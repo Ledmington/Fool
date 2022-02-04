@@ -1,0 +1,28 @@
+name: Fool Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  tests-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install antlr
+        run: apt install antlr4 -y
+
+      - name: Generate SVM grammar
+        run: antlr4 src/svm/SVM.g4 -o gen
+
+      - name: Generate FOOL grammar
+        run: antlr4 src/compiler/FOOL.g4 -o gen
+      
+      - name: Compiling java
+        run: javac src -o out
+      
+      - name: Running Test
+        run: java out/compiler/Test.class
