@@ -19,13 +19,13 @@ jobs:
         run: wget https://www.antlr.org/download/antlr-4.9.3-complete.jar -O antlr.jar
 
       - name: Generate SVM grammar
-        run: java -jar antlr.jar src/svm/SVM.g4 -o gen -listener -visitor
+        run: java -jar antlr.jar src/svm/SVM.g4 -o src -listener -visitor
 
       - name: Generate FOOL grammar
-        run: java -jar antlr.jar src/compiler/FOOL.g4 -o gen -listener -visitor
+        run: java -jar antlr.jar src/compiler/FOOL.g4 -o src -listener -visitor
         
       - name: debug
-        run: ls -alh -r gen
+        run: ls -r
       
       - name: Compiling java
         run: javac -cp antlr.jar $(find . | grep .java)
