@@ -22,7 +22,7 @@ jobs:
         run: antlr4 src/compiler/FOOL.g4 -o gen
       
       - name: Compiling java
-        run: javac src -o out
+        run: javac src -d out
       
       - name: Running Test
         run: java out/compiler/Test.class
