@@ -1,13 +1,14 @@
 package compiler;
 
-import java.util.*;
-import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
+import compiler.AST.*;
 
-public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
+import java.util.*;
+
+public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
-	private List<Map<String, STentry>> symTable = new ArrayList<>();
+	private final List<Map<String, STentry>> symTable = new ArrayList<>();
 	private int nestingLevel=0; // current nesting level
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
 	int stErrors=0;

@@ -1,10 +1,10 @@
 package compiler;
 
-import compiler.AST.*;
-import compiler.lib.*;
 import compiler.exc.*;
+import compiler.lib.*;
+import compiler.AST.*;
 
-public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
+public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
 
 	PrintEASTVisitor() { super(false,true); } 
 

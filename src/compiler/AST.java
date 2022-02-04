@@ -9,7 +9,7 @@ public class AST {
 		final List<DecNode> declist;
 		final Node exp;
 		ProgLetInNode(List<DecNode> d, Node e) {
-			declist = Collections.unmodifiableList(d); 
+			declist = Collections.unmodifiableList(d);
 			exp = e;
 		}
 

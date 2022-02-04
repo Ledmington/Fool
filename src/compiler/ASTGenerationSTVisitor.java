@@ -1,13 +1,12 @@
 package compiler;
 
-import java.util.*;
-
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import compiler.AST.*;
 import compiler.FOOLParser.*;
 import compiler.lib.*;
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.*;
+
+import java.util.*;
 import static compiler.lib.FOOLlib.*;
 
 public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
@@ -28,11 +27,11 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         
     @Override
 	public Node visit(ParseTree t) {
-    	if (t==null) return null;
-        String temp=indent;
-        indent=(indent==null)?"":indent+"  ";
+    	if (t == null) return null;
+        String temp = indent;
+        indent = (indent==null) ? "" : indent+"  ";
         Node result = super.visit(t);
-        indent=temp;
+        indent = temp;
         return result; 
 	}
 
@@ -46,7 +45,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
 		List<DecNode> declist = new ArrayList<>();
-		for (DecContext dec : c.dec()) declist.add((DecNode) visit(dec));
+		for (DecContext dec : c.dec()) {
+			declist.add((DecNode) visit(dec));
+		}
 		return new ProgLetInNode(declist, visit(c.exp()));
 	}
 
@@ -84,7 +85,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitVardec(VardecContext c) {
 		if (print) printVarAndProdName(c);
 		Node n = null;
-		if (c.ID()!=null) { //non-incomplete ST
+		if (c.ID() != null) { //non-incomplete ST
 			n = new VarNode(c.ID().getText(), (TypeNode) visit(c.type()), visit(c.exp()));
 			n.setLine(c.VAR().getSymbol().getLine());
 		}

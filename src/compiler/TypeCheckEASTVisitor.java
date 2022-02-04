@@ -1,8 +1,9 @@
 package compiler;
 
-import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
+import compiler.AST.*;
+
 import static compiler.TypeRels.*;
 
 //visitNode(n) fa il type checking di un Node n e ritorna:
@@ -11,7 +12,7 @@ import static compiler.TypeRels.*;
 //(- per un tipo: "null"; controlla che il tipo non sia incompleto) 
 //
 //visitSTentry(s) ritorna, per una STentry s, il tipo contenuto al suo interno
-public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException> {
+public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
 	TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions 
 	TypeCheckEASTVisitor(boolean debug) { super(true,debug); } // enables print for debugging

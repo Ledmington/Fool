@@ -1,11 +1,12 @@
 package compiler;
 
-import java.io.*;
+import compiler.exc.*;
+import compiler.lib.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
-import compiler.lib.*;
-import compiler.exc.*;
 import svm.*;
+
+import java.io.*;
 
 public class Test {
     public static void main(String[] args) throws Exception {
@@ -42,7 +43,7 @@ public class Test {
     		TypeNode mainType = typeCheckVisitor.visit(ast);
     		System.out.print("Type of main program expression is: ");
     		new PrintEASTVisitor().visit(mainType);
-    	} catch (IncomplException e) {    		
+    	} catch (IncomplException e) {
     		System.out.println("Could not determine main program expression type due to errors detected before type checking.");
     	} catch (TypeException e) {
     		System.out.println("Type checking error in main program expression: "+e.text); 
@@ -56,7 +57,7 @@ public class Test {
 
     	System.out.println("Generating code.");
     	String code = new CodeGenerationASTVisitor().visit(ast);        
-    	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
+    	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm"));
     	out.write(code);
     	out.close(); 
     	System.out.println("");

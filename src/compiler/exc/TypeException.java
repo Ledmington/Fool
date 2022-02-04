@@ -2,8 +2,11 @@ package compiler.exc;
 
 import compiler.lib.*;
 
+import java.io.*;
+
 public class TypeException extends Exception {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	public String text;

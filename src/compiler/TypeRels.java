@@ -1,10 +1,10 @@
 package compiler;
 
-import compiler.AST.*;
 import compiler.lib.*;
+import compiler.AST.*;
 
 /*
-	Class con metodi statici di utility per definire relazioni tra tipi.
+	Classe con metodi statici di utility per definire relazioni tra tipi.
 */
 public class TypeRels {
 

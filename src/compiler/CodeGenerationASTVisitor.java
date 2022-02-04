@@ -1,8 +1,8 @@
 package compiler;
 
-import compiler.AST.*;
-import compiler.lib.*;
 import compiler.exc.*;
+import compiler.lib.*;
+import compiler.AST.*;
 import static compiler.lib.FOOLlib.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {

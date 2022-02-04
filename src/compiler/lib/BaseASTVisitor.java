@@ -1,11 +1,11 @@
 package compiler.lib;
 
-import compiler.AST.*;
 import compiler.exc.*;
+import compiler.AST.*;
 
 import static compiler.lib.FOOLlib.*;
 
-public class BaseASTVisitor<S,E extends Exception> {
+public class BaseASTVisitor <S, E extends Exception> {
 
 	private boolean incomplExc; // enables throwing IncomplException
 	protected boolean print;    // enables printing
@@ -29,7 +29,7 @@ public class BaseASTVisitor<S,E extends Exception> {
 	
 	public S visit(Visitable v, String mark) throws E {   //when printing marks this visit with string mark
 		if (v==null)                                      
-			if (incomplExc) throw new IncomplException(); 
+			if (incomplExc) throw new IncomplException();
 			else                                         
 				return null; 
 		if (print) {

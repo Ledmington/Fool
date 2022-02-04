@@ -1,9 +1,9 @@
 package compiler.lib;
 
 import compiler.*;
-import compiler.exc.UnimplException;
+import compiler.exc.*;
 
-public class BaseEASTVisitor<S,E extends Exception> extends BaseASTVisitor<S,E>  {
+public class BaseEASTVisitor <S, E extends Exception> extends BaseASTVisitor<S,E>  {
 	
 	protected BaseEASTVisitor() {}
 	protected BaseEASTVisitor(boolean ie) { super(ie); } 
