@@ -15,9 +15,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '16'
-      
-      - name: Install java
-        run: sudo apt install default-jdk -y
         
       - name: Java version
         run: java --version
@@ -41,7 +38,7 @@ jobs:
         run: find ./src -iname *.java
       
       - name: Compiling java
-        run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -verbose
+        run: javac --sourcepath src $(find ./src -iname *.java) -verbose
         
       - name: Compile with Maven
         run: mvn compile
