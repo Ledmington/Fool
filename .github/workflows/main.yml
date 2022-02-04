@@ -37,7 +37,7 @@ jobs:
         run: find ./src -iname *.java
       
       - name: Compiling java
-        run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -sourcepath src -verbose
+        run: javac -cp "./antlr.jar" $(find ./src -iname *.java) -sourcepath src -verbose
       
       - name: Running Test
         run: java src/compiler/Test.class
