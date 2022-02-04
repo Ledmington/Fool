@@ -27,6 +27,9 @@ jobs:
       - name: debug
         run: tree .
       
+      - name: debug
+        run: find . -iname *.java
+      
       - name: Compiling java
         run: javac -cp antlr.jar $(find . -iname *.java)
       
