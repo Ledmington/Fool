@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Install java
-        run: sudo apt install default-jdk -y
+        run: sudo apt install openjdk-16-jdk -y
         
       - name: Java version
         run: java --version
