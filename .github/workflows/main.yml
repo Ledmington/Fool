@@ -25,7 +25,7 @@ jobs:
         run: java -jar antlr.jar src/compiler/FOOL.g4 -o gen
       
       - name: Compiling java
-        run: javac -cp antlr.jar src/**/*.java
+        run: javac -cp antlr.jar $(find . | grep .java)
       
       - name: Running Test
         run: java src/compiler/Test.class
