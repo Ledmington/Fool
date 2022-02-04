@@ -37,7 +37,12 @@ jobs:
         run: find ./src -iname *.java
       
       - name: Compiling java
-        run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -verbose
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '16'
+      - run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -verbose
+      - run: mvn compile
       
       - name: Running Test
         run: java src/compiler/Test.class
