@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '16'
       
       - name: Install java
         run: sudo apt install default-jdk -y
@@ -37,12 +41,10 @@ jobs:
         run: find ./src -iname *.java
       
       - name: Compiling java
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt'
-          java-version: '16'
-      - run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -verbose
-      - run: mvn compile
+        run: javac -cp ".:./antlr.jar" $(find ./src -iname *.java) -verbose
+        
+      - name: Compile with Maven
+        run: mvn compile
       
       - name: Running Test
         run: java src/compiler/Test.class
