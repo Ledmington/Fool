@@ -25,7 +25,7 @@ jobs:
         run: java -jar antlr.jar src/compiler/FOOL.g4 -listener -visitor -Xexact-output-dir -o gen/compiler
         
       - name: debug
-        run: ls -R
+        run: tree .
       
       - name: Compiling java
         run: javac -cp antlr.jar $(find . -iname *.java)
