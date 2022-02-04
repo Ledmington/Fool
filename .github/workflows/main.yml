@@ -14,6 +14,12 @@ jobs:
       
       - name: Install java
         run: sudo apt install default-jdk -y
+        
+      - name: Java version
+        run: java --version
+        
+      - name: Javac version
+        run: javac --version
 
       - name: Download antlr4.9.3
         run: wget https://www.antlr.org/download/antlr-4.9.3-complete.jar -O antlr.jar
