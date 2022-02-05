@@ -75,12 +75,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(IfNode n) throws TypeException {
 		if (print) printNode(n);
 		if ( !(isSubtype(visit(n.cond), new BoolTypeNode())) )
-			throw new TypeException("Non boolean condition in if",n.getLine());
+			throw new TypeException("Non boolean condition in if", n.getLine());
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
 		if (isSubtype(t, e)) return e;
 		if (isSubtype(e, t)) return t;
-		throw new TypeException("Incompatible types in then-else branches",n.getLine());
+		throw new TypeException("Incompatible types in then-else branches", n.getLine());
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		TypeNode l = visit(n.left);
 		TypeNode r = visit(n.right);
 		if ( !(isSubtype(l, r) || isSubtype(r, l)) )
-			throw new TypeException("Incompatible types in equal",n.getLine());
+			throw new TypeException("Incompatible types in equal", n.getLine());
 		return new BoolTypeNode();
 	}
 
@@ -118,8 +118,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printNode(n);
 		TypeNode l = visit(n.left);
 		TypeNode r = visit(n.right);
-		if ( !(isSubtype(l, r) || isSubtype(r, l)) )
-			throw new TypeException("Incompatible types in less-equal", n.getLine());
+		if ( !(l instanceof BoolTypeNode) || !(r instanceof BoolTypeNode) ) {
+			throw new TypeException("Non-boolean in or", n.getLine());
+		}
 		return new BoolTypeNode();
 	}
 
@@ -128,8 +129,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printNode(n);
 		TypeNode l = visit(n.left);
 		TypeNode r = visit(n.right);
-		if ( !(isSubtype(l, r) || isSubtype(r, l)) )
-			throw new TypeException("Incompatible types in less-equal", n.getLine());
+		if ( !(l instanceof BoolTypeNode) || !(r instanceof BoolTypeNode) ) {
+			throw new TypeException("Non-boolean in and", n.getLine());
+		}
 		return new BoolTypeNode();
 	}
 

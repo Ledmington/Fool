@@ -59,8 +59,6 @@ public class TestUtils {
 		int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
 		if(debug) System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 
-		if ( frontEndErrors > 0) System.exit(1);
-
 		if(debug) System.out.println("Generating code.");
 		return new CodeGenerationASTVisitor().visit(ast);
 	}
