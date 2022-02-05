@@ -45,4 +45,6 @@ public class TestFOOL {
 				      """;
 		assertEquals(compileAndRun(code).get(0), "5");
 	}
+
+	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
 }
