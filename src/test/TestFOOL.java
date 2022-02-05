@@ -46,5 +46,13 @@ public class TestFOOL {
 		assertEquals(compileAndRun(code).get(0), "5");
 	}
 
+	@Test
+	public void simple_math() throws TypeException {
+		assertEquals(compileAndRun("print(1+2);").get(0), "3");
+		assertEquals(compileAndRun("print(2-1);").get(0), "1");
+		assertEquals(compileAndRun("print(2*3);").get(0), "6");
+		assertEquals(compileAndRun("print(10/5);").get(0), "2");
+	}
+
 	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
 }
