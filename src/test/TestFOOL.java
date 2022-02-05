@@ -54,5 +54,42 @@ public class TestFOOL {
 		assertEquals(compileAndRun("print(10/5);").get(0), "2");
 	}
 
+	@Test
+	public void test_eq() throws TypeException {
+		assertEquals(compileAndRun("print(1==2);").get(0), "0");
+		assertEquals(compileAndRun("print(2==2);").get(0), "1");
+		assertEquals(compileAndRun("print(3==2);").get(0), "0");
+	}
+
+	@Test
+	public void test_geq() throws TypeException {
+		assertEquals(compileAndRun("print(1>=2);").get(0), "0");
+		assertEquals(compileAndRun("print(2>=2);").get(0), "1");
+		assertEquals(compileAndRun("print(3>=2);").get(0), "1");
+	}
+
+	@Test
+	public void test_leq() throws TypeException {
+		assertEquals(compileAndRun("print(1<=2);").get(0), "1");
+		assertEquals(compileAndRun("print(2<=2);").get(0), "1");
+		assertEquals(compileAndRun("print(3<=2);").get(0), "0");
+	}
+
+	@Test
+	public void test_or() throws TypeException {
+		assertEquals(compileAndRun("print(false||false);").get(0), "0");
+		assertEquals(compileAndRun("print(false||true);").get(0), "1");
+		assertEquals(compileAndRun("print(true||false);").get(0), "1");
+		assertEquals(compileAndRun("print(true||true);").get(0), "1");
+	}
+
+	@Test
+	public void test_and() throws TypeException {
+		assertEquals(compileAndRun("print(false&&false);").get(0), "0");
+		assertEquals(compileAndRun("print(false&&true);").get(0), "0");
+		assertEquals(compileAndRun("print(true&&false);").get(0), "0");
+		assertEquals(compileAndRun("print(true&&true);").get(0), "1");
+	}
+
 	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
 }
