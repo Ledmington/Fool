@@ -6,7 +6,7 @@ import compiler.AST.*;
 
 public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
 
-	PrintEASTVisitor() { super(false,true); } 
+	public PrintEASTVisitor() { super(false,true); }
 
 	@Override
 	public Void visitNode(ProgLetInNode n) {

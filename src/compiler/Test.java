@@ -26,18 +26,16 @@ public class Test {
     	System.out.println("Generating AST.");
     	ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
     	Node ast = visitor.visit(st);
-    	System.out.println("");
 
-    	System.out.println("Enriching AST via symbol table.");
+    	System.out.println("\nEnriching AST via symbol table.");
     	SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
     	symtableVisitor.visit(ast);
     	System.out.println("You had "+symtableVisitor.stErrors+" symbol table errors.\n");
 
     	System.out.println("Visualizing Enriched AST.");
     	new PrintEASTVisitor().visit(ast);
-    	System.out.println("");
 
-    	System.out.println("Checking Types.");
+    	System.out.println("\nChecking Types.");
     	try {
     		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
     		TypeNode mainType = typeCheckVisitor.visit(ast);
@@ -46,23 +44,22 @@ public class Test {
     	} catch (IncomplException e) {
     		System.out.println("Could not determine main program expression type due to errors detected before type checking.");
     	} catch (TypeException e) {
-    		System.out.println("Type checking error in main program expression: "+e.text); 
-    	}       	
+    		System.out.println("Type checking error in main program expression: " + e.text);
+    	}
     	System.out.println("You had "+FOOLlib.typeErrors+" type checking errors.\n");
 
-    	int frontEndErrors = lexer.lexicalErrors+parser.getNumberOfSyntaxErrors()+symtableVisitor.stErrors+FOOLlib.typeErrors;
-		System.out.println("You had a total of "+frontEndErrors+" front-end errors.\n");
+    	int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
+		System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 		
-		if ( frontEndErrors > 0) System.exit(1);   
+		if ( frontEndErrors > 0) System.exit(1);
 
     	System.out.println("Generating code.");
     	String code = new CodeGenerationASTVisitor().visit(ast);        
     	BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm"));
     	out.write(code);
-    	out.close(); 
-    	System.out.println("");
+    	out.close();
 
-    	System.out.println("Assembling generated code.");
+    	System.out.println("\nAssembling generated code.");
     	CharStream charsASM = CharStreams.fromFileName(fileName+".asm");
     	SVMLexer lexerASM = new SVMLexer(charsASM);
     	CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
@@ -77,7 +74,5 @@ public class Test {
     	System.out.println("Running generated code via Stack Virtual Machine.");
     	ExecuteVM vm = new ExecuteVM(parserASM.code);
     	vm.cpu();
-
     }
 }
-

@@ -11,9 +11,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	private final List<Map<String, STentry>> symTable = new ArrayList<>();
 	private int nestingLevel=0; // current nesting level
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
-	int stErrors=0;
+	public int stErrors=0;
 
-	SymbolTableASTVisitor() {}
+	public SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
 	private STentry stLookup(String id) {

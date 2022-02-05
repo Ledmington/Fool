@@ -7,7 +7,7 @@ import static compiler.lib.FOOLlib.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-  CodeGenerationASTVisitor() {}
+  public CodeGenerationASTVisitor() {}
   CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
 
 	@Override

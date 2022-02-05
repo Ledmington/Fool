@@ -14,7 +14,7 @@ import static compiler.TypeRels.*;
 //visitSTentry(s) ritorna, per una STentry s, il tipo contenuto al suo interno
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
-	TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions 
+	public TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions
 	TypeCheckEASTVisitor(boolean debug) { super(true,debug); } // enables print for debugging
 
 	//checks that a type object is visitable (not incomplete) 
