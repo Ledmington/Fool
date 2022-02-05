@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class TestUtils {
 	public static ArrayList<String> compileAndRun (final String code) throws TypeException {
-		return new ArrayList<>(Arrays.asList(run(compile(code)).split("\n")));
+		return run(compile(code));
 	}
 
 	public static String compile (final String code) throws TypeException {
@@ -65,11 +65,11 @@ public class TestUtils {
 		return new CodeGenerationASTVisitor().visit(ast);
 	}
 
-	public static String run (final String code) {
+	public static ArrayList<String> run (final String code) {
 		return run(code, false);
 	}
 
-	public static String run (final String code, final boolean debug) {
+	public static ArrayList<String> run (final String code, final boolean debug) {
 		if(debug) System.out.println("\nAssembling generated code.");
 		CharStream charsASM = CharStreams.fromString(code);
 		SVMLexer lexerASM = new SVMLexer(charsASM);
@@ -93,6 +93,6 @@ public class TestUtils {
 		vm.cpu();  // executing
 		newps.flush();  // flushing the output
 		System.setOut(old);
-		return baos.toString();
+		return new ArrayList<>(Arrays.asList(baos.toString().split("\n")));
 	}
 }
