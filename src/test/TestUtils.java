@@ -9,9 +9,14 @@ import svm.ExecuteVM;
 import svm.SVMLexer;
 import svm.SVMParser;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class TestUtils {
-	public static void compileAndRun (final String code) throws TypeException {
-		run(compile(code));
+	public static ArrayList<String> compileAndRun (final String code) throws TypeException {
+		return new ArrayList<>(Arrays.asList(run(compile(code)).split("\n")));
 	}
 
 	public static String compile (final String code) throws TypeException {
@@ -60,11 +65,11 @@ public class TestUtils {
 		return new CodeGenerationASTVisitor().visit(ast);
 	}
 
-	public static void run (final String code) {
-		run(code, false);
+	public static String run (final String code) {
+		return run(code, false);
 	}
 
-	public static void run (final String code, final boolean debug) {
+	public static String run (final String code, final boolean debug) {
 		if(debug) System.out.println("\nAssembling generated code.");
 		CharStream charsASM = CharStreams.fromString(code);
 		SVMLexer lexerASM = new SVMLexer(charsASM);
@@ -79,6 +84,15 @@ public class TestUtils {
 
 		if(debug) System.out.println("Running generated code via Stack Virtual Machine.");
 		ExecuteVM vm = new ExecuteVM(parserASM.code);
-		vm.cpu();
+
+		// before execution we redirect the output on a String
+		PrintStream old = System.out;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setOut(newps);
+		vm.cpu();  // executing
+		newps.flush();  // flushing the output
+		System.setOut(old);
+		return baos.toString();
 	}
 }
