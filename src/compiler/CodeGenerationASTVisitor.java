@@ -202,6 +202,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
+	public String visitNode(NotNode n) {
+		if (print) printNode(n);
+		return nlJoin(
+				"push 1",
+				visit(n.exp),
+				"sub"
+		);
+	}
+
+	@Override
 	public String visitNode(TimesNode n) {
 		if (print) printNode(n);
 		return nlJoin(

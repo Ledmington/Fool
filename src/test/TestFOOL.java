@@ -91,5 +91,11 @@ public class TestFOOL {
 		assertEquals(compileAndRun("print(true&&true);").get(0), "1");
 	}
 
+	@Test
+	public void test_not() throws TypeException {
+		assertEquals(compileAndRun("print(!false);").get(0), "1");
+		assertEquals(compileAndRun("print(!true);").get(0), "0");
+	}
+
 	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
 }
