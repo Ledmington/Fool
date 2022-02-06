@@ -21,9 +21,14 @@ public class TestErrors {
 		return lexerErrors + parserErrors + symTableErrors + typeErrors;
 	}
 
+	public boolean ok() {
+		return totalErrors() == 0;
+	}
+
 	public void reset() {
 		lexerErrors = 0;
 		parserErrors = 0;
+		symTableErrors = 0;
 		typeErrors = 0;
 	}
 }

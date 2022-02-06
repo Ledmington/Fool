@@ -8,12 +8,7 @@ import static test.TestUtils.*;
 
 public class TestFOOL {
 
-	public TestErrors err;
-
-	@BeforeEach
-	public void setup() {
-		err = TestErrors.getInstance();
-	}
+	public TestErrors err = TestErrors.getInstance();
 
 	@Test
 	public void simple() throws TypeException {
@@ -192,8 +187,128 @@ public class TestFOOL {
 						fun f:bool() let var x:int=5; in x;
 					in
 						f();""";
+		compile(code, true);
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void incompatible_value_var() throws TypeException {
+		String code = """
+					let
+						var x:bool = 5;
+					in
+						x;""";
 		compile(code);
-		assertEquals(1, err.totalErrors());
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void non_bool_in_if() {
+		String c1 = """
+					if(5) then {true} else {false};""";
+		String c2 = """
+					let
+						fun f:int() (5);
+					in
+						if (f) then {true} else {false};
+				""";
+		assertThrows(TypeException.class, () -> compile(c1));
+		assertThrows(TypeException.class, () -> compile(c2));
+	}
+
+	@Test
+	public void different_types_in_if() {
+		String c1 = """
+					let
+						fun f:int() (5);
+					in
+						if (true) then {true} else {f};
+				""";
+		String c2 = """
+					let
+						fun f:int() (5);
+					in
+						if (true) then {f} else {true};
+				""";
+		assertThrows(TypeException.class, () -> compile(c1));
+		assertThrows(TypeException.class, () -> compile(c2));
+	}
+
+	@Test
+	public void incompatible_types_in_equal() {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						if (true==f) then {1} else {0};
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void incompatible_types_in_greaterequal() {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						if (true>=f) then {1} else {0};
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void incompatible_types_in_lessequal() {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						if (true==f) then {1} else {0};
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void only_int_in_mul() throws TypeException {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						5*f;
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void only_int_in_div() throws TypeException {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						f/5;
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void only_int_in_sum() throws TypeException {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						5+f;
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void only_int_in_sub() throws TypeException {
+		String code = """
+					let
+						fun f:int() (5);
+					in
+						5-f;
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
 	}
 
 	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
