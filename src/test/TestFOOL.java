@@ -3,6 +3,10 @@ package test;
 import compiler.exc.TypeException;
 import org.junit.jupiter.api.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static test.TestUtils.*;
 
@@ -410,7 +414,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void prime() throws TypeException {
+	public void primes() throws TypeException {
 		String code = """
 					let
 						fun rem:int (a:int, b:int) (
@@ -440,10 +444,73 @@ public class TestFOOL {
 								}
 							}
 						);
+						fun primes:bool (n:int) (
+							if (n <= 100) then {
+								if (prime(n)) then {
+									if (print(n) >= 0) then {      /* print(n) returns n */
+										primes(n+1)
+									} else {
+										primes(n+1)
+									}
+								} else { primes(n+1) }
+							} else {true}
+						);
 					in
-						print(prime(491));
+						primes(0);
 				""";
-		assertEquals(compileAndRun(code).get(0), "1");
+		List<String> p = Stream.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97).map(Object::toString).toList();
+		assertEquals(p, compileAndRun(code));
+	}
+
+	@Test
+	public void square_root() throws TypeException {
+		String code = """
+					let
+						fun subOddNumber:int (i:int, n:int, count:int) (
+							if (i >= n+1) then {
+								count
+							} else {
+								subOddNumber(i+2, n-i, count+1)
+							}
+						);
+						fun sqrt:int (n:int) (
+							subOddNumber(1, n, 0)
+						);
+					in
+						print(sqrt(59049));
+				""";
+		assertEquals(compileAndRun(code).get(0), "243");
+	}
+
+	@Test
+	public void square_root_binary_search() throws TypeException {
+		String code = """
+					let
+						fun sqrtBinarySearch:int (low:int, high:int, mid:int, n:int)
+						let
+							var tmp:int = mid*mid;
+						in
+							if (tmp == n) then {
+								mid
+							} else {
+								if (high-low <= 1) then {
+									low
+								} else {
+									if (tmp >= n) then {
+										sqrtBinarySearch(low, mid, (low+mid)/2, n)
+									} else {
+										sqrtBinarySearch(mid, high, (mid+high)/2, n)
+									}
+								}
+							}
+						;
+						fun sqrt:int (n:int) (
+							sqrtBinarySearch(0, n, n/2, n)
+						);
+					in
+						print(sqrt(59049));
+				""";
+		assertEquals(compileAndRun(code).get(0), "243");
 	}
 
 	// Object-Oriented tests
