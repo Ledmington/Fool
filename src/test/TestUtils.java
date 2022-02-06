@@ -24,6 +24,9 @@ public class TestUtils {
 	}
 
 	public static String compile (final String code, final boolean debug) throws TypeException {
+		TestErrors err = TestErrors.getInstance();
+		err.reset();
+
 		CharStream chars = CharStreams.fromString(code);
 		FOOLLexer lexer = new FOOLLexer(chars);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -59,6 +62,11 @@ public class TestUtils {
 		int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
 		if(debug) System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 
+		err.lexerErrors = lexer.lexicalErrors;
+		err.parserErrors = parser.getNumberOfSyntaxErrors();
+		err.symTableErrors = symtableVisitor.stErrors;
+		err.typeErrors = FOOLlib.typeErrors;
+
 		if(debug) System.out.println("Generating code.");
 		return new CodeGenerationASTVisitor().visit(ast);
 	}
@@ -78,7 +86,6 @@ public class TestUtils {
 
 		// needed only for debug
 		if(debug) System.out.println("You had: " + lexerASM.lexicalErrors + " lexical errors and " + parserASM.getNumberOfSyntaxErrors() + " syntax errors.\n");
-		if (lexerASM.lexicalErrors + parserASM.getNumberOfSyntaxErrors() > 0) System.exit(1);
 
 		if(debug) System.out.println("Running generated code via Stack Virtual Machine.");
 		ExecuteVM vm = new ExecuteVM(parserASM.code);
@@ -91,6 +98,8 @@ public class TestUtils {
 		vm.cpu();  // executing
 		newps.flush();  // flushing the output
 		System.setOut(old);
-		return new ArrayList<>(Arrays.asList(baos.toString().split("\n")));
+
+		// Using "\r?\n" to be compatible with Windows
+		return new ArrayList<>(Arrays.asList(baos.toString().split("\r?\n")));
 	}
 }

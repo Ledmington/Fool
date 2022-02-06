@@ -1,13 +1,19 @@
 package test;
 
 import compiler.exc.TypeException;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static test.TestUtils.compile;
-import static test.TestUtils.compileAndRun;
+import static test.TestUtils.*;
 
 public class TestFOOL {
+
+	public TestErrors err;
+
+	@BeforeEach
+	public void setup() {
+		err = TestErrors.getInstance();
+	}
 
 	@Test
 	public void simple() throws TypeException {
@@ -35,15 +41,15 @@ public class TestFOOL {
 	@Test
 	public void simple_fun() throws TypeException {
 		String code = """
-				      let
-				        fun f:int()
-				        let
-				          var x:int = 5;
-				        in
-				          x;
-				      in
-				        print(f());
-				      """;
+					let
+						fun f:int()
+						let
+							var x:int = 5;
+						in
+							x;
+					in
+						print(f());
+					""";
 		assertEquals(compileAndRun(code).get(0), "5");
 	}
 
@@ -53,6 +59,24 @@ public class TestFOOL {
 		assertEquals(compileAndRun("print(2-1);").get(0), "1");
 		assertEquals(compileAndRun("print(2*3);").get(0), "6");
 		assertEquals(compileAndRun("print(10/5);").get(0), "2");
+	}
+
+	@Test
+	public void division_by_zero() {
+		assertThrows(ArithmeticException.class, () -> compileAndRun("1/0;"));
+	}
+
+	@Test
+	public void negative_numbers() throws TypeException {
+		assertEquals(compileAndRun("print(1-2);").get(0), "-1");
+		assertEquals(compileAndRun("print(-2-1);").get(0), "-3");
+		assertEquals(compileAndRun("print(1+-2);").get(0), "-1");
+		assertEquals(compileAndRun("print(2*-3);").get(0), "-6");
+		assertEquals(compileAndRun("print(-2*3);").get(0), "-6");
+		assertEquals(compileAndRun("print(-2*-3);").get(0), "6");
+		assertEquals(compileAndRun("print(6/-3);").get(0), "-2");
+		assertEquals(compileAndRun("print(-6/3);").get(0), "-2");
+		assertEquals(compileAndRun("print(-6/-3);").get(0), "2");
 	}
 
 	@Test
@@ -82,8 +106,10 @@ public class TestFOOL {
 		assertEquals(compileAndRun("print(false||true);").get(0), "1");
 		assertEquals(compileAndRun("print(true||false);").get(0), "1");
 		assertEquals(compileAndRun("print(true||true);").get(0), "1");
+	}
 
-		// only booleans allowed in or
+	@Test
+	public void only_bool_in_or() {
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 || 2);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 || true);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(true || 2);"));
@@ -95,8 +121,10 @@ public class TestFOOL {
 		assertEquals(compileAndRun("print(false&&true);").get(0), "0");
 		assertEquals(compileAndRun("print(true&&false);").get(0), "0");
 		assertEquals(compileAndRun("print(true&&true);").get(0), "1");
+	}
 
-		// only booleans allowed in and
+	@Test
+	public void only_bool_in_and() {
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 && 2);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 && true);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(true && 2);"));
@@ -109,24 +137,30 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void only_bool_in_not() {
+		assertThrows(TypeException.class, () -> compileAndRun("print(!0);"));
+		assertThrows(TypeException.class, () -> compileAndRun("print(!1);"));
+		assertThrows(TypeException.class, () -> compileAndRun("print(!2);"));
+	}
+
+	@Test
 	public void efficient_or() throws TypeException {
 		// This code tests if || is efficiently evaluated
 		// We prepare an infinite recursive function f() that will loop the program if executed
 		// Then we check (true || f()) and the program should terminate
 		String code = """
-				      let
-				        fun f:bool() (
-				          f()
-				        );
-				      in
-				        print(
-				          if (true || f()) then {
-				            1
-				          } else {
-				            0
-				          }
-				        );
-				      """;
+					let
+						fun f:bool() (
+							f()
+						);
+					in
+						print(
+							if (true || f()) then {
+								1
+							} else {
+								0
+							}
+						);""";
 		assertEquals(compileAndRun(code).get(0), "1");
 	}
 
@@ -136,20 +170,30 @@ public class TestFOOL {
 		// We prepare an infinite recursive function f() that will loop the program if executed
 		// Then we check (false && f()) and the program should terminate
 		String code = """
-				      let
-				        fun f:bool() (
-				          f()
-				        );
-				      in
-				        print(
-				          if (false && f()) then {
-				            1
-				          } else {
-				            0
-				          }
-				        );
-				      """;
+					let
+						fun f:bool() (
+							f()
+						);
+					in
+						print(
+							if (false && f()) then {
+								1
+							} else {
+								0
+							}
+						);""";
 		assertEquals(compileAndRun(code).get(0), "0");
+	}
+
+	@Test
+	public void wrong_return_type_function() throws TypeException {
+		String code = """
+					let
+						fun f:bool() let var x:int=5; in x;
+					in
+						f();""";
+		compile(code);
+		assertEquals(1, err.totalErrors());
 	}
 
 	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
