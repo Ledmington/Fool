@@ -311,5 +311,49 @@ public class TestFOOL {
 		assertThrows(TypeException.class, () -> compile(code));
 	}
 
-	// 2 punti: "<=", ">=", "||", "&&", "/", "-" e "!"
+	@Test
+	public void non_function_invocation() {
+		String code = """
+					let
+						var x:int = 5;
+					in
+						x();
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void wrong_number_of_parameters() {
+		String c1 = """
+					let
+						fun f:int() (5);
+					in
+						f(5);
+				""";
+		String c2 = """
+					let
+						fun f:int(x:int) (5);
+					in
+						f();
+				""";
+		assertThrows(TypeException.class, () -> compile(c1));
+		assertThrows(TypeException.class, () -> compile(c2));
+	}
+
+	@Test
+	public void wrong_parameter_type() {
+		String code = """
+					let
+						fun f:int(x:bool) (5);
+					in
+						f(5);
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	// Object-Oriented tests
+
+	// Object Inheritance tests
+
+	// Code Optimization tests
 }

@@ -1,3 +1,4 @@
 *.asm
 out/
 gen/
+cov_report/

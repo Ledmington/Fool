@@ -190,7 +190,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if ( !(at.parlist.size() == n.arglist.size()) )
 			throw new TypeException("Wrong number of parameters in the invocation of "+n.id, n.getLine());
 		for (int i = 0; i < n.arglist.size(); i++)
-			if ( !(isSubtype(visit(n.arglist.get(i)),at.parlist.get(i))) )
+			if ( !(isSubtype(visit(n.arglist.get(i)), at.parlist.get(i))) )
 				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.id,n.getLine());
 		return at.ret;
 	}
@@ -245,5 +245,4 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printSTentry("type");
 		return ckvisit(entry.type); 
 	}
-
 }
