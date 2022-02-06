@@ -351,6 +351,101 @@ public class TestFOOL {
 		assertThrows(TypeException.class, () -> compile(code));
 	}
 
+	@Test
+	public void fibonacci() throws TypeException {
+		String code = """
+					let
+						fun fib:int (n:int) (
+							if (n <= 1) then {
+								n
+							} else {
+								fib(n-1) + fib(n-2)
+							}
+						);
+					in
+						print(fib(10));
+				""";
+		assertEquals(compileAndRun(code).get(0), "55");
+	}
+
+	@Test
+	public void fattoriale() throws TypeException {
+		String code = """
+					let
+						fun fatt:int (n:int) (
+							if (n <= 1) then {
+								1
+							} else {
+								n * fatt(n-1)
+							}
+						);
+					in
+						print(fatt(10));
+				""";
+		assertEquals(compileAndRun(code).get(0), "3628800");
+	}
+
+	@Test
+	public void euclid_gcd() throws TypeException {
+		String code = """
+					let
+						fun rem:int (a:int, b:int) (
+							if (a >= b) then {
+								rem(a-b, b)
+							} else {
+								a
+							}
+						);
+						fun gcd:int (a:int, b:int) (
+							if (b == 0) then {
+								a
+							} else {
+								gcd(b, rem(a, b))
+							}
+						);
+					in
+						print(gcd(12345, 60));
+				""";
+		assertEquals(compileAndRun(code).get(0), "15");
+	}
+
+	@Test
+	public void prime() throws TypeException {
+		String code = """
+					let
+						fun rem:int (a:int, b:int) (
+							if (a >= b) then {
+								rem(a-b, b)
+							} else {
+								a
+							}
+						);
+						fun isPrime:bool (i:int, n:int) (
+							if (i == n) then {
+								true
+							} else {
+								if (rem(n, i) == 0) then {
+									false
+								} else {
+									isPrime(i+1, n)
+								}
+							}
+						);
+						fun prime:bool (n:int) (
+							if (n <= 1) then {false}
+							else {
+								if (n == 2) then {true}
+								else {
+									isPrime(2, n)
+								}
+							}
+						);
+					in
+						print(prime(491));
+				""";
+		assertEquals(compileAndRun(code).get(0), "1");
+	}
+
 	// Object-Oriented tests
 
 	// Object Inheritance tests
