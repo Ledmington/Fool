@@ -268,7 +268,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_mul() throws TypeException {
+	public void only_int_in_mul() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -279,7 +279,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_div() throws TypeException {
+	public void only_int_in_div() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -290,7 +290,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_sum() throws TypeException {
+	public void only_int_in_sum() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -301,7 +301,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_sub() throws TypeException {
+	public void only_int_in_sub() {
 		String code = """
 					let
 						fun f:int() (5);
