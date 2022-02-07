@@ -11,8 +11,6 @@ import static test.TestUtils.*;
 
 public class TestFOOL {
 
-	public TestErrors err = TestErrors.getInstance();
-
 	@Test
 	public void simple() throws TypeException {
 		int result = Integer.parseInt(compileAndRun("print(1+2*3);").get(0));
@@ -190,7 +188,7 @@ public class TestFOOL {
 						fun f:bool() let var x:int=5; in x;
 					in
 						f();""";
-		compile(code, true);
+		compile(code);
 		assertFalse(err.ok());
 	}
 
@@ -539,6 +537,18 @@ public class TestFOOL {
 	}
 
 	// Object-Oriented tests
+
+	@Test
+	public void empty_class() throws TypeException {
+		String code = """
+					let
+						class example() {}
+					in
+						5;
+				""";
+		compile(code);
+		assertTrue(err.ok());
+	}
 
 	// Object Inheritance tests
 

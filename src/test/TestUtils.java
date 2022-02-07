@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TestUtils {
+
+	public static TestErrors err;
+
 	public static ArrayList<String> compileAndRun (final String code) throws TypeException {
 		return run(compile(code));
 	}
@@ -24,8 +27,8 @@ public class TestUtils {
 	}
 
 	public static String compile (final String code, final boolean debug) throws TypeException {
-		TestErrors err = TestErrors.getInstance();
-		err.reset();
+		err = new TestErrors();
+		FOOLlib.typeErrors = 0;
 
 		CharStream chars = CharStreams.fromString(code);
 		FOOLLexer lexer = new FOOLLexer(chars);

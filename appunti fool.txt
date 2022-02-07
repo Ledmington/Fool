@@ -9,7 +9,8 @@ layout oggetti
 [...............................] <- hp   (dopo allocazione oggetto)
 dispatch pointer (object pointer) <- (offset 0)
 
-l'i-esimo campo dell'oggetto si trova a (hp-i-1)
+l'i-esimo campo dell'oggetto si trova a (dp-i-1)
+(dp sta per dispatch pointer)
 
 
 
