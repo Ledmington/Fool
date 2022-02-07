@@ -81,7 +81,7 @@ l'oggetto A ha il campo a int, ma l'oggetto B ha il campo a bool
 --- node types ---
 ClassNode        dichiarazione di una classe "class A {...}"
 FieldNode        dichiarazione di un campo di una classe
-MethodNode       chiamata a metodo dall'interno "B()"
+MethodNode       dichiarazione di un metodo  (l'invocazione dall'interno è un CallNode)
 ClassCallNode    chiamata a metodo dall'esterno "A.B()"
 NewNode          istanziazione di un oggetto con "new"  (torna un RefTypeNode)
 EmptyNode        "null"

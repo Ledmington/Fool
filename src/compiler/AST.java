@@ -209,11 +209,14 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
+	// dichiarazione di una classe
 	public static class ClassNode extends Node {
+		final String id;
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
 
-		public ClassNode(final List<FieldNode> f, final List<MethodNode> m) {
+		public ClassNode(final String i, final List<FieldNode> f, final List<MethodNode> m) {
+			id = i;
 			fields = f;
 			methods = m;
 		}
@@ -224,15 +227,40 @@ public class AST {
 		}
 	}
 
+	// dichiarazione di un campo
 	public static class FieldNode extends ParNode {
 		FieldNode(final String i, final TypeNode t) {
 			super(i, t);
 		}
 	}
 
+	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
 	public static class MethodNode extends FunNode {
 		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
 			super(i, rt, pl, dl, e);
+		}
+	}
+
+	// invocazione metodo dall'esterno
+	public static class ClassCallNode extends CallNode {
+		ClassCallNode(final String i, final List<Node> p) {
+			super(i, p);
+		}
+	}
+
+	// istanziazione di un oggetto
+	public static class NewNode extends Node {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	// null
+	public static class EmptyNode extends Node {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
 		}
 	}
 	
@@ -258,7 +286,32 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
+	// tipo di una classe
 	public static class ClassTypeNode extends TypeNode {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	// tipo di un metodo (per distinguerlo dalle funzioni)
+	public static class MethodTypeNode extends TypeNode {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	// riferimento ad una classe
+	public static class RefTypeNode extends TypeNode {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	// tipo di "null"
+	public static class EmptyTypeNode extends TypeNode {
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
