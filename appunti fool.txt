@@ -1,0 +1,65 @@
+gli oggetti stanno nello heap
+le dispatch tables degli oggetti stanno nello heap
+lo heap alloca da 0 -> n
+no garbage collector
+
+
+
+layout oggetti
+[...............................] <- hp   (dopo allocazione oggetto)
+dispatch pointer (object pointer) <- (offset 0)
+
+l'i-esimo campo dell'oggetto si trova a (hp-i-1)
+
+
+
+layout dispatch tables
+[...............................] <- hp   (dopo allocazione tabella)
+
+l'i-esimo metodo dell'oggetto si trova a (dp+i-1)
+(dp sta per dispatch pointer)
+
+
+
+
+
+--- classi ---
+dichiarazioni solo in ambiente globale e all'inizio
+A.B() invoca il metodo B appartenente all'oggetto A
+new A() istanzia un nuovo oggetto di classe A
+null è un valore di tipo object
+il tipo di una classe è un ID
+i campi di una classe sono descritti come parametri di una funzione
+
+
+
+
+
+
+--- oggetti ---
+gli oggetti sono immutabili
+i campi di un oggetto sono private final, da fuori non sono visibili e da dentro un metodo dell'oggetto si possono solo leggere
+il campo x di un oggetto si può leggere come "x+5" da dentro l'oggetto
+il metodo m dell'oggetto x si può invocare dall'interno come "m()" o dall'esterno come "x.m()"
+
+
+
+
+
+
+
+
+
+
+--- ereditarietà ---
+"class A extends B" dichiara una classe di tipo A figlia della classe B (esistente)
+
+il costruttore della classe figlia ha all'inizio i parametri impliciti della classe padre, cioè
+class A (a:int, b:bool) {...}
+class B extends A (c:int) {...}
+l'oggetto B si costruisce così B(5, true, 7)
+
+se nel costruttore della classe figlia compaiono parametri con lo stesso ID di altri della classe padre, si fa overriding (i parametri non sono posizionali)
+class A (a:int, b:bool) {...}
+class B extends A (c:int, a:bool) {...}
+l'oggetto A ha il campo a int, ma l'oggetto B ha il campo a bool
