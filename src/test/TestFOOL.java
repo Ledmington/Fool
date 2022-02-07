@@ -1,8 +1,9 @@
 package test;
 
-import compiler.exc.TypeException;
+import compiler.exc.*;
 import org.junit.jupiter.api.*;
 
+import java.io.*;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -624,10 +625,87 @@ public class TestFOOL {
 					let
 						class useless() {}
 					in
-						null;
+						print(null);
 				""";
-		compile(code);
+		String asm = compile(code);
 		assertTrue(err.ok());
+		assertEquals(run(asm).get(0), "-1");
+	}
+
+	@Test
+	public void null_is_not_int() {
+		// we are checking null against -1 because null is represented as -1 in memory
+		String code = """
+					if (null == -1) then {
+						true
+					} else {
+						false
+					};
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void classes_only_in_global_scope() throws TypeException {
+		String code = """
+					let
+						fun f:int ()
+						let
+							class example() {};
+						in 1;
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void class_redefinition() throws TypeException {
+		String code = """
+					let
+						class example() {};
+						class example() {};
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void object_redefinition() throws TypeException {
+		String code = """
+					let
+						class example() {};
+						var x:example = new example();
+						var x:example = new example();
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
 	}
 
 	// Object Inheritance tests
