@@ -70,6 +70,8 @@ public class TestUtils {
 		err.symTableErrors = symtableVisitor.stErrors;
 		err.typeErrors = FOOLlib.typeErrors;
 
+		if(frontEndErrors > 0) return null; // make the test fail if compilation failed
+
 		if(debug) System.out.println("Generating code.");
 		return new CodeGenerationASTVisitor().visit(ast);
 	}

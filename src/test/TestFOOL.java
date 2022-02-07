@@ -550,6 +550,46 @@ public class TestFOOL {
 		assertTrue(err.ok());
 	}
 
+	@Test
+	public void class_with_fields() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {}
+					in
+						5;
+				""";
+		compile(code);
+		assertTrue(err.ok());
+	}
+
+	@Test
+	public void class_with_methods() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun f:bool() (true);
+						}
+					in
+						5;
+				""";
+		compile(code);
+		assertTrue(err.ok());
+	}
+
+	@Test
+	public void class_with_fields_and_methods() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {
+							fun f:bool() (true);
+						}
+					in
+						5;
+				""";
+		compile(code);
+		assertTrue(err.ok());
+	}
+
 	// Object Inheritance tests
 
 	// Code Optimization tests

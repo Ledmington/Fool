@@ -208,6 +208,33 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+
+	public static class ClassNode extends Node {
+		final List<FieldNode> fields;
+		final List<MethodNode> methods;
+
+		public ClassNode(final List<FieldNode> f, final List<MethodNode> m) {
+			fields = f;
+			methods = m;
+		}
+
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	public static class FieldNode extends ParNode {
+		FieldNode(final String i, final TypeNode t) {
+			super(i, t);
+		}
+	}
+
+	public static class MethodNode extends FunNode {
+		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
+			super(i, rt, pl, dl, e);
+		}
+	}
 	
 	public static class ArrowTypeNode extends TypeNode {
 		final List<TypeNode> parlist;
@@ -229,6 +256,13 @@ public class AST {
 	public static class IntTypeNode extends TypeNode {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+	}
+
+	public static class ClassTypeNode extends TypeNode {
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
 	}
 
 }

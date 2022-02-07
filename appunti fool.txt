@@ -64,3 +64,29 @@ se nel costruttore della classe figlia compaiono parametri con lo stesso ID di a
 class A (a:int, b:bool) {...}
 class B extends A (c:int, a:bool) {...}
 l'oggetto A ha il campo a int, ma l'oggetto B ha il campo a bool
+
+
+
+
+
+
+
+--- code optimization ---
+
+
+
+
+
+
+--- node types ---
+ClassNode        dichiarazione di una classe "class A {...}"
+FieldNode        dichiarazione di un campo di una classe
+MethodNode       chiamata a metodo dall'interno "B()"
+ClassCallNode    chiamata a metodo dall'esterno "A.B()"
+NewNode          istanziazione di un oggetto con "new"  (torna un RefTypeNode)
+EmptyNode        "null"
+
+ClassTypeNode    tipo di una classe
+MethodTypeNode   tipo in STentry per i metodi (per distinguerli dalla funzioni)
+RefTypeNode      riferimento ad una classe(?)
+EmptyTypeNode    tipo di "null" (restituito dal typecheck di EmptyNode)
