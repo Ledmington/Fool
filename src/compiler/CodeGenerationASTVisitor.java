@@ -189,15 +189,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		return nlJoin(
 				visit(n.left),
 				"push 0",
-				"beq "+labelFalse,
+				"beq " + labelFalse,
 				visit(n.right),
 				"push 0",
-				"beq "+labelFalse,
+				"beq " + labelFalse,
 				"push 1",
-				"b "+labelEnd,
-				labelFalse+":",
+				"b " + labelEnd,
+				labelFalse + ":",
 				"push 0",
-				labelEnd+":"
+				labelEnd + ":"
 		);
 	}
 

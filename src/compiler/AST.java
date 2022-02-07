@@ -210,7 +210,7 @@ public class AST {
 	}
 
 	// dichiarazione di una classe
-	public static class ClassNode extends Node {
+	public static class ClassNode extends DecNode {
 		final String id;
 		//final String superID;  // ID classe padre
 		final List<Node> fields;
@@ -275,6 +275,7 @@ public class AST {
 
 	// istanziazione di un oggetto
 	public static class NewNode extends CallNode {
+		// TODO
 		// l'ID di CallNode è ora l'id della classe da istanziare
 		NewNode(final String i, final List<Node> p) {
 			super(i, p);
@@ -332,8 +333,14 @@ public class AST {
 		}
 	}
 
-	// riferimento ad una classe
+	// riferimento ad una classe (tipo quando invochi un metodo dall'esterno)
 	public static class RefTypeNode extends TypeNode {
+		final String classID;
+
+		public RefTypeNode(String classID) {
+			this.classID = classID;
+		}
+
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);

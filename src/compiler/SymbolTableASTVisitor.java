@@ -9,10 +9,13 @@ import java.util.*;
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
 	private final List<Map<String, STentry>> symTable = new ArrayList<>();
-	private final Map<String, Map<String, STentry>> virtualTable = new HashMap<>();
 	private int nestingLevel = 0; // current nesting level
 	private int decOffset = -2; // counter for offset of local declarations at current nesting level
 	public int stErrors = 0;
+
+	private final Map<String, // id della classe
+			Map<String, STentry> // virtual table della classe
+			> classTable = new HashMap<>();
 
 	public SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
@@ -25,8 +28,16 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		return entry;
 	}
 
+	// virtual table lookup
 	private STentry vtLookup(String classID, String id) {
-		return virtualTable.get(classID).get(id);
+		STentry entry = null;
+		if (classTable.containsKey(classID)) {
+			Map<String, STentry> virtualTable = classTable.get(classID);
+			if(virtualTable.containsKey(id)) {
+				entry = virtualTable.get(id);
+			}
+		}
+		return entry;
 	}
 
 	@Override
@@ -192,6 +203,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	@Override
 	public Void visitNode(CallNode n) {
 		if (print) printNode(n);
+
+		// cerca id della funzione nella symbol table
 		STentry entry = stLookup(n.id);
 		if (entry == null) {
 			System.out.println("Fun id " + n.id + " at line "+ n.getLine() + " not declared");
@@ -200,7 +213,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.entry = entry;
 			n.nl = nestingLevel;
 		}
+
 		for (Node arg : n.arglist) visit(arg);
+
 		return null;
 	}
 
@@ -208,7 +223,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);
 
-		// Looking for object
+		// Looking for existing object in the symbol table
 		STentry objEntry = stLookup(n.objID);
 		if (objEntry == null) {
 			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
@@ -218,19 +233,21 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.nl = nestingLevel;
 		}
 
-		// TODO finish here
+		String classID = ((RefTypeNode)objEntry.type).classID;
+
+		// TODO check if this if-else is correct
 		// Looking for method
-		// we get the class name from the object STentry?
-		STentry methodEntry = vtLookup(n.id);
+		// we get the class name from the object STentry
+		STentry methodEntry = vtLookup(classID, n.id);
 		if (methodEntry == null) {
-			System.out.println("Method id " + n.id + " at line "+ n.getLine() + " not declared");
+			System.out.println("Method id " + n.id + " at line " + n.getLine() + " not declared in class " + classID);
 			stErrors++;
 		} else {
 			n.entry = methodEntry;
 			n.nl = nestingLevel;
 		}
 
-
+		// TODO finish this
 
 		return null;
 	}
@@ -263,7 +280,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 	@Override
 	public Void visitNode(EmptyNode n) {
-		if (print) printNode(n);
+		if (print) printNode(n, "null");
 		return null;
 	}
 }

@@ -5,16 +5,22 @@ no garbage collector
 
 
 
+
 layout oggetti
-[...............................] <- hp   (dopo allocazione oggetto)
-dispatch pointer (object pointer) <- (offset 0)
+hp   -> dopo allocazione di oggetto, heap pointer punta al niente
+hp+1 -> 1-esimo campo
+hp+2 -> 2-esimo campo
+.
+.
+hp+n -> n-esimo campo
+hp+n+1 -> dispatch pointer (tutti i puntatori a questo oggetto puntano qui)
 
 l'i-esimo campo dell'oggetto si trova a (dp-i-1)
 (dp sta per dispatch pointer)
 
 
 
-layout dispatch tables
+layout dispatch tables (tabella dei metodi)
 [...............................] <- hp   (dopo allocazione tabella)
 
 l'i-esimo metodo dell'oggetto si trova a (dp+i-1)
@@ -33,6 +39,11 @@ il tipo di una classe è un ID
 i campi di una classe sono descritti come parametri di una funzione
 
 non serve nesting level per classi/oggetti perchè non è permesso dichiarare classi dentro altre classi
+
+la class table tiene, per ogni classe, un riferimento ad una virtual table
+la virtual table di una classe contiene la lista di tutte le dichiarazione dei suoi campi e dei suoi metodi
+servono per forza due table diverse perchè i metodi di una classe non si cancellano mai, si allocano solamente una volta
+invece i campi si allocano per ogni oggetto
 
 
 
