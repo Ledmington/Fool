@@ -536,6 +536,34 @@ public class TestFOOL {
 		assertEquals(compileAndRun(code).get(0), "243");
 	}
 
+	@Test
+	public void collatz_conjecture() throws TypeException {
+		String code = """
+					let
+						fun rem:int (a:int, b:int) (
+							if (a >= b) then {
+								rem(a-b, b)
+							} else {
+								a
+							}
+						);
+						fun collatz:int (n:int) (
+							if (n == 1) then {
+								1
+							} else {
+								if (rem(n, 2) == 0) then {
+									collatz(n/2)
+								} else {
+									collatz(3*n+1)
+								}
+							}
+						);
+					in
+						print(collatz(245));
+				""";
+		assertEquals(compileAndRun(code).get(0), "1");
+	}
+
 	// Object-Oriented tests
 
 	@Test
