@@ -238,6 +238,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		return null;
 	}
 
+	@Override
+	public TypeNode visitNode(EmptyNode n) {
+		if (print) printNode(n);
+		return new EmptyTypeNode();
+	}
+
 // STentry (ritorna campo type)
 
 	@Override

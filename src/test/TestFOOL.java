@@ -590,6 +590,18 @@ public class TestFOOL {
 		assertTrue(err.ok());
 	}
 
+	@Test
+	public void null_type() throws TypeException {
+		String code = """
+					let
+						class useless() {}
+					in
+						null;
+				""";
+		compile(code);
+		assertTrue(err.ok());
+	}
+
 	// Object Inheritance tests
 
 	// Code Optimization tests
