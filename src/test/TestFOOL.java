@@ -4,7 +4,6 @@ import compiler.exc.TypeException;
 import org.junit.jupiter.api.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -353,6 +352,32 @@ public class TestFOOL {
 						f(5);
 				""";
 		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
+	public void variable_redefinition() throws TypeException {
+		String code = """
+					let
+						var x:bool = true;
+						var x:int = 5;
+					in
+						x;
+				""";
+		compile(code);
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void function_redefinition() throws TypeException {
+		String code = """
+					let
+						fun f:bool() (true);
+						fun f:int() (5);
+					in
+						f();
+				""";
+		compile(code);
+		assertFalse(err.ok());
 	}
 
 	@Test
