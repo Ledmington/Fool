@@ -212,10 +212,11 @@ public class AST {
 	// dichiarazione di una classe
 	public static class ClassNode extends Node {
 		final String id;
-		final List<FieldNode> fields;
-		final List<MethodNode> methods;
+		//final String superID;  // ID classe padre
+		final List<Node> fields;
+		final List<Node> methods;
 
-		public ClassNode(final String i, final List<FieldNode> f, final List<MethodNode> m) {
+		public ClassNode(final String i, final List<Node> f, final List<Node> m) {
 			id = i;
 			fields = f;
 			methods = m;
@@ -228,28 +229,57 @@ public class AST {
 	}
 
 	// dichiarazione di un campo
-	public static class FieldNode extends ParNode {
-		FieldNode(final String i, final TypeNode t) {
-			super(i, t);
+	public static class FieldNode extends VarNode {
+		final String classId; // ID della classe a cui appartiene
+
+		FieldNode(final String i, final TypeNode t, final Node v, final String cID) {
+			super(i, t, v);
+			classId = cID;
+		}
+
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
 		}
 	}
 
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
 	public static class MethodNode extends FunNode {
-		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
+		final String classId; // ID della classe a cui appartiene
+
+		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e, final String cID) {
 			super(i, rt, pl, dl, e);
+			classId = cID;
+		}
+
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
 		}
 	}
 
 	// invocazione metodo dall'esterno
 	public static class ClassCallNode extends CallNode {
-		ClassCallNode(final String i, final List<Node> p) {
+		final String objID; // ID dell'oggetto su cui si effettua l'invocazione
+
+		ClassCallNode(final String oID, final String i, final List<Node> p) {
 			super(i, p);
+			objID = oID;
+		}
+
+		@Override
+		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
+			return visitor.visitNode(this);
 		}
 	}
 
 	// istanziazione di un oggetto
-	public static class NewNode extends Node {
+	public static class NewNode extends CallNode {
+		// l'ID di CallNode è ora l'id della classe da istanziare
+		NewNode(final String i, final List<Node> p) {
+			super(i, p);
+		}
+
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);

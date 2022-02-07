@@ -9,9 +9,10 @@ import java.util.*;
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
 	private final List<Map<String, STentry>> symTable = new ArrayList<>();
-	private int nestingLevel=0; // current nesting level
-	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
-	public int stErrors=0;
+	private final Map<String, Map<String, STentry>> virtualTable = new HashMap<>();
+	private int nestingLevel = 0; // current nesting level
+	private int decOffset = -2; // counter for offset of local declarations at current nesting level
+	public int stErrors = 0;
 
 	public SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
@@ -22,6 +23,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		while (j >= 0 && entry == null) 
 			entry = symTable.get(j--).get(id);	
 		return entry;
+	}
+
+	private STentry vtLookup(String classID, String id) {
+		return virtualTable.get(classID).get(id);
 	}
 
 	@Override
@@ -196,6 +201,37 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.nl = nestingLevel;
 		}
 		for (Node arg : n.arglist) visit(arg);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(ClassCallNode n) {
+		if (print) printNode(n);
+
+		// Looking for object
+		STentry objEntry = stLookup(n.objID);
+		if (objEntry == null) {
+			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
+			stErrors++;
+		} else {
+			n.entry = objEntry;
+			n.nl = nestingLevel;
+		}
+
+		// TODO finish here
+		// Looking for method
+		// we get the class name from the object STentry?
+		STentry methodEntry = vtLookup(n.id);
+		if (methodEntry == null) {
+			System.out.println("Method id " + n.id + " at line "+ n.getLine() + " not declared");
+			stErrors++;
+		} else {
+			n.entry = methodEntry;
+			n.nl = nestingLevel;
+		}
+
+
+
 		return null;
 	}
 

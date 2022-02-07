@@ -708,6 +708,20 @@ public class TestFOOL {
 		assertFalse(err.ok());
 	}
 
+	@Test
+	public void simple_object_usage() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {
+							fun getX:int () (x);
+						}
+						var obj:example = new example(5);
+					in
+						print(obj.getX());
+				""";
+		assertEquals(compileAndRun(code).get(0), "5");
+	}
+
 	// Object Inheritance tests
 
 	// Code Optimization tests

@@ -32,6 +32,8 @@ null è un valore di tipo object
 il tipo di una classe è un ID
 i campi di una classe sono descritti come parametri di una funzione
 
+non serve nesting level per classi/oggetti perchè non è permesso dichiarare classi dentro altre classi
+
 
 
 
