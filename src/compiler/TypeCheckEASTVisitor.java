@@ -192,7 +192,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		for (int i = 0; i < n.arglist.size(); i++)
 			if ( !(isSubtype(visit(n.arglist.get(i)), at.parlist.get(i))) )
 				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.id,n.getLine());
-		return at.ret;
+		return at.returnType;
 	}
 
 	@Override
@@ -222,7 +222,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ArrowTypeNode n) throws TypeException {
 		if (print) printNode(n);
 		for (Node par: n.parlist) visit(par);
-		visit(n.ret,"->"); //marks return type
+		visit(n.returnType,"->"); //marks return type
 		return null;
 	}
 

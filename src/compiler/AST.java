@@ -229,14 +229,7 @@ public class AST {
 	}
 
 	// dichiarazione di un campo
-	public static class FieldNode extends VarNode {
-		final String classId; // ID della classe a cui appartiene
-
-		FieldNode(final String i, final TypeNode t, final Node v, final String cID) {
-			super(i, t, v);
-			classId = cID;
-		}
-
+	public static class FieldNode extends Node {
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
@@ -244,14 +237,7 @@ public class AST {
 	}
 
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
-	public static class MethodNode extends FunNode {
-		final String classId; // ID della classe a cui appartiene
-
-		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e, final String cID) {
-			super(i, rt, pl, dl, e);
-			classId = cID;
-		}
-
+	public static class MethodNode extends Node {
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
@@ -259,12 +245,18 @@ public class AST {
 	}
 
 	// invocazione metodo dall'esterno
-	public static class ClassCallNode extends CallNode {
-		final String objID; // ID dell'oggetto su cui si effettua l'invocazione
+	public static class ClassCallNode extends Node {
+		final String objID;
+		final String methodID;
+		final List<Node> arglist;
+		STentry objEntry;
+		STentry methodEntry;
+		int nl;
 
-		ClassCallNode(final String oID, final String i, final List<Node> p) {
-			super(i, p);
+		public ClassCallNode(final String oID, final String mID, final List<Node> args) {
 			objID = oID;
+			methodID = mID;
+			arglist = args;
 		}
 
 		@Override
@@ -274,11 +266,13 @@ public class AST {
 	}
 
 	// istanziazione di un oggetto
-	public static class NewNode extends CallNode {
-		// TODO
-		// l'ID di CallNode è ora l'id della classe da istanziare
-		NewNode(final String i, final List<Node> p) {
-			super(i, p);
+	public static class NewNode extends Node {
+		final String classID;
+		final List<Node> arglist;
+
+		public NewNode(final String cID, final List<Node> args) {
+			classID = cID;
+			arglist = args;
 		}
 
 		@Override
@@ -297,10 +291,11 @@ public class AST {
 	
 	public static class ArrowTypeNode extends TypeNode {
 		final List<TypeNode> parlist;
-		final TypeNode ret;
+		final TypeNode returnType;
+
 		ArrowTypeNode(List<TypeNode> p, TypeNode r) {
 			parlist = Collections.unmodifiableList(p); 
-			ret = r;
+			returnType = r;
 		}
 
 		@Override

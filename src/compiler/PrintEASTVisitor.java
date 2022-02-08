@@ -174,7 +174,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
 	public Void visitNode(ArrowTypeNode n) {
 		printNode(n);
 		for (Node par: n.parlist) visit(par);
-		visit(n.ret,"->"); //marks return type
+		visit(n.returnType,"->"); //marks return type
 		return null;
 	}
 

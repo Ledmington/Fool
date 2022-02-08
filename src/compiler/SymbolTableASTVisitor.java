@@ -228,26 +228,25 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (objEntry == null) {
 			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
 			stErrors++;
+			return null;
 		} else {
-			n.entry = objEntry;
+			n.objEntry = objEntry;
 			n.nl = nestingLevel;
 		}
 
 		String classID = ((RefTypeNode)objEntry.type).classID;
 
-		// TODO check if this if-else is correct
-		// Looking for method
-		// we get the class name from the object STentry
-		STentry methodEntry = vtLookup(classID, n.id);
+		// Looking for method (we get the class name from the object STentry)
+		STentry methodEntry = vtLookup(classID, n.methodID);
 		if (methodEntry == null) {
-			System.out.println("Method id " + n.id + " at line " + n.getLine() + " not declared in class " + classID);
+			System.out.println("Method id " + n.methodID + " at line " + n.getLine() + " not declared in class " + classID);
 			stErrors++;
 		} else {
-			n.entry = methodEntry;
+			n.methodEntry = methodEntry;
 			n.nl = nestingLevel;
 		}
 
-		// TODO finish this
+		for (Node arg : n.arglist) visit(arg);
 
 		return null;
 	}
