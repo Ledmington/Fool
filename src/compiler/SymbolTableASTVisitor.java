@@ -43,11 +43,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	@Override
 	public Void visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
+
 		Map<String, STentry> hm = new HashMap<>();
 		symTable.add(hm);
 	    for (Node dec : n.declist) visit(dec);
+
 		visit(n.exp);
 		symTable.remove(0);
+
 		return null;
 	}
 
@@ -220,6 +223,29 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	}
 
 	@Override
+	public Void visitNode(ClassNode n) {
+		if (print) printNode(n);
+
+		// Checking that the class is not already declared
+		String classID = n.id;
+		if (classTable.containsKey(classID)) {
+			System.out.println("Class id " + classID + " at line " + n.getLine() + " already declared");
+			stErrors++;
+		}
+
+		// Creating virtual table
+		Map<String, STentry> vt = new HashMap<>();
+		for(MethodNode meth : n.methods) {
+			vt.put(meth.id, meth.entry);
+		}
+
+		// Adding class virtual table
+		classTable.put(classID, vt);
+
+		return null;
+	}
+
+	@Override
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);
 
@@ -228,7 +254,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (objEntry == null) {
 			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-			return null;
 		} else {
 			n.objEntry = objEntry;
 			n.nl = nestingLevel;
@@ -260,19 +285,16 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (!classTable.containsKey(classID)) {
 			System.out.println("Class id " + n.classID + " at line " + n.getLine() + " not declared");
 			stErrors++;
-			return null;
 		}
 
-		n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset--);
+		RefTypeNode classType = new RefTypeNode(classID);
+		n.entry = new STentry(nestingLevel, classType, decOffset--);
 
-		// TODO is this correct
 		// Inserting new class instance
 		if(symTable.get(0).put(classID, n.entry) != null) {
-			System.out.println("Class id " + n.classID + " at line " + n.getLine() + " not declared");
+			System.out.println("Object of class " + n.classID + " at line " + n.getLine() + " already declared");
 			stErrors++;
 		}
-
-		// TODO finish this
 
 		return null;
 	}

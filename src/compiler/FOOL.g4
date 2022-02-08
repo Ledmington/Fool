@@ -1,7 +1,7 @@
 grammar FOOL;
  
 @lexer::members {
-public int lexicalErrors=0;
+    public int lexicalErrors=0;
 }
    
 /*------------------------------------------------------------------

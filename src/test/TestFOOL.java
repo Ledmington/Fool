@@ -707,7 +707,7 @@ public class TestFOOL {
 					let
 						fun f:int ()
 						let
-							class example() {};
+							class example() {}
 						in 1;
 					in 1;
 				""";
@@ -727,8 +727,8 @@ public class TestFOOL {
 	public void class_redefinition() throws TypeException {
 		String code = """
 					let
-						class example() {};
-						class example() {};
+						class example() {}
+						class example() {}
 					in 1;
 				""";
 		// all of this mess is just to avoid automatic error printing by antlr
@@ -736,7 +736,7 @@ public class TestFOOL {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream newps = new PrintStream(baos);
 		System.setErr(newps);
-		compile(code);  // executing
+		compile(code, true);  // executing
 		newps.flush();  // flushing the output
 		System.setErr(old);
 
@@ -747,7 +747,7 @@ public class TestFOOL {
 	public void object_redefinition() throws TypeException {
 		String code = """
 					let
-						class example() {};
+						class example() {}
 						var x:example = new example();
 						var x:example = new example();
 					in 1;

@@ -222,7 +222,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ArrowTypeNode n) throws TypeException {
 		if (print) printNode(n);
 		for (Node par: n.parlist) visit(par);
-		visit(n.returnType,"->"); //marks return type
+		visit(n.returnType, "->"); //marks return type
 		return null;
 	}
 
@@ -239,12 +239,22 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	}
 
 	@Override
+	public TypeNode visitNode(NewNode n) throws TypeException {
+		if (print) printNode(n);
+
+		for (Node arg : n.arglist) visit(arg);
+
+		// Il tipo della classe istanziata è il tipo della STentry
+		return n.entry.type;
+	}
+
+	@Override
 	public TypeNode visitNode(EmptyNode n) {
 		if (print) printNode(n);
 		return new EmptyTypeNode();
 	}
 
-// STentry (ritorna campo type)
+	// STentry (ritorna campo type)
 
 	@Override
 	public TypeNode visitSTentry(STentry entry) throws TypeException {

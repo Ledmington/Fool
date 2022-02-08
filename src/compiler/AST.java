@@ -213,10 +213,10 @@ public class AST {
 	public static class ClassNode extends DecNode {
 		final String id;
 		//final String superID;  // ID classe padre
-		final List<Node> fields;
-		final List<Node> methods;
+		final List<FieldNode> fields;
+		final List<MethodNode> methods;
 
-		public ClassNode(final String i, final List<Node> f, final List<Node> m) {
+		public ClassNode(final String i, final List<FieldNode> f, final List<MethodNode> m) {
 			id = i;
 			fields = f;
 			methods = m;
@@ -229,7 +229,11 @@ public class AST {
 	}
 
 	// dichiarazione di un campo
-	public static class FieldNode extends Node {
+	public static class FieldNode extends ParNode {
+		FieldNode(String i, TypeNode t) {
+			super(i, t);
+		}
+
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
@@ -237,7 +241,13 @@ public class AST {
 	}
 
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
-	public static class MethodNode extends Node {
+	public static class MethodNode extends FunNode {
+		STentry entry;
+
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
+			super(i, rt, pl, dl, e);
+		}
+
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);

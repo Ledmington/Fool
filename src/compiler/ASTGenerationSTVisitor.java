@@ -44,10 +44,15 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
+
 		List<DecNode> declist = new ArrayList<>();
+		for (CldecContext cldec : c.cldec()) {
+			declist.add((DecNode) visit(cldec));
+		}
 		for (DecContext dec : c.dec()) {
 			declist.add((DecNode) visit(dec));
 		}
+
 		return new ProgLetInNode(declist, visit(c.exp()));
 	}
 
@@ -143,17 +148,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitFundec(FundecContext c) {
 		if (print) printVarAndProdName(c);
+
 		List<ParNode> parList = new ArrayList<>();
 		for (int i = 1; i < c.ID().size(); i++) { 
 			ParNode p = new ParNode(c.ID(i).getText(),(TypeNode) visit(c.type(i)));
 			p.setLine(c.ID(i).getSymbol().getLine());
 			parList.add(p);
 		}
+
 		List<DecNode> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
 		Node n = null;
 		if (c.ID().size()>0) { //non-incomplete ST
-			n = new FunNode(c.ID(0).getText(),(TypeNode)visit(c.type(0)),parList,decList,visit(c.exp()));
+			n = new FunNode(c.ID(0).getText(), (TypeNode)visit(c.type(0)),parList,decList,visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}
         return n;
@@ -257,6 +264,36 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
 
 		return new NewNode(classID, arglist);
+	}
+
+	@Override
+	public Node visitCldec(CldecContext c) {
+		if (print) printVarAndProdName(c);
+
+		int i = 0;
+
+		// Reading class name
+		String classID = c.ID(i++).getText();
+
+		// Reading superclass name
+		String superID = null;
+		if(c.EXTENDS() != null) {
+			superID = c.ID(i++).getText();
+		}
+
+		// Reading fields
+		List<FieldNode> fieldlist = new ArrayList<>();
+		for(int j=0; i < c.ID().size(); i++, j++) {
+			fieldlist.add(new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(j))));
+		}
+
+		// Reading methods
+		List<MethodNode> methodlist = new ArrayList<>();
+		for(MethdecContext meth : c.methdec()) {
+			methodlist.add((MethodNode) visit(meth));
+		}
+
+		return new ClassNode(classID, fieldlist, methodlist);
 	}
 
 	@Override
