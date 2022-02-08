@@ -46,9 +46,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (print) printVarAndProdName(c);
 
 		List<DecNode> declist = new ArrayList<>();
+
+		// Visiting the class declarations
 		for (CldecContext cldec : c.cldec()) {
 			declist.add((DecNode) visit(cldec));
 		}
+
+		// Visiting the other declarations
 		for (DecContext dec : c.dec()) {
 			declist.add((DecNode) visit(dec));
 		}

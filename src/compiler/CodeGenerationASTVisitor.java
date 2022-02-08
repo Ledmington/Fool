@@ -14,7 +14,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
 		String declCode = null;
-		for (Node dec : n.declist) declCode = nlJoin(declCode,visit(dec));
+		for (Node dec : n.declist) declCode = nlJoin(declCode, visit(dec));
 		return nlJoin(
 			"push 0",	
 			declCode, // generate code for declarations (allocation)			
@@ -310,6 +310,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(IntNode n) {
 		if (print) printNode(n,n.val.toString());
 		return "push "+n.val;
+	}
+
+	@Override
+	public String visitNode(ClassNode n) {
+		if (print) printNode(n, n.id);
+		return null; // TODO implement this
 	}
 
 	@Override
