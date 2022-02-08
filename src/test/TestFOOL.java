@@ -565,6 +565,62 @@ public class TestFOOL {
 		assertEquals(compileAndRun(code).get(0), "1");
 	}
 
+	@Test
+	public void prova() throws TypeException {
+		String code = """
+					let
+						var y:int = 5+2;
+						fun g:bool (b:bool)
+							let
+								fun f:bool (n:int, m:int)
+									let
+										var x:int = m;
+									in g(3==y);
+							in
+								if b then {
+									f(2,3)
+								} else {
+									false
+								};
+					in
+						print (
+							if g(true)
+								then { y }
+								else { 10 }
+						);
+				""";
+		assertEquals(compileAndRun(code).get(0), "10");
+	}
+
+	@Test
+	public void prova2() throws TypeException {
+		String code = """
+					let
+						var x:int = 1+5;
+						var b:bool = true;
+					in
+						print (
+							if (b) then {
+									x+1
+							} else {
+									x+2
+							}
+						);
+				""";
+		assertEquals(compileAndRun(code).get(0), "7");
+	}
+
+	@Test
+	public void prova3() throws TypeException {
+		String code = """
+					let
+						fun f:int (i:int, j:int) i+j;
+					in
+						print (f(3,5));
+				""";
+		assertEquals(compileAndRun(code).get(0), "8");
+	}
+
 	// Object-Oriented tests
 
 	@Test
