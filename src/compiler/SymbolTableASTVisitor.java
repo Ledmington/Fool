@@ -96,7 +96,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (print) printNode(n);
 		visit(n.exp);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
-		STentry entry = new STentry(nestingLevel,n.getType(),decOffset--);
+		STentry entry = new STentry(nestingLevel, n.getType(), decOffset--);
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
@@ -247,6 +247,32 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		}
 
 		for (Node arg : n.arglist) visit(arg);
+
+		return null;
+	}
+
+	@Override
+	public Void visitNode(NewNode n) {
+		if (print) printNode(n);
+
+		// checking that the class exists
+		String classID = n.classID;
+		if (!classTable.containsKey(classID)) {
+			System.out.println("Class id " + n.classID + " at line " + n.getLine() + " not declared");
+			stErrors++;
+			return null;
+		}
+
+		n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset--);
+
+		// TODO is this correct
+		// Inserting new class instance
+		if(symTable.get(0).put(classID, n.entry) != null) {
+			System.out.println("Class id " + n.classID + " at line " + n.getLine() + " not declared");
+			stErrors++;
+		}
+
+		// TODO finish this
 
 		return null;
 	}

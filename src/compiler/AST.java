@@ -269,6 +269,8 @@ public class AST {
 	public static class NewNode extends Node {
 		final String classID;
 		final List<Node> arglist;
+		STentry entry;
+		int nl;
 
 		public NewNode(final String cID, final List<Node> args) {
 			classID = cID;

@@ -765,6 +765,25 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void unexisting_class() throws TypeException {
+		String code = """
+					let
+						var x:example = new example();
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
 	public void simple_object_usage() throws TypeException {
 		String code = """
 					let
