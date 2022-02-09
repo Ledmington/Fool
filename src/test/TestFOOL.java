@@ -657,7 +657,7 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code);
+		compile(code, true);
 		assertTrue(err.ok());
 	}
 

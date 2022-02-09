@@ -300,6 +300,29 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		return new ClassNode(classID, fieldlist, methodlist);
 	}
 
+	// Method declaration
+	@Override
+	public Node visitMethdec(MethdecContext c) {
+		if (print) printVarAndProdName(c);
+
+		List<ParNode> parList = new ArrayList<>();
+		for (int i = 1; i < c.ID().size(); i++) {
+			ParNode p = new ParNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+			p.setLine(c.ID(i).getSymbol().getLine());
+			parList.add(p);
+		}
+
+		List<DecNode> decList = new ArrayList<>();
+		for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
+		Node n = null;
+		if (c.ID().size()>0) { //non-incomplete ST
+			n = new MethodNode(c.ID(0).getText(), (TypeNode)visit(c.type(0)), parList, decList, visit(c.exp()));
+			n.setLine(c.FUN().getSymbol().getLine());
+		}
+
+		return n;
+	}
+
 	@Override
 	public Node visitNull(NullContext c) {
 		if (print) printVarAndProdName(c);

@@ -5,6 +5,7 @@ import compiler.lib.*;
 import compiler.AST.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
@@ -64,6 +65,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	@Override
 	public Void visitNode(FunNode n) {
 		if (print) printNode(n);
+
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();  
 		for (ParNode par : n.parlist) parTypes.add(par.getType()); 
@@ -226,22 +228,48 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	public Void visitNode(ClassNode n) {
 		if (print) printNode(n);
 
+		ClassTypeNode classTypeNode = new ClassTypeNode(
+				new ArrayList<>(), // fields
+				new ArrayList<>()  // methods
+		);
+
+		STentry classEntry = new STentry(nestingLevel, classTypeNode, decOffset--);
+		n.classTypeNode = classTypeNode;
+
 		// Checking that the class is not already declared
 		String classID = n.id;
-		if (classTable.containsKey(classID)) {
+		if (symTable.get(nestingLevel).put(classID, classEntry) != null) {
 			System.out.println("Class id " + classID + " at line " + n.getLine() + " already declared");
 			stErrors++;
 		}
 
 		// Creating virtual table
 		Map<String, STentry> vt = new HashMap<>();
+		// Adding class virtual table
+		classTable.put(classID, vt);
+		symTable.add(vt);
+		nestingLevel++;
+
+		// Reading fields without visit
+		for(FieldNode field : n.fields) {
+
+		}
+
+		// Visiting methods
 		for(MethodNode meth : n.methods) {
 			vt.put(meth.id, meth.entry);
 		}
 
-		// Adding class virtual table
-		classTable.put(classID, vt);
 
+
+
+
+		return null;
+	}
+
+	@Override
+	public Void visitNode(MethodNode n) {
+		if (print) printNode(n);
 		return null;
 	}
 

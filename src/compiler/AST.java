@@ -242,14 +242,9 @@ public class AST {
 	}
 
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
-	public static class MethodNode extends FunNode {
-		final String classID;
-		STentry entry;
-		int nl;
-
-		MethodNode(String cID, String mID, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
-			super(mID, rt, pl, dl, e);
-			classID = cID;
+	public static class MethodNode extends ArrowTypeNode {
+		MethodNode(List<TypeNode> p, TypeNode r) {
+			super(p, r);
 		}
 
 		@Override
@@ -315,7 +310,7 @@ public class AST {
 		}
 
 		@Override
-		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {return visitor.visitNode(this);}
 	}
 	
 	public static class BoolTypeNode extends TypeNode {
@@ -346,6 +341,12 @@ public class AST {
 
 	// tipo di un metodo (per distinguerlo dalle funzioni)
 	public static class MethodTypeNode extends TypeNode {
+		final ArrowTypeNode fun;
+
+		public MethodTypeNode(final ArrowTypeNode f) {
+			fun = f;
+		}
+
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
