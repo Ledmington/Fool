@@ -706,7 +706,7 @@ public class TestFOOL {
 						false
 					};
 				""";
-		assertThrows(TypeException.class, () -> compile(code));
+		assertThrows(TypeException.class, () -> compile(code, true));
 	}
 
 	@Test
