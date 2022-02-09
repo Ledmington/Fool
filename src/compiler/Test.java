@@ -5,9 +5,9 @@ import compiler.lib.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import svm.*;
-import visualsvm.*;
 import visualsvm.ExecuteVM;
-//import svm.*;
+import visualsvm.SVMLexer;
+import visualsvm.SVMParser;
 
 import java.io.*;
 import java.nio.file.*;

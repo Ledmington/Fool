@@ -868,6 +868,36 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void function_returning_object() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {
+							fun m:bool() (true);
+						}
+						fun f:example() (new example(5));
+					in
+						f();
+				""";
+		compileQuiet(code);
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void method_returning_object() throws TypeException {
+		String code = """
+					let
+						class example(a:int) {
+							fun m:example() (new example(5));
+						}
+						var x:example = new example(10);
+					in
+						x.m();
+				""";
+		compileQuiet(code, true);
+		assertFalse(err.ok());
+	}
+
+	@Test
 	public void simple_object_usage() throws TypeException {
 		String code = """
 					let
