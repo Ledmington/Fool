@@ -631,7 +631,7 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code, true);
+		compile(code);
 		assertTrue(err.ok());
 	}
 
@@ -657,7 +657,7 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code, true);
+		compile(code);
 		assertTrue(err.ok());
 	}
 
@@ -736,7 +736,7 @@ public class TestFOOL {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream newps = new PrintStream(baos);
 		System.setErr(newps);
-		compile(code, true);  // executing
+		compile(code);  // executing
 		newps.flush();  // flushing the output
 		System.setErr(old);
 
