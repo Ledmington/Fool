@@ -141,11 +141,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitVardec(VardecContext c) {
 		if (print) printVarAndProdName(c);
+
 		Node n = null;
 		if (c.ID() != null) { //non-incomplete ST
 			n = new VarNode(c.ID().getText(), (TypeNode) visit(c.type()), visit(c.exp()));
 			n.setLine(c.VAR().getSymbol().getLine());
 		}
+
         return n;
 	}
 
@@ -180,6 +182,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitBoolType(BoolTypeContext c) {
 		if (print) printVarAndProdName(c);
 		return new BoolTypeNode();
+	}
+
+	@Override
+	public Node visitIdType(IdTypeContext c) {
+		if (print) printVarAndProdName(c);
+		return new RefTypeNode(c.ID().getText());
 	}
 
 	@Override

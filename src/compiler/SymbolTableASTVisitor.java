@@ -68,7 +68,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();  
 		for (ParNode par : n.parlist) parTypes.add(par.getType()); 
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes,n.retType),decOffset--);
+		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
 
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
@@ -80,29 +80,32 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
 		symTable.add(hmn);
-		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level 
-		decOffset=-2;
+		int prevNLDecOffset = decOffset; // stores counter for offset of declarations at previous nesting level
+		decOffset = -2;
 		
-		int parOffset=1;
+		int parOffset = 1;
 		for (ParNode par : n.parlist)
-			if (hmn.put(par.id, new STentry(nestingLevel,par.getType(),parOffset++)) != null) {
+			if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
 				System.out.println("Par id " + par.id + " at line "+ n.getLine() +" already declared");
 				stErrors++;
 			}
 		for (Node dec : n.declist) visit(dec);
 		visit(n.exp);
+
 		//rimuovere la hashmap corrente poiche' esco dallo scope               
 		symTable.remove(nestingLevel--);
-		decOffset=prevNLDecOffset; // restores counter for offset of declarations at previous nesting level 
+		decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
 		return null;
 	}
 	
 	@Override
 	public Void visitNode(VarNode n) {
 		if (print) printNode(n);
+
 		visit(n.exp);
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		STentry entry = new STentry(nestingLevel, n.getType(), decOffset--);
+
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
 			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
@@ -230,8 +233,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (print) printNode(n);
 
 		ClassTypeNode classTypeNode = new ClassTypeNode(
-				// reading fields without visit
-				n.fields.stream().map(DecNode::getType).toList(),
+				new ArrayList<>(), // fields
 				new ArrayList<>()  // methods
 		);
 
@@ -249,6 +251,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		classTable.put(n.id, vt);
 		symTable.add(vt);
 
+		// adding fields without visit
+		for(FieldNode field : n.fields) {
+			// adding field type to classTypeNode
+			classTypeNode.allFields.add(field.getType());
+
+			// adding field to virtual table
+			vt.put(field.id, new STentry(nestingLevel, field.getType(), decOffset--));
+		}
+
 		// Incrementing nesting level for method visits
 		nestingLevel++;
 
@@ -259,6 +270,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Resetting old value of nesting level
 		nestingLevel--;
+
+		// Removing the class from the symbolTable
+		symTable.remove(0);
 
 		// TODO anything else?
 
@@ -307,13 +321,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			stErrors++;
 			return null; // early exit
 		} else {
-			n.objEntry = objEntry;
+			n.entry = objEntry;
 			n.nl = nestingLevel;
 		}
 
-		String classID = ((RefTypeNode)objEntry.type).classID;
+		String classID = ((RefTypeNode) objEntry.type).classID;
 
-		// Looking for method (we get the class name from the object STentry)
+		// Looking for method in the virtual table
 		STentry methodEntry = vtLookup(classID, n.methodID);
 		if (methodEntry == null) {
 			System.out.println("Method id " + n.methodID + " at line " + n.getLine() + " not declared in class " + classID);
@@ -339,14 +353,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			stErrors++;
 		}
 
-		RefTypeNode classType = new RefTypeNode(classID);
-		n.entry = new STentry(nestingLevel, classType, decOffset--);
-
-		// Inserting new class instance
-		if(symTable.get(0).put(classID, n.entry) != null) {
-			System.out.println("Object of class " + n.classID + " at line " + n.getLine() + " already declared");
-			stErrors++;
-		}
+		for (Node arg : n.arglist) visit(arg);
 
 		return null;
 	}

@@ -258,8 +258,8 @@ public class AST {
 		final String objID;
 		final String methodID;
 		final List<Node> arglist;
-		STentry objEntry;
-		STentry methodEntry;
+		STentry entry; // entry dell'oggetto
+		STentry methodEntry; // entry del metodo
 		int nl;
 
 		public ClassCallNode(final String oID, final String mID, final List<Node> args) {

@@ -821,7 +821,7 @@ public class TestFOOL {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream newps = new PrintStream(baos);
 		System.setErr(newps);
-		compile(code);  // executing
+		compile(code, true);  // executing
 		newps.flush();  // flushing the output
 		System.setErr(old);
 
