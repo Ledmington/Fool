@@ -239,6 +239,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	}
 
 	@Override
+	public TypeNode visitNode(RefTypeNode n) {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
 	public TypeNode visitNode(NewNode n) throws TypeException {
 		if (print) printNode(n);
 

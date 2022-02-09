@@ -271,9 +271,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Resetting old value of nesting level
 		nestingLevel--;
 
-		// Removing the class from the symbolTable
-		symTable.remove(0);
-
 		// TODO anything else?
 
 		return null;
@@ -352,6 +349,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			System.out.println("Class id " + n.classID + " at line " + n.getLine() + " not declared");
 			stErrors++;
 		}
+
+		// Setting the entry as the one of the class
+		n.entry = symTable.get(0).get(classID);
 
 		for (Node arg : n.arglist) visit(arg);
 
