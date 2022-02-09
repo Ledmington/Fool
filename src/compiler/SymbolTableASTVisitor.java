@@ -305,6 +305,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (objEntry == null) {
 			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
 			stErrors++;
+			return null; // early exit
 		} else {
 			n.objEntry = objEntry;
 			n.nl = nestingLevel;
