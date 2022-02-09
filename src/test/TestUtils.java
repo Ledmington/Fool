@@ -6,8 +6,7 @@ import compiler.lib.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import svm.ExecuteVM;
-import svm.SVMLexer;
-import svm.SVMParser;
+import visualsvm.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

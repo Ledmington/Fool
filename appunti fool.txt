@@ -112,3 +112,8 @@ MethodNode è un FunNode
 
 Il tipo nella STentry dei metodi è MethodTypeNode
 MethodTypeNode ha un "final ArrowTypeNode fun"
+
+
+--- OFFSET ---
+-1 fields
+0 methods
