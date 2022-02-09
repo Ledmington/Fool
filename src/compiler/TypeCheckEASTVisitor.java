@@ -250,8 +250,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 		for (Node arg : n.arglist) visit(arg);
 
+		TypeNode t = visit(n.entry);
+
+		if(!(t instanceof RefTypeNode)) {
+			throw new TypeException("Class " + n.classID + " does not exist", n.getLine());
+		}
+
 		// Il tipo della classe istanziata è il tipo della STentry
-		return n.entry.type;
+		return t;
 	}
 
 	@Override
