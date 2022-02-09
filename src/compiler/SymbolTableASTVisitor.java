@@ -302,7 +302,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		Map<String, STentry> hmn = new HashMap<>();
 		for (ParNode par : n.parlist) {
 			if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
-				System.out.println("Par id " + par.id + " at line " + n.getLine() + " already declared");
+				System.out.println("Par id " + par.id + " at line " + par.getLine() + " already declared");
 				stErrors++;
 			}
 		}

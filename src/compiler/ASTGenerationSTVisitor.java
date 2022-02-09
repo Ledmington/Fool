@@ -261,7 +261,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		String methodID = c.ID(1).getText();
 		String objID = c.ID(0).getText();
 
-		return new ClassCallNode(objID, methodID, arglist);
+		Node n = new ClassCallNode(objID, methodID, arglist);
+		n.setLine(c.ID(0).getSymbol().getLine());
+		return n;
 	}
 
 	@Override
@@ -275,7 +277,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<Node> arglist = new ArrayList<>();
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
 
-		return new NewNode(classID, arglist);
+		Node n = new NewNode(classID, arglist);
+		n.setLine(c.ID().getSymbol().getLine());
+		return n;
 	}
 
 	@Override
@@ -296,7 +300,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		// Reading fields
 		List<FieldNode> fieldlist = new ArrayList<>();
 		for(int j=0; i < c.ID().size(); i++, j++) {
-			fieldlist.add(new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(j))));
+			FieldNode n = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(j)));
+			n.setLine(c.ID(i).getSymbol().getLine());
+			fieldlist.add(n);
 		}
 
 		// Reading methods
@@ -305,7 +311,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 			methodlist.add((MethodNode) visit(meth));
 		}
 
-		return new ClassNode(classID, fieldlist, methodlist);
+		Node n = new ClassNode(classID, fieldlist, methodlist);
+		n.setLine(c.ID(0).getSymbol().getLine());
+		return n;
 	}
 
 	// Method declaration
@@ -334,6 +342,8 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitNull(NullContext c) {
 		if (print) printVarAndProdName(c);
-		return new EmptyNode();
+		Node n = new EmptyNode();
+		n.setLine(c.NULL().getSymbol().getLine());
+		return n;
 	}
 }
