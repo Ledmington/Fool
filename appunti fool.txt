@@ -103,3 +103,12 @@ ClassTypeNode    tipo di una classe
 MethodTypeNode   tipo in STentry per i metodi (per distinguerli dalla funzioni)
 RefTypeNode      riferimento ad una classe(?)
 EmptyTypeNode    tipo di "null" (restituito dal typecheck di EmptyNode)
+
+
+
+FieldNode è un ParNode
+MethodNode è un FunNode
+(perchè così ereditano da DecNode che ha il type)
+
+Il tipo nella STentry dei metodi è MethodTypeNode
+MethodTypeNode ha un "final ArrowTypeNode fun"

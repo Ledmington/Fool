@@ -242,9 +242,9 @@ public class AST {
 	}
 
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
-	public static class MethodNode extends ArrowTypeNode {
-		MethodNode(List<TypeNode> p, TypeNode r) {
-			super(p, r);
+	public static class MethodNode extends FunNode {
+		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
+			super(i, rt, pl, dl, e);
 		}
 
 		@Override
