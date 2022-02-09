@@ -21,6 +21,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
 	private STentry stLookup(String id) {
+		if(symTable.isEmpty()) return null;
+
 		int j = nestingLevel;
 		STentry entry = null;
 		while (j >= 0 && entry == null) 

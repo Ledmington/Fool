@@ -354,6 +354,14 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void unexisting_variable() {
+		String code = """
+					x;
+				""";
+		assertThrows(IncomplException.class, () -> compile(code));
+	}
+
+	@Test
 	public void variable_redefinition() throws TypeException {
 		String code = """
 					let
@@ -776,7 +784,7 @@ public class TestFOOL {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream newps = new PrintStream(baos);
 		System.setErr(newps);
-		compile(code);  // executing
+		compile(code, true);  // executing
 		newps.flush();  // flushing the output
 		System.setErr(old);
 
