@@ -365,7 +365,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		}
 
 		// Setting the entry as the one of the class
-		n.entry = symTable.get(0).get(classID);
+		//n.entry = symTable.get(0).get(classID);
+		n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset--);
 
 		for (Node arg : n.arglist) visit(arg);
 
