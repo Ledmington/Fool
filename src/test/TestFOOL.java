@@ -784,6 +784,77 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void calling_method_on_unexisting_object() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun m:bool() (true);
+						}
+					in
+						obj.m();
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void calling_unexisting_method() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun m:bool() (true);
+						}
+						var obj:example = new example();
+					in
+						obj.f();
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void calling_method_on_wrong_class() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun m:bool() (true);
+						}
+						class simple() {
+							fun x:bool() (true);
+						}
+						var obj:example = new example();
+					in
+						obj.x();
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
 	public void simple_object_usage() throws TypeException {
 		String code = """
 					let
