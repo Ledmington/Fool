@@ -863,7 +863,7 @@ public class TestFOOL {
 					in
 						obj.x();
 				""";
-		compileQuiet(code);
+		compileQuiet(code, true);
 		assertFalse(err.ok());
 	}
 
@@ -893,7 +893,7 @@ public class TestFOOL {
 					in
 						x.m();
 				""";
-		compileQuiet(code, true);
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 

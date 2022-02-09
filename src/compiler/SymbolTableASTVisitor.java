@@ -276,6 +276,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Resetting old value of nesting level
 		nestingLevel--;
 
+		// Removing the class's virtual table from the symbol table after visiting the declaration
+		symTable.remove(vt);
+
 		// TODO anything else?
 
 		return null;
