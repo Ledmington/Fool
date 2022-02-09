@@ -235,10 +235,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				new ArrayList<>()  // methods
 		);
 
-		STentry classEntry = new STentry(nestingLevel, classTypeNode, decOffset--);
+		STentry classEntry = new STentry(0, classTypeNode, decOffset--);
 
 		// Checking that the class is not already declared
-		if (symTable.get(nestingLevel).put(n.id, classEntry) != null) {
+		if (symTable.get(0).put(n.id, classEntry) != null) {
 			System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
 			stErrors++;
 		}
@@ -248,12 +248,17 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Adding class virtual table
 		classTable.put(n.id, vt);
 		symTable.add(vt);
+
+		// Incrementing nesting level for method visits
 		nestingLevel++;
 
 		// Visiting methods
 		for(MethodNode meth : n.methods) {
 			visit(meth);
 		}
+
+		// Resetting old value of nesting level
+		nestingLevel--;
 
 		// TODO anything else?
 
