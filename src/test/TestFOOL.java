@@ -730,15 +730,7 @@ public class TestFOOL {
 						in 1;
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -750,15 +742,7 @@ public class TestFOOL {
 						class example() {}
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -771,15 +755,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -790,15 +766,7 @@ public class TestFOOL {
 						class example(x:int, x:bool) {}
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -811,15 +779,7 @@ public class TestFOOL {
 						}
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -831,15 +791,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in x.a;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -853,15 +805,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in x.f;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -872,15 +816,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in 1;
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -894,15 +830,7 @@ public class TestFOOL {
 					in
 						obj.m();
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -917,15 +845,7 @@ public class TestFOOL {
 					in
 						obj.f();
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -943,15 +863,7 @@ public class TestFOOL {
 					in
 						obj.x();
 				""";
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		compile(code);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-
+		compileQuiet(code);
 		assertFalse(err.ok());
 	}
 
@@ -966,9 +878,7 @@ public class TestFOOL {
 					in
 						print(obj.getX());
 				""";
-		compile(code, true);
-		assertTrue(err.ok());
-		//assertEquals(compileAndRun(code).get(0), "5");
+		assertEquals(compileAndRun(code).get(0), "5");
 	}
 
 	// Object Inheritance tests

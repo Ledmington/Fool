@@ -18,6 +18,22 @@ public class TestUtils {
 
 	public static TestErrors err;
 
+	public static String compileQuiet (final String code) throws TypeException {
+		return compileQuiet(code, false);
+	}
+
+	public static String compileQuiet (final String code, final boolean debug) throws TypeException {
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		String output = compile(code, debug);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+		return output;
+	}
+
 	public static ArrayList<String> compileAndRun (final String code) throws TypeException {
 		return run(compile(code));
 	}
