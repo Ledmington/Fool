@@ -388,6 +388,17 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void function_argument_redefinition() {
+		String code = """
+					let
+						fun f:bool(x:int, x:bool) (true);
+					in
+						f();
+				""";
+		assertThrows(TypeException.class, () -> compile(code));
+	}
+
+	@Test
 	public void fibonacci() throws TypeException {
 		String code = """
 					let
@@ -759,6 +770,88 @@ public class TestFOOL {
 						var x:example = new example();
 						var x:example = new example();
 					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void field_redefinition() throws TypeException {
+		String code = """
+					let
+						class example(x:int, x:bool) {}
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code, true);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void method_argument_redefinition() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun f:bool(x:int, x:bool) (true);
+						}
+					in 1;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void cannot_access_fields() throws TypeException {
+		String code = """
+					let
+						class example(a:int) {}
+						var x:example = new example();
+					in x.a;
+				""";
+		// all of this mess is just to avoid automatic error printing by antlr
+		PrintStream old = System.err;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream newps = new PrintStream(baos);
+		System.setErr(newps);
+		compile(code);  // executing
+		newps.flush();  // flushing the output
+		System.setErr(old);
+
+		assertFalse(err.ok());
+	}
+
+	@Test
+	public void using_method_like_field() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun f:bool() (true);
+						}
+						var x:example = new example();
+					in x.f;
 				""";
 		// all of this mess is just to avoid automatic error printing by antlr
 		PrintStream old = System.err;

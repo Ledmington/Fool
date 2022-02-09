@@ -259,7 +259,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			classTypeNode.allFields.add(field.getType());
 
 			// adding field to virtual table
-			vt.put(field.id, new STentry(nestingLevel, field.getType(), decOffset--));
+			if(vt.put(field.id, new STentry(nestingLevel, field.getType(), decOffset--)) != null) {
+				System.out.println("Field id " + field.id + " at line " + field.getLine() + " already declared");
+				stErrors++;
+			}
 		}
 
 		// Incrementing nesting level for method visits
@@ -294,6 +297,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				.toList(); // Collecting parameters
 		ArrowTypeNode atn = new ArrowTypeNode(parTypes, n.retType); // Creating the ArrowTypeNode
 		STentry methodEntry = new STentry(nestingLevel, new MethodTypeNode(atn), decOffset--); // Creating the method STentry
+
+		int parOffset = 1;
+		Map<String, STentry> hmn = new HashMap<>();
+		for (ParNode par : n.parlist) {
+			if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
+				System.out.println("Par id " + par.id + " at line " + n.getLine() + " already declared");
+				stErrors++;
+			}
+		}
 
 		// Adding the method STentry to the symbol table
 		symTable.get(nestingLevel).put(n.id, methodEntry);
