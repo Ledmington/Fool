@@ -12,6 +12,13 @@ import static test.TestUtils.*;
 
 public class TestFOOL {
 
+	private TestUtils compiler;
+
+	@BeforeEach
+	public void setup() {
+		compiler = new TestUtils();
+	}
+
 	@Test
 	public void simple() throws TypeException {
 		int result = Integer.parseInt(compileAndRun("print(1+2*3);").get(0));
@@ -189,8 +196,8 @@ public class TestFOOL {
 						fun f:bool() let var x:int=5; in x;
 					in
 						f();""";
-		compile(code);
-		assertFalse(err.ok());
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -200,8 +207,8 @@ public class TestFOOL {
 						var x:bool = 5;
 					in
 						x;""";
-		compile(code);
-		assertFalse(err.ok());
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -370,8 +377,8 @@ public class TestFOOL {
 					in
 						x;
 				""";
-		compile(code);
-		assertFalse(err.ok());
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -383,8 +390,8 @@ public class TestFOOL {
 					in
 						f();
 				""";
-		compile(code);
-		assertFalse(err.ok());
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -650,8 +657,8 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code);
-		assertTrue(err.ok());
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -662,8 +669,8 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code);
-		assertTrue(err.ok());
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -676,8 +683,8 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code);
-		assertTrue(err.ok());
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -690,8 +697,8 @@ public class TestFOOL {
 					in
 						5;
 				""";
-		compile(code);
-		assertTrue(err.ok());
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -702,9 +709,8 @@ public class TestFOOL {
 					in
 						print(null);
 				""";
-		String asm = compile(code);
-		assertTrue(err.ok());
-		assertEquals(run(asm).get(0), "-1");
+		assertEquals(compiler.compileSourceAndRun(code).get(0), "-1");
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -730,8 +736,8 @@ public class TestFOOL {
 						in 1;
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -742,8 +748,8 @@ public class TestFOOL {
 						class example() {}
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -755,8 +761,8 @@ public class TestFOOL {
 						var x:example = new example();
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -766,8 +772,8 @@ public class TestFOOL {
 						class example(x:int, x:bool) {}
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -779,8 +785,8 @@ public class TestFOOL {
 						}
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -791,8 +797,8 @@ public class TestFOOL {
 						var x:example = new example();
 					in x.a;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -805,8 +811,8 @@ public class TestFOOL {
 						var x:example = new example();
 					in x.f;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -816,8 +822,8 @@ public class TestFOOL {
 						var x:example = new example();
 					in 1;
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -830,8 +836,8 @@ public class TestFOOL {
 					in
 						obj.m();
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -845,8 +851,8 @@ public class TestFOOL {
 					in
 						obj.f();
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -863,8 +869,8 @@ public class TestFOOL {
 					in
 						obj.x();
 				""";
-		compileQuiet(code, true);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
@@ -878,8 +884,8 @@ public class TestFOOL {
 					in
 						f();
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
@@ -893,8 +899,8 @@ public class TestFOOL {
 					in
 						x.m();
 				""";
-		compileQuiet(code);
-		assertFalse(err.ok());
+		compiler.quiet().compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test

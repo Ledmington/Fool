@@ -10,38 +10,69 @@ import visualsvm.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class TestUtils {
 
-	public static TestErrors err;
+	public TestErrors err;
 
-	public static String compileQuiet (final String code) throws TypeException {
-		return compileQuiet(code, false);
+	private boolean debug = false;  // if true prints on console the errors and ASTs
+	private boolean quiet = false;  // if true hides the automatic error printing by ANTLR
+	private boolean visual = false; // if true uses the visualSVM to run the code
+
+	public TestUtils debug() {
+		this.debug = true;
+		return this;
 	}
 
-	public static String compileQuiet (final String code, final boolean debug) throws TypeException {
-		// all of this mess is just to avoid automatic error printing by antlr
-		PrintStream old = System.err;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setErr(newps);
-		String output = compile(code, debug);  // executing
-		newps.flush();  // flushing the output
-		System.setErr(old);
-		return output;
+	public TestUtils quiet() {
+		this.quiet = true;
+		return this;
 	}
 
-	public static ArrayList<String> compileAndRun (final String code) throws TypeException {
-		return run(compile(code));
+	public TestUtils visual() {
+		this.visual = true;
+		return this;
 	}
 
-	public static String compile (final String code) throws TypeException {
-		return compile(code, false);
+	public List<String> compileSourceAndRun (final String code) throws TypeException {
+		CharStream charsASM = CharStreams.fromString(compileSource(code));
+		SVMLexer lexerASM = new SVMLexer(charsASM);
+		CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
+		SVMParser parserASM = new SVMParser(tokensASM);
+
+		parserASM.assembly();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();;
+
+		if(visual) {
+			visualsvm.ExecuteVM vm = new visualsvm.ExecuteVM(parserASM.code, parserASM.sourceMap, Arrays.stream(code.split("\r?\n")).toList());
+			vm.cpu();
+		} else {
+			ExecuteVM vm = new ExecuteVM(parserASM.code);
+			PrintStream old = System.out;
+			PrintStream newps = new PrintStream(baos);
+			System.setOut(newps);
+			vm.cpu();  // executing
+			newps.flush();  // flushing the output
+			System.setOut(old);
+		}
+
+		// Using "\r?\n" to be compatible with Windows
+		return Arrays.stream(baos.toString().split("\r?\n")).toList();
 	}
 
-	public static String compile (final String code, final boolean debug) throws TypeException {
+	public String compileSource (final String code) throws TypeException {
+		PrintStream old = null;
+		PrintStream newps = null;
+		if(quiet) {
+			old = System.err;
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			newps = new PrintStream(baos);
+			System.setErr(newps);
+		}
+
 		err = new TestErrors();
 		FOOLlib.typeErrors = 0;
 
@@ -88,38 +119,21 @@ public class TestUtils {
 		if(frontEndErrors > 0) return null; // make the test fail if compilation failed
 
 		if(debug) System.out.println("Generating code.");
+
+		if(quiet) {
+			assert newps != null;
+			newps.flush();  // flushing the output
+			System.setErr(old);
+		}
+
 		return new CodeGenerationASTVisitor().visit(ast);
 	}
 
-	public static ArrayList<String> run (final String code) {
-		return run(code, false);
+	public static String compile(final String code) throws TypeException {
+		return new TestUtils().compileSource(code);
 	}
 
-	public static ArrayList<String> run (final String code, final boolean debug) {
-		if(debug) System.out.println("\nAssembling generated code.");
-		CharStream charsASM = CharStreams.fromString(code);
-		SVMLexer lexerASM = new SVMLexer(charsASM);
-		CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
-		SVMParser parserASM = new SVMParser(tokensASM);
-
-		parserASM.assembly();
-
-		// needed only for debug
-		if(debug) System.out.println("You had: " + lexerASM.lexicalErrors + " lexical errors and " + parserASM.getNumberOfSyntaxErrors() + " syntax errors.\n");
-
-		if(debug) System.out.println("Running generated code via Stack Virtual Machine.");
-		ExecuteVM vm = new ExecuteVM(parserASM.code);
-
-		// before execution we redirect the output on a String
-		PrintStream old = System.out;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream newps = new PrintStream(baos);
-		System.setOut(newps);
-		vm.cpu();  // executing
-		newps.flush();  // flushing the output
-		System.setOut(old);
-
-		// Using "\r?\n" to be compatible with Windows
-		return new ArrayList<>(Arrays.asList(baos.toString().split("\r?\n")));
+	public static List<String> compileAndRun(final String code) throws TypeException {
+		return new TestUtils().compileSourceAndRun(code);
 	}
 }
