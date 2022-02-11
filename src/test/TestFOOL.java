@@ -914,7 +914,10 @@ public class TestFOOL {
 					in
 						print(obj.getX());
 				""";
-		assertEquals(compileAndRun(code).get(0), "5");
+		String result = compiler.debug().visual().compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+		//assertEquals(compileAndRun(code).get(0), "5");
 	}
 
 	// Object Inheritance tests

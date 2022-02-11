@@ -11,6 +11,7 @@ import visualsvm.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class TestUtils {
@@ -46,8 +47,13 @@ public class TestUtils {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();;
 
+		List<String> source = new LinkedList<>();
+		for(String line : code.split("\r?\n")) {
+			source.add(line);
+		}
+
 		if(visual) {
-			visualsvm.ExecuteVM vm = new visualsvm.ExecuteVM(parserASM.code, parserASM.sourceMap, Arrays.stream(code.split("\r?\n")).toList());
+			visualsvm.ExecuteVM vm = new visualsvm.ExecuteVM(parserASM.code, parserASM.sourceMap, source);
 			vm.cpu();
 		} else {
 			ExecuteVM vm = new ExecuteVM(parserASM.code);
