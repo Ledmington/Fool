@@ -248,7 +248,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(NewNode n) throws TypeException {
 		if (print) printNode(n);
 
+		// TODO maybe this is useless
+		if (n.entry == null) {
+			throw new TypeException("Invalid type", n.getLine());
+		}
+
 		ClassTypeNode ctn = ((ClassTypeNode) n.entry.type);
+
+		if ( n.arglist.size() != ctn.allFields.size() ) {
+			throw new TypeException("Wrong number of parameters for new " + n.classID, n.getLine());
+		}
 
 		for (int i=0; i<ctn.allFields.size(); i++) {
 			Node arg = n.arglist.get(i);
