@@ -10,9 +10,7 @@ import visualsvm.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TestUtils {
 
@@ -48,9 +46,7 @@ public class TestUtils {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();;
 
 		List<String> source = new LinkedList<>();
-		for(String line : code.split("\r?\n")) {
-			source.add(line);
-		}
+		Collections.addAll(source, code.split("\r?\n"));
 
 		if(visual) {
 			visualsvm.ExecuteVM vm = new visualsvm.ExecuteVM(parserASM.code, parserASM.sourceMap, source);

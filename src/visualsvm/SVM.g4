@@ -31,16 +31,16 @@ assembly: instruction* EOF 	{ for (Integer j: labelRef.keySet())
 							} ;
 
 instruction:
-        t=PUSH n=INTEGER        { codem($t.line, PUSH, Integer.parseInt($n.text)); } //push NUMBER on the stack
+        t=PUSH n=INTEGER       { codem($t.line, PUSH, Integer.parseInt($n.text)); } //push NUMBER on the stack
 	  | t=PUSH l=LABEL         { codem($t.line, PUSH); labelRef.put(i++,$l.text); } //push the location address pointed by LABEL on the stack
 	  | t=POP                  { codem($t.line, POP); } //pop the top of the stack
-	  | t=ADD	                 { codem($t.line, ADD); } //replace the two values on top of the stack with their sum
-	  | t=SUB	                 { codem($t.line, SUB); } //pop the two values v1 and v2 (respectively) and push v2-v1
+	  | t=ADD	               { codem($t.line, ADD); } //replace the two values on top of the stack with their sum
+	  | t=SUB	               { codem($t.line, SUB); } //pop the two values v1 and v2 (respectively) and push v2-v1
 	  | t=MULT                 { codem($t.line, MULT); } //replace the two values on top of the stack with their product
-	  | t=DIV	                 { codem($t.line, DIV); }//pop the two values v1 and v2 (respectively) and push v2/v1
+	  | t=DIV	               { codem($t.line, DIV); }//pop the two values v1 and v2 (respectively) and push v2/v1
 	  | t=STOREW               { codem($t.line, STOREW); } //pop two values: the second one is written at the memory address pointed by the first one
 	  | t=LOADW                { codem($t.line, LOADW); } //read the content of the memory cell pointed by the top of the stack and replace the top of the stack with such value
-	  | l=LABEL COL          { labelDef.put($l.text, i); } //LABEL points at the location of the subsequent instruction
+	  | l=LABEL COL            { labelDef.put($l.text, i); } //LABEL points at the location of the subsequent instruction
 	  | t=BRANCH l=LABEL       { codem($t.line, BRANCH); labelRef.put(i++,$l.text); } //jump at the instruction pointed by LABEL
 	  | t=BRANCHEQ l=LABEL     { codem($t.line, BRANCHEQ); labelRef.put(i++,$l.text); } //pop two values and jump if they are equal
 	  | t=BRANCHLESSEQ l=LABEL { codem($t.line, BRANCHLESSEQ); labelRef.put(i++,$l.text); } //pop two values and jump if the second one is less or equal to the first one

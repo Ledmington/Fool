@@ -1,7 +1,5 @@
 package visualsvm;
 
-import svm.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -16,8 +14,8 @@ public class ExecuteVM {
 	public static final int MEMSIZE = 10000;
 	public static final int CODESIZE = 10000;
 
-	private int[] code;
-	private int[] memory;
+	private final int[] code;
+	private final int[] memory;
 
 	private int ip = 0;
 	private int sp = MEMSIZE; // punta al top dello stack
@@ -28,44 +26,38 @@ public class ExecuteVM {
 	private int fp = MEMSIZE;
 
 	private final JFrame frame;
-	private final JPanel mainPanel;
-	private final JPanel buttonPanel;
 	private final JList<String> asmList;
 	private final JList<String> stackList, heapList;
 	private final JButton nextStep;
 	private final JButton play;
-	private final JPanel registerPanel;
-	private final JSplitPane memPanel;
 	private final JLabel tmLabel, raLabel, fpLabel, ipLabel, spLabel, hpLabel;
-	private final JScrollPane asmScroll, stackScroll, heapScroll, outputScroll;
+	private final JScrollPane asmScroll;
 	private final JTextArea outputText;
 
 	private final int codeLineCount;
 	private String keyboardCommand = "";
 
-	private int[] sourceMap;
-	private List<String> source;
+	private final int[] sourceMap;
 
 	public ExecuteVM(int[] code, int[] sourceMap, List<String> source) {
 
 		this.code = code;
 		this.sourceMap = sourceMap;
-		this.source = source;
 		this.memory = new int[MEMSIZE];
 
 		this.frame = new JFrame("FOOL Virtual Machine");
-		this.mainPanel = new JPanel();
+		JPanel mainPanel = new JPanel();
 
-		this.buttonPanel = new JPanel();
-		this.buttonPanel.setLayout(new BoxLayout(this.buttonPanel, BoxLayout.Y_AXIS));
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		this.play = new JButton("PLAY");
 		this.play.addActionListener(e -> this.playButtonHandler());
 		this.nextStep = new JButton("STEP");
 		this.nextStep.addActionListener(e -> this.stepButtonHandler());
-		this.buttonPanel.add(this.play);
-		this.buttonPanel.add(this.nextStep);
+		buttonPanel.add(this.play);
+		buttonPanel.add(this.nextStep);
 
-		this.registerPanel = new JPanel();
+		JPanel registerPanel = new JPanel();
 		this.tmLabel = new JLabel();
 		this.tmLabel.setFont(FONT);
 		this.raLabel = new JLabel();
@@ -78,16 +70,16 @@ public class ExecuteVM {
 		this.spLabel.setFont(FONT);
 		this.hpLabel = new JLabel();
 		this.hpLabel.setFont(FONT);
-		this.registerPanel.setLayout(new BoxLayout(this.registerPanel, BoxLayout.Y_AXIS));
-		this.registerPanel.add(this.tmLabel);
-		this.registerPanel.add(this.raLabel);
-		this.registerPanel.add(this.fpLabel);
-		this.registerPanel.add(this.ipLabel);
-		this.registerPanel.add(this.spLabel);
-		this.registerPanel.add(this.hpLabel);
+		registerPanel.setLayout(new BoxLayout(registerPanel, BoxLayout.Y_AXIS));
+		registerPanel.add(this.tmLabel);
+		registerPanel.add(this.raLabel);
+		registerPanel.add(this.fpLabel);
+		registerPanel.add(this.ipLabel);
+		registerPanel.add(this.spLabel);
+		registerPanel.add(this.hpLabel);
 
-		this.mainPanel.setLayout(new BorderLayout());
-		this.asmList = new JList<String>();
+		mainPanel.setLayout(new BorderLayout());
+		this.asmList = new JList<>();
 //		final List<String> disassembly = new ArrayList<>();
 //		int i;
 //		for (i = 0; i < this.code.length && this.code[i] != 0; i++) {
@@ -100,11 +92,11 @@ public class ExecuteVM {
 //		}
 //		this.codeLineCount = i;
 //		this.asmList.setListData(new Vector<>(disassembly));
-		for (int i = 0; i < this.source.size(); i++) {
-			this.source.set(i, String.format("%5d: %s", i, this.source.get(i)));
+		for (int i = 0; i < source.size(); i++) {
+			source.set(i, String.format("%5d: %s", i, source.get(i)));
 		}
-		this.asmList.setListData(new Vector<>(this.source));
-		this.codeLineCount = this.source.size();
+		this.asmList.setListData(new Vector<>(source));
+		this.codeLineCount = source.size();
 
 
 		this.asmList.setFont(FONT);
@@ -116,25 +108,25 @@ public class ExecuteVM {
 		}
 		this.asmScroll = new JScrollPane(this.asmList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		this.mainPanel.add(this.asmScroll, BorderLayout.EAST);
+		mainPanel.add(this.asmScroll, BorderLayout.EAST);
 
 		this.stackList = new JList<>();
 		this.heapList = new JList<>();
 		setMem();
 		this.stackList.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
 		this.heapList.setFont(new Font(Font.MONOSPACED, Font.BOLD, 16));
-		this.stackScroll = new JScrollPane(this.stackList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane stackScroll = new JScrollPane(this.stackList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		this.heapScroll = new JScrollPane(this.heapList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane heapScroll = new JScrollPane(this.heapList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		this.memPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				this.stackScroll, this.heapScroll);
-		this.mainPanel.add(this.memPanel, BorderLayout.CENTER);
+		JSplitPane memPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				stackScroll, heapScroll);
+		mainPanel.add(memPanel, BorderLayout.CENTER);
 
 		this.outputText = new JTextArea();
 		this.outputText.setRows(7);
 		this.outputText.setEditable(false);
-		this.outputScroll = new JScrollPane(this.outputText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane outputScroll = new JScrollPane(this.outputText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 
@@ -161,15 +153,12 @@ public class ExecuteVM {
 		this.frame.setMinimumSize(new Dimension(800, 500));
 		this.frame.pack();
 
-		this.stackScroll.getVerticalScrollBar().setValue(this.stackScroll.getVerticalScrollBar().getMaximum());
-		this.memPanel.setDividerLocation(0.5);
+		stackScroll.getVerticalScrollBar().setValue(stackScroll.getVerticalScrollBar().getMaximum());
+		memPanel.setDividerLocation(0.5);
 
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
+		Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+			e.printStackTrace();
+			System.exit(1);
 		});
 	}
 
@@ -221,7 +210,7 @@ public class ExecuteVM {
 	}
 
 	private void playButtonHandler() {
-		while (this.step());
+		while (this.step()) ;
 		this.nextStep.setEnabled(false);
 		this.play.setEnabled(false);
 		this.update();
