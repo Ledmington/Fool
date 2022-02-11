@@ -3,7 +3,6 @@ package test;
 import compiler.exc.*;
 import org.junit.jupiter.api.*;
 
-import java.io.*;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -904,6 +903,21 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void null_subtype_of_class() throws TypeException {
+		String code = """
+					let
+						class example(a:int) {
+							fun m:example() (new example(5));
+						}
+						var x:example = new example(10);
+					in
+						print(x == null);
+				""";
+		assertEquals(compiler.compileSourceAndRun(code).get(0), "0");
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
 	public void method_call() throws TypeException {
 		String code = """
 					let
@@ -914,7 +928,9 @@ public class TestFOOL {
 					in
 						print(obj.getX());
 				""";
-		assertEquals(compileAndRun(code).get(0), "5");
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
 	}
 
 	// Object Inheritance tests
