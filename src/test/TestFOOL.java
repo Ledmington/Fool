@@ -904,7 +904,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void simple_object_usage() throws TypeException {
+	public void method_call() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -914,10 +914,7 @@ public class TestFOOL {
 					in
 						print(obj.getX());
 				""";
-		String result = compiler.debug().visual().compileSourceAndRun(code).get(0);
-		assertTrue(compiler.err.ok());
-		assertEquals(result, "5");
-		//assertEquals(compileAndRun(code).get(0), "5");
+		assertEquals(compileAndRun(code).get(0), "5");
 	}
 
 	// Object Inheritance tests

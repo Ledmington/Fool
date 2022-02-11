@@ -4,11 +4,12 @@ import compiler.exc.*;
 import compiler.lib.*;
 import compiler.AST.*;
 import static compiler.lib.FOOLlib.*;
+import static svm.ExecuteVM.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-  public CodeGenerationASTVisitor() {}
-  CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
+	public CodeGenerationASTVisitor() {}
+	CodeGenerationASTVisitor(boolean debug) {super(false, debug);} //enables print for debugging
 
 	@Override
 	public String visitNode(ProgLetInNode n) {
@@ -323,9 +324,50 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(NewNode n) {
 		if (print) printNode(n, n.classID);
-		return nlJoin(
 
-		); // TODO implement this
+		String argCode = null;
+
+		// Visito tutti gli argomenti (ognuno pusha il suo valore sullo stack)
+		for (int i=0; i<n.arglist.size(); i++) {
+			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
+		}
+
+		// Per ogni argomento, carico il suo valore sull'heap, incrementando hp
+		for (int i=0; i<n.arglist.size(); i++) {
+			argCode = nlJoin(argCode,
+					"lhp",
+					"stm",
+					"lhp",
+					"sw",
+					"ltm",
+					"push 1",
+					"add",
+					"shp"
+			);
+		}
+
+		// TODO is this finished?
+		return nlJoin(
+				"/* new " + n.classID + " */",
+				argCode,
+
+				// calcolo dispatch pointer
+				"push " + MEMSIZE,
+				"push " + n.entry.offset,
+				"add",
+
+				// carico dispatch pointer sull'heap
+				"lhp",
+				"sw",
+
+				// carico sullo stack object pointer
+				"lhp",
+
+				// incremento hp
+				"lhp",
+				"push 1",
+				"shp"
+		);
 	}
 
 	@Override

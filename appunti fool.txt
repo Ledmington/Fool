@@ -117,3 +117,6 @@ MethodTypeNode ha un "final ArrowTypeNode fun"
 --- OFFSET ---
 -1 fields
 0 methods
+
+lo stack cresce da 0 verso l'alto
+l'heap cresce da MEMSIZE-1 verso il basso
