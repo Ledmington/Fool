@@ -53,7 +53,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		putCode(
 			nlJoin(
-					"/* "+n.id+" */",
+					"/* function "+n.id+" */",
 				funl+":",
 				"cfp", // set $fp to $sp value
 				"lra", // load $ra value
@@ -316,9 +316,83 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(ClassNode n) {
 		if (print) printNode(n, n.id);
-		return nlJoin(
 
-		); // TODO implement this
+		String dispatchTableCode = null;
+
+		// Genero il codice di ogni metodo
+		for(int i=0; i<n.methods.size(); i++) {
+			MethodNode method = n.methods.get(i);
+			visit(method);
+
+			// sulla cima dello stack c'è l'indirizzo del metodo
+			String methodLabel = method.label;
+			int methodOffset = method.offset;
+
+			dispatchTableCode = nlJoin(dispatchTableCode,
+					// memorizzo l'etichetta in hp
+					"lhp",
+					"sw",
+
+					// incremento hp
+					"lhp",
+					"push 1",
+					"add",
+					"shp"
+					);
+		}
+
+		// TODO is this finished?
+		return nlJoin(
+			"/* class " + n.id + " */",
+				"lhp", // metto il dispatch pointer sullo stack
+				dispatchTableCode
+		);
+	}
+
+	@Override
+	public String visitNode(MethodNode n) {
+		if (print) printNode(n,n.id);
+
+		String declCode = null, popDecl = null, popParl = null;
+
+		for (Node dec : n.declist) {
+			declCode = nlJoin(declCode, visit(dec));
+			popDecl = nlJoin(popDecl, "pop");
+		}
+
+		for (int i=0; i<n.parlist.size(); i++) {
+			popParl = nlJoin(popParl, "pop");
+		}
+
+		String methodLabel = freshFunLabel();
+		n.label = methodLabel;
+
+		putCode(
+				nlJoin(
+						"/* method "+n.id+" */",
+						methodLabel+":",
+						"cfp", // set $fp to $sp value
+						"lra", // load $ra value
+						"/* local declaration code */",
+						declCode, // generate code for local declarations (they use the new $fp!!!)
+						"/* method body */",
+						visit(n.exp), // generate code for function body expression
+						"stm", // set $tm to popped value (function result)
+						"/* removing local declaration */",
+						popDecl, // remove local declarations from stack
+						"sra", // set $ra to popped value
+						"pop", // remove Access Link from stack
+						"/* removing parameters */",
+						popParl, // remove parameters from stack
+						"sfp", // set $fp to popped value (Control Link)
+						"ltm", // load $tm value (function result)
+						"lra", // load $ra value
+						"js"  // jump to to popped address
+				)
+		);
+
+		// TODO why?
+		return null;
 	}
 
 	@Override
