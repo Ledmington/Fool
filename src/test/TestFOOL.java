@@ -918,6 +918,42 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void less_fields_than_required() throws TypeException {
+		String code = """
+					let
+						class example(a:int) {}
+						var obj:example = new example();
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void more_fields_than_required() throws TypeException {
+		String code = """
+					let
+						class example(a:int) {}
+						var obj:example = new example(5, 6);
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void wrong_field_type() throws TypeException {
+		String code = """
+					let
+						class example(a:bool) {}
+						var obj:example = new example(5);
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
 	public void method_call() throws TypeException {
 		String code = """
 					let
