@@ -59,7 +59,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 	@Override
 	public TypeNode visitNode(VarNode n) throws TypeException {
-		if (print) printNode(n,n.id);
+		if (print) printNode(n, n.id);
 		if ( !isSubtype(visit(n.exp), ckvisit(n.getType())) )
 			throw new TypeException("Incompatible value for variable " + n.id, n.getLine());
 		return null;
@@ -248,12 +248,18 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(NewNode n) throws TypeException {
 		if (print) printNode(n);
 
-		for (Node arg : n.arglist) visit(arg);
+		ClassTypeNode ctn = ((ClassTypeNode) n.entry.type);
 
-		TypeNode t = visit(n.entry);
+		for (int i=0; i<ctn.allFields.size(); i++) {
+			Node arg = n.arglist.get(i);
+			TypeNode t = visit(arg);
 
-		// Il tipo della classe istanziata è il tipo della STentry
-		return t;
+			if (!(isSubtype(t, ctn.allFields.get(i)))) {
+				throw new TypeException("Wrong type of "+i+"-th parameter", n.getLine());
+			}
+		}
+
+		return new RefTypeNode(n.classID);
 	}
 
 	@Override

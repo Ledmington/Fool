@@ -11,13 +11,13 @@ import visualsvm.SVMParser;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-   			
-    	String fileName = "prova.fool";
+    	/*String fileName = "prova.fool";
 
-    	CharStream chars = CharStreams.fromFileName(fileName);
+		CharStream chars = CharStreams.fromFileName(fileName);
     	FOOLLexer lexer = new FOOLLexer(chars);
     	CommonTokenStream tokens = new CommonTokenStream(lexer);
     	FOOLParser parser = new FOOLParser(tokens);
@@ -55,7 +55,7 @@ public class Test {
     	int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
 		System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 		
-		if ( frontEndErrors > 0) System.exit(1);
+		if (frontEndErrors > 0) System.exit(1);
 
     	System.out.println("Generating code.");
     	String code = new CodeGenerationASTVisitor().visit(ast);        
@@ -78,6 +78,67 @@ public class Test {
     	System.out.println("Running generated code via Stack Virtual Machine.");
     	//ExecuteVM vm = new ExecuteVM(parserASM.code);
 		ExecuteVM vm = new ExecuteVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName+".asm")));
-    	vm.cpu();
+    	vm.cpu();*/
+
+		String source = """
+					let
+						class example(x:int) {
+							fun getX:int () (x);
+						}
+						var obj:example = new example(5);
+					in
+						print(obj.getX());
+				""";
+		CharStream chars = CharStreams.fromString(source);
+		FOOLLexer lexer = new FOOLLexer(chars);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		FOOLParser parser = new FOOLParser(tokens);
+
+		System.out.println("Generating ST via lexer and parser.");
+		ParseTree st = parser.prog();
+		System.out.println("You had " + lexer.lexicalErrors + " lexical errors and " + parser.getNumberOfSyntaxErrors() + " syntax errors.\n");
+
+		System.out.println("Generating AST.");
+		ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
+		Node ast = visitor.visit(st);
+
+		System.out.println("\nEnriching AST via symbol table.");
+		SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+		symtableVisitor.visit(ast);
+		System.out.println("You had " + symtableVisitor.stErrors + " symbol table errors.\n");
+
+		System.out.println("Visualizing Enriched AST.");
+		new PrintEASTVisitor().visit(ast);
+
+
+		System.out.println("\nChecking Types.");
+		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+		TypeNode mainType = typeCheckVisitor.visit(ast);
+
+		System.out.print("Type of main program expression is: ");
+		new PrintEASTVisitor().visit(mainType);
+		System.out.println("You had " + FOOLlib.typeErrors + " type checking errors.\n");
+
+
+		int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
+		System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
+
+		if(frontEndErrors > 0) System.exit(1);
+
+		System.out.println("Generating code.");
+
+		String code = new CodeGenerationASTVisitor().visit(ast);
+		CharStream charsASM = CharStreams.fromString(code);
+		SVMLexer lexerASM = new SVMLexer(charsASM);
+		CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
+		SVMParser parserASM = new SVMParser(tokensASM);
+
+		parserASM.assembly();
+
+		List<String> codeLines = new LinkedList<>();
+		Collections.addAll(codeLines, code.split("\r?\n"));
+
+		visualsvm.ExecuteVM vm = new visualsvm.ExecuteVM(parserASM.code, parserASM.sourceMap, codeLines);
+		vm.cpu();
     }
 }

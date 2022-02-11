@@ -110,9 +110,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
-			System.out.println("Var id " + n.id + " at line "+ n.getLine() +" already declared");
+			System.out.println("Var id " + n.id + " at line "+ n.getLine() + " already declared");
 			stErrors++;
 		}
+
 		return null;
 	}
 
@@ -238,7 +239,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				new ArrayList<>(), // fields
 				new ArrayList<>()  // methods
 		);
-
+		System.out.println(n.id + " -> " + decOffset);
 		STentry classEntry = new STentry(0, classTypeNode, decOffset--);
 
 		// Checking that the class is not already declared
@@ -254,26 +255,35 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		symTable.add(vt);
 
 		// adding fields without visit
-		for(FieldNode field : n.fields) {
+		for(int i=0; i<n.fields.size(); i++) {
+			FieldNode field = n.fields.get(i);
+
 			// adding field type to classTypeNode
 			classTypeNode.allFields.add(field.getType());
 
 			// adding field to virtual table
-			if(vt.put(field.id, new STentry(nestingLevel, field.getType(), decOffset--)) != null) {
+			if(vt.put(field.id, new STentry(nestingLevel, field.getType(), -i-1)) != null) {
 				System.out.println("Field id " + field.id + " at line " + field.getLine() + " already declared");
 				stErrors++;
 			}
 		}
 
 		// Incrementing nesting level for method visits
+		int prevNLDecOffset = decOffset;
+		decOffset = 0;
 		nestingLevel++;
 
 		// Visiting methods
-		for(MethodNode meth : n.methods) {
+		for(int i=0; i<n.methods.size(); i++) {
+			MethodNode meth = n.methods.get(i);
+
 			visit(meth);
+
+			classTypeNode.allMethods.add((ArrowTypeNode) meth.getType());
 		}
 
 		// Resetting old value of nesting level
+		decOffset = prevNLDecOffset;
 		nestingLevel--;
 
 		// Removing the class's virtual table from the symbol table after visiting the declaration
@@ -299,7 +309,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				.map(DecNode::getType)
 				.toList(); // Collecting parameters
 		ArrowTypeNode atn = new ArrowTypeNode(parTypes, n.retType); // Creating the ArrowTypeNode
-		STentry methodEntry = new STentry(nestingLevel, new MethodTypeNode(atn), decOffset--); // Creating the method STentry
+		STentry methodEntry = new STentry(nestingLevel, new MethodTypeNode(atn), decOffset++); // Creating the method STentry
+
+		int prevNLOffset = decOffset;
+		decOffset = 1;
 
 		int parOffset = 1;
 		Map<String, STentry> hmn = new HashMap<>();
@@ -320,6 +333,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Visiting method body
 		visit(n.exp);
+
+		decOffset = prevNLOffset;
 
 		return null;
 	}
@@ -368,8 +383,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		}
 
 		// Setting the entry as the one of the class
-		//n.entry = symTable.get(0).get(classID);
-		n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset--);
+		n.entry = symTable.get(0).get(classID);
+		//n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset);
 
 		for (Node arg : n.arglist) visit(arg);
 
