@@ -270,7 +270,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
 		}
 
-		for (int i = 0; i<n.nl-n.entry.nl; i++) {
+		for (int i = 0; i < n.nl-n.entry.nl; i++) {
 			getAR = nlJoin(getAR, "lw");
 		}
 
@@ -283,9 +283,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			"/* searching "+n.id+" declaration */",
 			"lfp", getAR, // retrieve address of frame containing "id" declaration
                           // by following the static chain (of Access Links)
+
             "stm", // set $tm to popped value (with the aim of duplicating top of stack)
             "ltm", // load Access Link (pointer to frame of function "id" declaration)
             "ltm", // duplicate top of stack
+
             "push "+n.entry.offset, "add", // compute address of "id" declaration
 			"lw", // load address of "id" function
             "js"  // jump to popped address (saving address of subsequent instruction in $ra)
@@ -296,7 +298,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(IdNode n) {
 		if (print) printNode(n, n.id);
 
-		String getAR = (n.nl<=n.entry.nl) ? null : "lfp";
+		String getAR = null;
 
 		for (int i = 0; i < n.nl-n.entry.nl; i++) {
 			getAR = nlJoin(getAR, "lw");
@@ -304,8 +306,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		// TODO per trovare il valore di un campo di un oggetto, quando invoco un suo metodo lascio l'object pointer sullo stack, cosi poi posso calcolare la posizione dell'id con il suo offset
 		return nlJoin(
-			getAR, // retrieve address of frame containing "id" declaration
+			"lfp", getAR, // retrieve address of frame containing "id" declaration
 						 // by following the static chain (of Access Links)
+
 			"push "+n.entry.offset, "add", // compute address of "id" declaration
 			"lw" // load value of "id" variable
 		);
@@ -330,7 +333,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String dispatchTableCode = null;
 
 		// Genero il codice di ogni metodo
-		for(int i=0; i<n.methods.size(); i++) {
+		for(int i = 0; i < n.methods.size(); i++) {
 			MethodNode method = n.methods.get(i);
 			visit(method);
 
@@ -343,13 +346,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 					// aggiorno la Dispatch Table creata settando la posizione, data
 					// dall’offset del metodo, alla sua etichetta
-					"push "+methodLabel,
-					"push 0",
-					"push "+methodOffset,
-					"sub",
-					"sw",
-
-					// memorizzo l'etichetta in hp
 					"push "+methodLabel,
 					"lhp",
 					"sw",
@@ -372,7 +368,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 	@Override
 	public String visitNode(MethodNode n) {
-		if (print) printNode(n,n.id);
+		if (print) printNode(n, n.id);
 
 		String declCode = null, popDecl = null, popParl = null;
 
@@ -381,7 +377,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			popDecl = nlJoin(popDecl, "pop");
 		}
 
-		for (int i=0; i<n.parlist.size(); i++) {
+		for (int i = 0; i < n.parlist.size(); i++) {
 			popParl = nlJoin(popParl, "pop");
 		}
 
@@ -393,7 +389,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"/* method "+n.id+" */",
 						methodLabel+":",
 						"cfp", // set $fp to $sp value
-						//"lra", // load $ra value // TODO is this correct?
+						"lra", // load $ra value
 
 						"/* local declaration code */",
 						declCode, // generate code for local declarations (they use the new $fp!!!)
@@ -404,7 +400,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 						"/* removing local declaration */",
 						popDecl, // remove local declarations from stack
-						//"sra", // set $ra to popped value // TODO is this correct?
+						"sra", // set $ra to popped value
 						"pop", // remove Access Link from stack
 
 						"/* removing parameters */",
@@ -426,15 +422,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String argCode = null;
 
 		// Visito tutti gli argomenti (ognuno pusha il suo valore sullo stack)
-		for (int i=0; i<n.arglist.size(); i++) {
+		for (int i = 0; i < n.arglist.size(); i++) {
 			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
 		}
 
 		// Per ogni argomento, carico il suo valore sull'heap, incrementando hp
-		for (int i=0; i<n.arglist.size(); i++) {
+		for (int i = 0; i < n.arglist.size(); i++) {
 			argCode = nlJoin(argCode,
-					"lhp",
-					"sw",
+					"lhp", // prendo l'heap pointer (sopra il valore da caricare)
+					"sw",  // carico il valore sull'heap
+
+					// incremento heap pointer
 					"lhp",
 					"push 1",
 					"add",
@@ -475,11 +473,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		String argCode = null, getAR = null;
 
-		for (int i=n.arglist.size()-1; i>=0; i--) {
+		for (int i = n.arglist.size()-1; i >= 0; i--) {
 			argCode = nlJoin(argCode, visit(n.arglist.get(i)));
 		}
 
-		for (int i = 0; i<n.nl-n.entry.nl; i++) {
+		for (int i = 0; i < n.nl-n.entry.nl; i++) {
 			getAR = nlJoin(getAR, "lw");
 		}
 
@@ -493,26 +491,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"/* searching "+n.methodID+" declaration */",
 				"lfp", getAR, // retrieve address of frame containing "id" declaration
 				              // by following the static chain (of Access Links)
-				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
-				"ltm", // load Access Link (pointer to frame of function "id" declaration)
-				"ltm", // duplicate top of stack
-
-				// compute address of "id" declaration
-				"/* computing address of "+n.objID+"."+n.methodID+" declaration */",
 				"push "+n.entry.offset, // address of class's dispatch pointer
 				"add",
 				"lw",
+
+				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
+				"ltm", // load Access Link (pointer to frame of function "id" declaration)
+				"ltm", // duplicate top of stack
+				"lw", // TODO why?
+
+				// compute address of "id" declaration
+				"/* computing address of "+n.objID+"."+n.methodID+" declaration */",
 				"push "+n.methodEntry.offset, // address of method's pointer
 				"add",
 
-				// duplicating top of the stack (it's the object pointer we are leaving on the stack)
-				"stm",
-				"ltm",
-				"ltm",
-
-				"/* jumping to method address */",
-				"lw", // load address of "id" function
-				"lw", // TODO is this useful?
+				"lw",
 				"js"  // jump to popped address (saving address of subsequent instruction in $ra)
 		);
 	}

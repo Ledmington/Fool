@@ -83,7 +83,7 @@ public class Test {
 		String source = """
 					let
 						class example(x:int) {
-							fun getX:int () (x);
+							fun getX:int() x;
 						}
 						var obj:example = new example(5);
 					in
