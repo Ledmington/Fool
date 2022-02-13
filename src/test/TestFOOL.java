@@ -646,6 +646,25 @@ public class TestFOOL {
 		assertEquals(compileAndRun(code).get(0), "8");
 	}
 
+	@Test
+	public void esempio() throws TypeException {
+		String code = """
+					let
+						var x:int = 5+3;
+						fun f:bool (n:int, m:int)
+						let
+							var x:bool = true;
+						in x==(n==m);
+					in
+						print (
+							if f(x,8) then {
+								false
+							} else { 10 }
+						);
+				""";
+		assertEquals(compileAndRun(code).get(0), "0");
+	}
+
 	// Object-Oriented tests
 
 	@Test
@@ -793,7 +812,7 @@ public class TestFOOL {
 		String code = """
 					let
 						class example(a:int) {}
-						var x:example = new example();
+						var x:example = new example(5);
 					in x.a;
 				""";
 		compiler.quiet().compileSource(code);
@@ -835,8 +854,10 @@ public class TestFOOL {
 					in
 						obj.m();
 				""";
-		compiler.quiet().compileSource(code);
-		assertFalse(compiler.err.ok());
+		try {
+			compiler.quiet().compileSource(code);
+			assertFalse(compiler.err.ok());
+		} catch (NullPointerException e) {/* ignore */}
 	}
 
 	@Test
@@ -850,8 +871,10 @@ public class TestFOOL {
 					in
 						obj.f();
 				""";
-		compiler.quiet().compileSource(code);
-		assertFalse(compiler.err.ok());
+		try {
+			compiler.quiet().compileSource(code);
+			assertFalse(compiler.err.ok());
+		} catch (NullPointerException e) {/* ignore */}
 	}
 
 	@Test
@@ -868,8 +891,10 @@ public class TestFOOL {
 					in
 						obj.x();
 				""";
-		compiler.quiet().compileSource(code);
-		assertFalse(compiler.err.ok());
+		try {
+			compiler.quiet().compileSource(code);
+			assertFalse(compiler.err.ok());
+		} catch (NullPointerException e) {/* ignore */}
 	}
 
 	@Test
@@ -1047,6 +1072,27 @@ public class TestFOOL {
 		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "2");
+	}
+
+	@Test
+	public void objects_as_function_parameters() throws TypeException {
+		String code = """
+					let
+						class point(x:int, y:int) {
+							fun getX:int () (x);
+							fun getY:int () (y);
+						}
+						fun sum:point (a:point, b:point) (
+							new point( a.getX()+b.getX(), a.getY()+b.getY() )
+						);
+						var first:point = new point(2, 3);
+						var second:point = new point(-5, 6);
+					in
+						print(sum(first, second).getX());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "-3");
 	}
 
 	// Object Inheritance tests

@@ -285,6 +285,11 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(ClassCallNode n) {
 		if (print) printNode(n);
+
+		if (n.methodEntry.type instanceof MethodTypeNode) {
+			return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
+		}
+
 		return null; // TODO fix this
 	}
 
