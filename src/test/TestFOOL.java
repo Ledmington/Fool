@@ -969,6 +969,86 @@ public class TestFOOL {
 		assertEquals(result, "5");
 	}
 
+	@Test
+	public void method_call_with_two_classes() throws TypeException {
+		String code = """
+					let
+						class useless(a:bool, b:bool) {
+							fun wow:int () (a);
+						}
+						class example(x:int) {
+							fun getX:int () (x);
+						}
+						var obj:example = new example(5);
+					in
+						print(obj.getX());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void getter_with_three_fields() throws TypeException {
+		String code = """
+					let
+						class example(a:int, b:int, c:int) {
+							fun getA:int () (a);
+							fun getB:int () (b);
+							fun getC:int () (c);
+						}
+						var obj:example = new example(5,6,7);
+					in
+						print(obj.getB());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "6");
+	}
+
+	@Test
+	public void multiple_objects() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {
+							fun getX:int () (x);
+						}
+						var one:example = new example(1);
+						var two:example = new example(2);
+						var three:example = new example(3);
+					in
+						print(two.getX());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "2");
+	}
+
+	@Test
+	public void multiple_classes_multiple_objects() throws TypeException {
+		String code = """
+					let
+						class example(x:int) {
+							fun getX:int () (x);
+						}
+						class useless(a:bool, b:bool) {
+							fun getA:bool () (a);
+							fun getB:bool () (b);
+						}
+						var one:example = new example(1);
+						var hello:example = new useless(false, false);
+						var two:example = new example(2);
+						var wow:example = new useless(false, true);
+						var three:example = new example(3);
+						var ciao:example = new useless(true, false);
+					in
+						print(two.getX());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "2");
+	}
+
 	// Object Inheritance tests
 
 	// Code Optimization tests
