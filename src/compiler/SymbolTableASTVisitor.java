@@ -261,8 +261,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			// adding field type to classTypeNode
 			classTypeNode.allFields.add(field.getType());
 
-			// adding field to virtual table
-			if(vt.put(field.id, new STentry(nestingLevel, field.getType(), -i-1)) != null) {
+			// adding field to virtual table (fields exist only at nestingLevel 1)
+			if(vt.put(field.id, new STentry(1, field.getType(), -i-1)) != null) {
 				System.out.println("Field id " + field.id + " at line " + field.getLine() + " already declared");
 				stErrors++;
 			}
@@ -394,6 +394,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	@Override
 	public Void visitNode(IdNode n) {
 		if (print) printNode(n);
+
 		STentry entry = stLookup(n.id);
 		if (entry == null) {
 			System.out.println("Var or Par id " + n.id + " at line " + n.getLine() + " not declared");
@@ -402,6 +403,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.entry = entry;
 			n.nl = nestingLevel;
 		}
+
 		return null;
 	}
 

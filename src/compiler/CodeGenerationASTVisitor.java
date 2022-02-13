@@ -262,7 +262,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 	@Override
 	public String visitNode(CallNode n) {
-		if (print) printNode(n,n.id);
+		if (print) printNode(n, n.id);
 
 		String argCode = null, getAR = null;
 
@@ -294,17 +294,18 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 	@Override
 	public String visitNode(IdNode n) {
-		if (print) printNode(n,n.id);
+		if (print) printNode(n, n.id);
 
-		String getAR = null;
+		String getAR = (n.nl<=n.entry.nl) ? null : "lfp";
 
-		for (int i = 0;i<n.nl-n.entry.nl;i++) {
+		for (int i = 0; i < n.nl-n.entry.nl; i++) {
 			getAR = nlJoin(getAR, "lw");
 		}
 
+		// TODO per trovare il valore di un campo di un oggetto, quando invoco un suo metodo lascio l'object pointer sullo stack, cosi poi posso calcolare la posizione dell'id con il suo offset
 		return nlJoin(
-			"lfp", getAR, // retrieve address of frame containing "id" declaration
-				                // by following the static chain (of Access Links)
+			getAR, // retrieve address of frame containing "id" declaration
+						 // by following the static chain (of Access Links)
 			"push "+n.entry.offset, "add", // compute address of "id" declaration
 			"lw" // load value of "id" variable
 		);
@@ -392,7 +393,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"/* method "+n.id+" */",
 						methodLabel+":",
 						"cfp", // set $fp to $sp value
-						"lra", // load $ra value
+						//"lra", // load $ra value // TODO is this correct?
 
 						"/* local declaration code */",
 						declCode, // generate code for local declarations (they use the new $fp!!!)
@@ -403,7 +404,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 						"/* removing local declaration */",
 						popDecl, // remove local declarations from stack
-						"sra", // set $ra to popped value
+						//"sra", // set $ra to popped value // TODO is this correct?
 						"pop", // remove Access Link from stack
 
 						"/* removing parameters */",
@@ -415,7 +416,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				)
 		);
 
-		// TODO why?
 		return null;
 	}
 
@@ -434,10 +434,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i=0; i<n.arglist.size(); i++) {
 			argCode = nlJoin(argCode,
 					"lhp",
-					"stm",
-					"lhp",
 					"sw",
-					"ltm",
+					"lhp",
 					"push 1",
 					"add",
 					"shp"
@@ -453,8 +451,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"push " + MEMSIZE,
 				"push " + n.entry.offset,
 				"add",
+				"lw",
 
-				// carico ildispatch pointer sull'heap
+				// carico il dispatch pointer sull'heap
 				"lhp",
 				"sw",
 
@@ -464,7 +463,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				// incremento hp
 				"lhp",
 				"push 1",
-				"shp"
+				"add",
+				"shp",
+				"/* end new " + n.classID + " */"
 		);
 	}
 
@@ -504,15 +505,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"push "+n.methodEntry.offset, // address of method's pointer
 				"add",
 
+				// duplicating top of the stack (it's the object pointer we are leaving on the stack)
+				"stm",
+				"ltm",
+				"ltm",
+
 				"/* jumping to method address */",
 				"lw", // load address of "id" function
+				"lw", // TODO is this useful?
 				"js"  // jump to popped address (saving address of subsequent instruction in $ra)
 		);
 	}
 
 	@Override
 	public String visitNode(EmptyNode n) {
-	  if (print) printNode(n);
-	  return "push -1";
+		if (print) printNode(n);
+		return "push -1";
 	}
 }
