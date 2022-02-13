@@ -1087,12 +1087,41 @@ public class TestFOOL {
 						);
 						var first:point = new point(2, 3);
 						var second:point = new point(-5, 6);
+						var result:point = sum(first, second);
 					in
-						print(sum(first, second).getX());
+						print(result.getX());
 				""";
 		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "-3");
+	}
+
+	@Test
+	public void recursive_classes() throws TypeException {
+		String code = """
+					let
+						class list(head:int, tail:list) {
+							fun getHead:int() (head);
+							fun getTail:list() (tail);
+							fun search:int (n:int) (
+								if (head == n) then {
+									head
+								} else {
+									if (tail == null) then {
+										-1
+									} else {
+										search(tail)
+									}
+								}
+							);
+						}
+						var l:list = new list(1, new list(2, new list(3, new list(4, null))));
+					in
+						print(l.search(3));
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "3");
 	}
 
 	// Object Inheritance tests
