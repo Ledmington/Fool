@@ -1136,9 +1136,9 @@ public class TestFOOL {
 				 	let
 				 		fun makeList:List (l:List, i:int) new List (i,l);
 				 	in
-				 		 if (l == null)
-				 			 then {null}
-				 			 else {makeList(printList(l.rest()),print(l.first()))};
+				 		if (l == null)
+				 			then {null}
+				 			else {makeList(printList(l.rest()),print(l.first()))};
 				 	
 				 	fun append:List (l1:List, l2:List)
 				 		if (l1 == null)
@@ -1153,12 +1153,12 @@ public class TestFOOL {
 				 		fun accept:bool (cond:bool)
 				 				if (before) then {cond} else {!(cond)};
 				 	in
-				 		if (l == null)
-				 			then {null}
-				 			else {if ( accept(l.first()<=pivot) )
-				 							then { new List( l.first(), filter(l.rest(),pivot,before) ) }
-				 							else { filter(l.rest(),pivot,before) }
-				 					 };
+				 		if (l == null) then {null}
+				 		else {
+				 			if (accept(l.first()<=pivot)) then {
+				 				new List( l.first(), filter(l.rest(),pivot,before) )
+				 			} else { filter(l.rest(),pivot,before) }
+				 		};
 				 	
 				 	fun quicksort:List (l:List)
 				 	let
@@ -1186,6 +1186,89 @@ public class TestFOOL {
 	}
 
 	// Object Inheritance tests
+
+	@Test
+	public void subtyping_class() throws TypeException {
+		String code = """
+					let
+						class father() {}
+						class example extends father() {}
+						fun f:bool(obj:example) (true);
+						var x:father = new father();
+					in f(x);
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
+	public void accessing_father_fields() throws TypeException {
+		String code = """
+					let
+						class father(a:int) {}
+						class example extends father(b:bool) {
+							fun m:int() (a);
+						}
+						var x:example = new example(5, true);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void accessing_father_methods() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int() (5);
+						}
+						class example extends father() {}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void field_overriding() throws TypeException {
+		String code = """
+					let
+						class father(a:bool) {
+							fun getA:bool() (a);
+						}
+						class example extends father(b:bool, a:int) {
+							fun getB:bool() (b);
+							fun getChildA:int() (a);
+						}
+						var x:example = new example(true, 5);
+					in print(x.getChildA());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void method_overriding() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:bool() (false);
+						}
+						class example extends father() {
+							fun m:int() (5);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
 
 	// Code Optimization tests
 }

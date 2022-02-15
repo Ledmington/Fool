@@ -311,7 +311,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 			methodlist.add((MethodNode) visit(meth));
 		}
 
-		Node n = new ClassNode(classID, fieldlist, methodlist);
+		Node n = new ClassNode(classID, superID, fieldlist, methodlist);
 		n.setLine(c.ID(0).getSymbol().getLine());
 		return n;
 	}

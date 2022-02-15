@@ -213,12 +213,13 @@ public class AST {
 	// dichiarazione di una classe
 	public static class ClassNode extends DecNode {
 		final String id;
-		//final String superID;  // ID classe padre
+		final String superID;  // ID classe padre
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
 
-		public ClassNode(final String i, final List<FieldNode> f, final List<MethodNode> m) {
+		public ClassNode(final String i, final String fatherID, final List<FieldNode> f, final List<MethodNode> m) {
 			id = i;
+			superID = fatherID;
 			fields = f;
 			methods = m;
 		}
