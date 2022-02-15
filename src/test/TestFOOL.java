@@ -795,6 +795,20 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void method_redefinition() throws TypeException {
+		String code = """
+					let
+						class example() {
+							fun f:bool() (true);
+							fun f:int() (5);
+						}
+					in 1;
+				""";
+		compiler.quiet().compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
 	public void method_argument_redefinition() throws TypeException {
 		String code = """
 					let
@@ -1202,6 +1216,17 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void unexisting_superclass() throws TypeException {
+		String code = """
+					let
+						class example extends father() {}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
 	public void accessing_father_fields() throws TypeException {
 		String code = """
 					let
@@ -1268,6 +1293,22 @@ public class TestFOOL {
 		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "5");
+	}
+
+	@Test
+	public void method_call_on_wrong_class() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:bool() (false);
+						}
+						class example extends father() {}
+						class useless() {}
+						var x:useless = new useless();
+					in print(x.m());
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	// Code Optimization tests

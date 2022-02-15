@@ -254,7 +254,25 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		classTable.put(n.id, vt);
 		symTable.add(vt);
 
+		// adding superclass fields and methods from the virtual table
+		if(n.superID != null) {
+			Map<String, STentry> superVT = classTable.get(n.superID);
+			if(superVT == null) {
+				System.out.println("Superclass " + n.superID + " at line " + n.getLine() + " not declared");
+				stErrors++;
+			}
+
+			vt.putAll(superVT);
+
+			// adding superclass fields and methods from the ClassTypeNode
+			STentry superClassEntry = stLookup(n.superID);
+			ClassTypeNode superClassTypeNode = (ClassTypeNode) superClassEntry.type;
+			classTypeNode.allFields.addAll(superClassTypeNode.allFields);
+			classTypeNode.allMethods.addAll(superClassTypeNode.allMethods);
+		}
+
 		// adding fields without visit
+		Map<String, STentry> tmpVT = new HashMap<>();
 		for(int i=0; i<n.fields.size(); i++) {
 			FieldNode field = n.fields.get(i);
 
@@ -262,7 +280,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			classTypeNode.allFields.add(field.getType());
 
 			// adding field to virtual table (fields exist only at nestingLevel 1)
-			if(vt.put(field.id, new STentry(1, field.getType(), -i-1)) != null) {
+			if(tmpVT.put(field.id, new STentry(1, field.getType(), -i-1)) != null) {
 				System.out.println("Field id " + field.id + " at line " + field.getLine() + " already declared");
 				stErrors++;
 			}
@@ -288,8 +306,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Removing the class's virtual table from the symbol table after visiting the declaration
 		symTable.remove(vt);
-
-		// TODO anything else?
 
 		return null;
 	}
