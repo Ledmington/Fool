@@ -1237,9 +1237,8 @@ public class TestFOOL {
 						var x:example = new example(5, true);
 					in print(x.m());
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
-		assertEquals(result, "5");
 	}
 
 	@Test
@@ -1253,9 +1252,8 @@ public class TestFOOL {
 						var x:example = new example();
 					in print(x.m());
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
-		assertEquals(result, "5");
 	}
 
 	@Test
@@ -1272,9 +1270,8 @@ public class TestFOOL {
 						var x:example = new example(true, 5);
 					in print(x.getChildA());
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
-		assertEquals(result, "5");
 	}
 
 	@Test
@@ -1290,9 +1287,22 @@ public class TestFOOL {
 						var x:example = new example();
 					in print(x.m());
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
-		assertEquals(result, "5");
+	}
+
+	@Test
+	public void wrong_overriding() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:bool() (false);
+						}
+						class example extends father(m:int) {}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
 	}
 
 	@Test
