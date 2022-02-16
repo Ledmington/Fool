@@ -216,6 +216,7 @@ public class AST {
 		final String superID;  // ID classe padre
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
+		STentry superEntry;
 
 		public ClassNode(final String i, final String fatherID, final List<FieldNode> f, final List<MethodNode> m) {
 			id = i;

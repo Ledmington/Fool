@@ -255,7 +255,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				System.out.println("Superclass id " + n.id + " at line " + n.getLine() + " not declared");
 				stErrors++;
 			}
-			superType = (ClassTypeNode) symTable.get(0).get(n.superID).type;
+			n.superEntry = symTable.get(0).get(n.superID);
+			superType = (ClassTypeNode) n.superEntry.type;
 			classTypeNode = new ClassTypeNode(
 					superType.allFields,
 					superType.allMethods
