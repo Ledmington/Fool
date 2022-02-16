@@ -279,7 +279,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(ClassNode n) {
 		if (print) printNode(n);
-		return null; // TODO this should be correct
+
+		if(n.superID != null) {
+			superType.put(n.id, n.superID);
+		}
+
+		return null;
 	}
 
 	@Override

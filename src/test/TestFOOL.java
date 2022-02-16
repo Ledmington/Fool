@@ -1292,13 +1292,75 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_overriding() throws TypeException {
+	public void wrong_field_overriding() throws TypeException {
+		String code = """
+					let
+						class father(x:bool) {}
+						class example extends father(x:int) {}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void wrong_method_overriding1() throws TypeException {
 		String code = """
 					let
 						class father() {
-							fun m:bool() (false);
+							fun m:bool() (true);
 						}
-						class example extends father(m:int) {}
+						class example extends father() {
+							fun m:int() (5);
+						}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void wrong_method_overriding2() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:bool) (5);
+						}
+						class example extends father() {
+							fun m:int(a:int) (5);
+						}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void wrong_method_overriding3() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:bool) (5);
+						}
+						class example extends father() {
+							fun m:int() (5);
+						}
+					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void wrong_method_overriding4() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:bool) (5);
+						}
+						class example extends father() {
+							fun m:int(a:int, b:int) (5);
+						}
 					in 1;
 				""";
 		compiler.compileSource(code);
