@@ -6,6 +6,8 @@ import compiler.AST.*;
 
 import java.util.*;
 
+import static compiler.TypeRels.*;
+
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
 	private final List<Map<String, STentry>> symTable = new ArrayList<>();
@@ -240,6 +242,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		symbolIDs = new HashSet<>();
 
 		ClassTypeNode classTypeNode;
+		ClassTypeNode superType = null;
 		Map<String, STentry> vt; // virtual table
 		if(n.superID == null) {
 			 classTypeNode = new ClassTypeNode(
@@ -252,7 +255,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				System.out.println("Superclass id " + n.id + " at line " + n.getLine() + " not declared");
 				stErrors++;
 			}
-			ClassTypeNode superType = (ClassTypeNode) symTable.get(0).get(n.superID).type;
+			superType = (ClassTypeNode) symTable.get(0).get(n.superID).type;
 			classTypeNode = new ClassTypeNode(
 					superType.allFields,
 					superType.allMethods
@@ -271,6 +274,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Adding class virtual table
 		classTable.put(n.id, vt);
 		symTable.add(vt);
+		
+		decOffset = (n.superID == null) ? -1 : -superType.allFields.size()-1;
 
 		// adding fields without visit
 		for(int i=0; i<n.fields.size(); i++) {
@@ -286,22 +291,17 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			} else {
 				if(!vt.containsKey(field.id)) {
 					// fields only exist at nesting level 1
-					vt.put(field.id, new STentry(1, field.getType(), -i-1));
+					vt.put(field.id, new STentry(1, field.getType(), decOffset--));
 				} else { // overriding
-					if(!vt.get(field.id).type.getClass().equals(field.getType().getClass())) { // wrong overriding
-						System.out.println("Wrong overriding of field " + field.id + " at line " + field.getLine());
-						stErrors++;
-					} else {
-						STentry oldEntry = vt.get(field.id);
-						vt.put(field.id, new STentry(1, field.getType(), oldEntry.offset));
-					}
+					STentry oldEntry = vt.get(field.id);
+					vt.put(field.id, new STentry(1, field.getType(), oldEntry.offset));
 				}
 			}
 		}
 
 		// Incrementing nesting level for method visits
 		int prevNLDecOffset = decOffset;
-		decOffset = 0;
+		decOffset = (n.superID == null) ? 0 : superType.allMethods.size();
 		nestingLevel++;
 
 		// Visiting methods
@@ -330,8 +330,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (print) printNode(n);
 
 		// Checking that the method is not already declared
-		STentry entry = stLookup(n.id);
-		if(entry != null) {
+		if(!symbolIDs.add(n.id)) {
 			System.out.println("Method id " + n.id + " at line " + n.getLine() + " already declared");
 			stErrors++;
 		}
