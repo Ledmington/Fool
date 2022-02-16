@@ -31,9 +31,7 @@ public class TypeRels {
 			return true;
 		}
 
-		if(a instanceof ArrowTypeNode && b instanceof ArrowTypeNode) {
-			ArrowTypeNode atnA = (ArrowTypeNode) a;
-			ArrowTypeNode atnB = (ArrowTypeNode) b;
+		if(a instanceof ArrowTypeNode atnA && b instanceof ArrowTypeNode atnB) {
 
 			// covarianza tipo di ritorno (il tipo di ritorno nuovo deve essere uguale o sottotipo di quello vecchio)
 			if(!isSubtype(atnA.returnType, atnB.returnType)) return false;

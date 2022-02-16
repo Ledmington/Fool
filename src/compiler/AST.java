@@ -358,7 +358,7 @@ public class AST {
 		}
 	}
 
-	// riferimento ad una classe (tipo quando invochi un metodo dall'esterno)
+	// riferimento ad una classe (tipo quando si invoca un metodo dall'esterno)
 	public static class RefTypeNode extends TypeNode {
 		final String classID;
 

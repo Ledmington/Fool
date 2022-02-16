@@ -282,6 +282,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 		if(n.superID != null) {
 			superType.put(n.id, n.superID);
+
+			// TODO continue here
+			System.out.println(n.getType());
+			n.getType();
 		}
 
 		return null;
