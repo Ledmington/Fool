@@ -1216,14 +1216,13 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void unexisting_superclass() throws TypeException {
+	public void unexisting_superclass() {
 		String code = """
 					let
 						class example extends father() {}
 					in 1;
 				""";
-		compiler.compileSource(code);
-		assertFalse(compiler.err.ok());
+		assertThrows(NullPointerException.class, () -> compiler.compileSource(code));
 	}
 
 	@Test

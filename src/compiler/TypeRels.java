@@ -15,8 +15,7 @@ public class TypeRels {
 
 	// controlla che a sia sottotipo di b
 	public static boolean isSubtype(TypeNode a, TypeNode b) {
-		if(a.getClass().equals(b.getClass()) ||
-				(a instanceof BoolTypeNode) && (b instanceof IntTypeNode) ||
+		if((a instanceof BoolTypeNode) && (b instanceof IntTypeNode) ||
 				(a instanceof EmptyTypeNode) && (b instanceof RefTypeNode)) {
 			return true;
 		}
@@ -39,15 +38,16 @@ public class TypeRels {
 
 			// controvarianza tipi dei parametri (il tipo dell'i-esimo parametro nuovo deve essere sottotipo dell'i-esimo parametro vecchio)
 			if(atnA.parlist.size() != atnB.parlist.size()) return false;
+
 			for(int i=0; i<atnA.parlist.size(); i++) {
-				TypeNode oldPar = atnA.parlist.get(i);
-				TypeNode newPar = atnB.parlist.get(i);
-				if(!isSubtype(oldPar, newPar)) return false;
+				TypeNode newPar = atnA.parlist.get(i);
+				TypeNode oldPar = atnB.parlist.get(i);
+				if(!isSubtype(newPar, oldPar)) return false;
 			}
 
 			return true;
 		}
 
-		return false;
+		return a.getClass().equals(b.getClass());
 	}
 }

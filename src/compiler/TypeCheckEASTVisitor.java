@@ -291,21 +291,24 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 			// confronto che gli eventuali overriding di campi siano corretti
 			for(int i=0; i<fatherType.allFields.size(); i++) {
-				if(!isSubtype(n.type.allFields.get(i), fatherType.allFields.get(i))) {
-					throw new TypeException("Invalid overriding of " + (i+1) + "-th field in class " + n.id, n.getLine());
+				if( !isSubtype(n.type.allFields.get(i), fatherType.allFields.get(i)) ) {
+					throw new TypeException("Invalid overriding of " + i + "-th field in class " + n.id, n.getLine());
 				}
 			}
 
 			// confronto che gli eventuali overriding di metodi siano corretti
-			for(int i=0; i<fatherType.allMethods.size(); i++) {
-				if(!isSubtype(n.type.allMethods.get(i), fatherType.allMethods.get(i))) {
-					throw new TypeException("Invalid overriding of " + (i+1) + "-th method in class " + n.id, n.getLine());
+			int i=0;
+			for(; i<fatherType.allMethods.size(); i++) {
+				ArrowTypeNode atn = ((MethodTypeNode) visit(n.methods.get(i))).fun;
+				ArrowTypeNode fatherAtn = fatherType.allMethods.get(i);
+				if( !isSubtype(atn, fatherAtn) ) {
+					throw new TypeException("Invalid overriding of " + i + "-th method in class " + n.id, n.getLine());
 				}
 			}
 
-			// Visita dei metodi
-			for(MethodNode meth : n.methods) {
-				visit(meth);
+			// visito tutti gli altri metodi senza overriding
+			for(; i<n.methods.size(); i++) {
+				visit(n.methods.get(i));
 			}
 		}
 
@@ -316,26 +319,26 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ClassCallNode n) {
 		if (print) printNode(n);
 
-		if (n.methodEntry.type instanceof MethodTypeNode) {
-			return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
-		}
-
-		return null; // TODO fix this
+		return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
 	}
 
 	@Override
 	public TypeNode visitNode(MethodNode n) throws TypeException {
-		if (print) printNode(n,n.id);
-		for (Node dec : n.declist)
+		if (print) printNode(n, n.id);
+
+		for (Node dec : n.declist) {
 			try {
 				visit(dec);
 			} catch (IncomplException ignored) {
 			} catch (TypeException e) {
 				System.out.println("Type checking error in a declaration: " + e.text);
 			}
+		}
+
 		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) )
 			throw new TypeException("Wrong return type for method " + n.id, n.getLine());
-		return null;
+
+		return new MethodTypeNode(new ArrowTypeNode(n.parlist.stream().map(DecNode::getType).toList(), n.retType));
 	}
 
 	@Override
