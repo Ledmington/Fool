@@ -1199,6 +1199,23 @@ public class TestFOOL {
 		assertEquals(result, Stream.of(1,2,2,3,4,5).map(Object::toString).toList());
 	}
 
+	@Test
+	public void assert_type_checking_inside_methods() {
+		String code = """
+					let
+						class father() {
+							fun m:bool() (
+							let
+								var a:father = null;
+								var b:bool = true;
+							in a == b;
+							);
+						}
+					in 1;
+				""";
+		assertThrows(TypeException.class, () -> compiler.quiet().compileSource(code));
+	}
+
 	// Object Inheritance tests
 
 	@Test
@@ -1314,7 +1331,7 @@ public class TestFOOL {
 						}
 					in 1;
 				""";
-		compiler.compileSource(code);
+		compiler.debug().compileSource(code);
 		assertFalse(compiler.err.ok());
 	}
 

@@ -26,13 +26,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(ProgLetInNode n) throws TypeException {
 		if (print) printNode(n);
-		for (Node dec : n.declist)
+
+		for (Node dec : n.declist) {
 			try {
 				visit(dec);
 			} catch (IncomplException ignored) {
 			} catch (TypeException e) {
 				System.out.println("Type checking error in a declaration: " + e.text);
 			}
+		}
+
 		return visit(n.exp);
 	}
 
@@ -282,34 +285,35 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 	@Override
 	public TypeNode visitNode(ClassNode n) throws TypeException {
-		if (print) printNode(n);
+		if (print) printNode(n, n.id + ((n.superID==null)?"":" extends "+n.superID));
 
+		int f=0;
+		int m=0;
 		if(n.superID != null) {
 			superType.put(n.id, n.superID);
 
 			ClassTypeNode fatherType = (ClassTypeNode) n.superEntry.type;
 
 			// confronto che gli eventuali overriding di campi siano corretti
-			for(int i=0; i<fatherType.allFields.size(); i++) {
-				if( !isSubtype(n.type.allFields.get(i), fatherType.allFields.get(i)) ) {
-					throw new TypeException("Invalid overriding of " + i + "-th field in class " + n.id, n.getLine());
+			for(; f<fatherType.allFields.size(); f++) {
+				if( !isSubtype(n.type.allFields.get(f), fatherType.allFields.get(f)) ) {
+					throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
 				}
 			}
 
 			// confronto che gli eventuali overriding di metodi siano corretti
-			int i=0;
-			for(; i<fatherType.allMethods.size(); i++) {
-				ArrowTypeNode atn = n.type.allMethods.get(i);
-				ArrowTypeNode fatherAtn = fatherType.allMethods.get(i);
+			for(; m<fatherType.allMethods.size(); m++) {
+				ArrowTypeNode atn = n.type.allMethods.get(m);
+				ArrowTypeNode fatherAtn = fatherType.allMethods.get(m);
 				if( !isSubtype(atn, fatherAtn) ) {
-					throw new TypeException("Invalid overriding of " + i + "-th method in class " + n.id, n.getLine());
+					throw new TypeException("Invalid overriding of " + m + "-th method in class " + n.id, n.getLine());
 				}
 			}
+		}
 
-			// visito tutti gli altri metodi senza overriding
-			for(; i<n.methods.size(); i++) {
-				visit(n.methods.get(i));
-			}
+		// visito tutti gli altri metodi senza overriding (visito solo i metodi nuovi)
+		for(; m<n.methods.size(); m++) {
+			visit(n.methods.get(m));
 		}
 
 		return null;
@@ -317,9 +321,13 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 	@Override
 	public TypeNode visitNode(ClassCallNode n) {
-		if (print) printNode(n);
+		if (print) printNode(n, n.objID+"."+n.methodID);
 
-		return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
+		if(n.methodEntry.type instanceof MethodTypeNode) {
+			return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
+		}
+
+		return null; // TODO is this correct?
 	}
 
 	@Override
