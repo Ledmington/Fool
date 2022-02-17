@@ -6,8 +6,6 @@ import compiler.AST.*;
 
 import java.util.*;
 
-import static compiler.TypeRels.*;
-
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	
 	private final List<Map<String, STentry>> symTable = new ArrayList<>();
@@ -22,7 +20,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 	private Set<String> symbolIDs;
 
 	public SymbolTableASTVisitor() {}
-	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
+	public SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
 	private STentry stLookup(String id) {
 		if(symTable.isEmpty()) return null;

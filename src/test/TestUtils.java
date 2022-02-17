@@ -88,11 +88,11 @@ public class TestUtils {
 		if(debug) System.out.println("You had " + lexer.lexicalErrors + " lexical errors and " + parser.getNumberOfSyntaxErrors() + " syntax errors.\n");
 
 		if(debug) System.out.println("Generating AST.");
-		ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
+		ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(debug);
 		Node ast = visitor.visit(st);
 
 		if(debug) System.out.println("\nEnriching AST via symbol table.");
-		SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+		SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor(debug);
 		symtableVisitor.visit(ast);
 		if(debug) System.out.println("You had " + symtableVisitor.stErrors + " symbol table errors.\n");
 
@@ -102,7 +102,7 @@ public class TestUtils {
 		}
 
 		if(debug) System.out.println("\nChecking Types.");
-		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor(debug);
 		TypeNode mainType = typeCheckVisitor.visit(ast);
 		if(debug) {
 			System.out.print("Type of main program expression is: ");
@@ -128,7 +128,7 @@ public class TestUtils {
 			System.setErr(old);
 		}
 
-		return new CodeGenerationASTVisitor().visit(ast);
+		return new CodeGenerationASTVisitor(debug).visit(ast);
 	}
 
 	public static String compile(final String code) throws TypeException {

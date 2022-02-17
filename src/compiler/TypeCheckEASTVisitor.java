@@ -15,7 +15,7 @@ import static compiler.TypeRels.*;
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
 	public TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions
-	TypeCheckEASTVisitor(boolean debug) { super(true,debug); } // enables print for debugging
+	public TypeCheckEASTVisitor(boolean debug) { super(true,debug); } // enables print for debugging
 
 	//checks that a type object is visitable (not incomplete) 
 	private TypeNode ckvisit(TypeNode t) throws TypeException {
@@ -284,6 +284,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			superType.put(n.id, n.superID);
 
 			ClassTypeNode fatherType = (ClassTypeNode) n.superEntry.type;
+
+			System.out.println(n.type.allFields.size() + " fields (" + n.type.allFields.stream().toList() + ")"); // TODO delete this line
+			System.out.println(n.type.allMethods.size() + " methods (" + n.type.allMethods.stream().toList() + ")"); // TODO delete this line
+
+			System.out.println(fatherType.allFields.size() + " fields (" + fatherType.allFields.stream().toList() + ")"); // TODO delete this line
+			System.out.println(fatherType.allMethods.size() + " methods (" + fatherType.allMethods.stream().toList() + ")"); // TODO delete this line
 
 			// confronto che gli eventuali overriding di campi siano corretti
 			for(int i=0; i<fatherType.allFields.size(); i++) {

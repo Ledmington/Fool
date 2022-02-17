@@ -15,7 +15,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public boolean print;
 	
     public ASTGenerationSTVisitor() {}
-    ASTGenerationSTVisitor(boolean debug) { print=debug; }
+    public ASTGenerationSTVisitor(boolean debug) { print=debug; }
         
     private void printVarAndProdName(ParserRuleContext ctx) {
         String prefix="";        

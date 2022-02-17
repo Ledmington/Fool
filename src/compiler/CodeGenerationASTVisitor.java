@@ -9,7 +9,7 @@ import static svm.ExecuteVM.*;
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
 	public CodeGenerationASTVisitor() {}
-	CodeGenerationASTVisitor(boolean debug) {super(false, debug);} //enables print for debugging
+	public CodeGenerationASTVisitor(boolean debug) {super(false, debug);} //enables print for debugging
 
 	@Override
 	public String visitNode(ProgLetInNode n) {
