@@ -1260,12 +1260,12 @@ public class TestFOOL {
 	public void field_overriding() throws TypeException {
 		String code = """
 					let
-						class father(a:bool) {
-							fun getA:bool() (a);
+						class father(a:int) {
+							fun getA:int() (a);
 						}
-						class example extends father(b:bool, a:int) {
-							fun getB:bool() (b);
-							fun getChildA:int() (a);
+						class example extends father(a:bool, b:int) {
+							fun getB:int() (b);
+							fun getChildA:bool() (a);
 						}
 						var x:example = new example(true, 5);
 					in print(x.getChildA());

@@ -284,9 +284,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		for(int i=0; i<n.fields.size(); i++) {
 			FieldNode field = n.fields.get(i);
 
-			// adding field type to classTypeNode
-			classTypeNode.allFields.add(field.getType());
-
 			// adding field to virtual table
 			if(!symbolIDs.add(field.id)) { // if a field is redeclared
 				System.out.println("Field id " + field.id + " at line " + field.getLine() + " already declared");
@@ -295,9 +292,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				if(!vt.containsKey(field.id)) {
 					// fields only exist at nesting level 1
 					vt.put(field.id, new STentry(1, field.getType(), decOffset--));
+					classTypeNode.allFields.add(field.getType());
 				} else { // overriding
 					STentry oldEntry = vt.get(field.id);
 					vt.put(field.id, new STentry(1, field.getType(), oldEntry.offset));
+					classTypeNode.allFields.set(i, field.getType());
 				}
 			}
 		}
@@ -313,7 +312,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 			visit(meth);
 
-			classTypeNode.allMethods.add((ArrowTypeNode) meth.getType());
+			classTypeNode.allMethods.add(((MethodTypeNode)meth.getType()).fun);
 		}
 
 		// Resetting old value of nesting level
@@ -341,9 +340,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		List<TypeNode> parTypes = n.parlist.stream()
 				.map(DecNode::getType)
 				.toList(); // Collecting parameters
-		ArrowTypeNode atn = new ArrowTypeNode(parTypes, n.retType); // Creating the ArrowTypeNode
-		n.setType(atn);
-		STentry methodEntry = new STentry(nestingLevel, new MethodTypeNode(atn), decOffset++); // Creating the method STentry
+		MethodTypeNode methodType = new MethodTypeNode(new ArrowTypeNode(parTypes, n.retType));
+		n.setType(methodType);
+		STentry methodEntry = new STentry(nestingLevel, methodType, decOffset++); // Creating the method STentry
 
 		// Adding the method STentry to the symbol table
 		symTable.get(nestingLevel).put(n.id, methodEntry);
