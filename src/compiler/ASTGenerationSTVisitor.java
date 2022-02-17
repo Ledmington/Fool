@@ -331,7 +331,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<DecNode> decList = new ArrayList<>();
 		for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
 		Node n = null;
-		if (c.ID().size()>0) { //non-incomplete ST
+		if (c.ID().size() > 0) { //non-incomplete ST
 			n = new MethodNode(c.ID(0).getText(), (TypeNode)visit(c.type(0)), parList, decList, visit(c.exp()));
 			n.setLine(c.FUN().getSymbol().getLine());
 		}

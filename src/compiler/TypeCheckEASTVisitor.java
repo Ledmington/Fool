@@ -299,7 +299,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			// confronto che gli eventuali overriding di metodi siano corretti
 			int i=0;
 			for(; i<fatherType.allMethods.size(); i++) {
-				ArrowTypeNode atn = ((MethodTypeNode) visit(n.methods.get(i))).fun;
+				ArrowTypeNode atn = n.type.allMethods.get(i);
 				ArrowTypeNode fatherAtn = fatherType.allMethods.get(i);
 				if( !isSubtype(atn, fatherAtn) ) {
 					throw new TypeException("Invalid overriding of " + i + "-th method in class " + n.id, n.getLine());
