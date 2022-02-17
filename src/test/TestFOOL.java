@@ -1207,8 +1207,8 @@ public class TestFOOL {
 					let
 						class father() {}
 						class example extends father() {}
-						fun f:bool(obj:example) (true);
-						var x:father = new father();
+						fun f:bool(obj:father) (true);
+						var x:example = new example();
 					in f(x);
 				""";
 		compiler.compileSource(code);
