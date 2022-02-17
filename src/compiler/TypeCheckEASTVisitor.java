@@ -285,12 +285,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 			ClassTypeNode fatherType = (ClassTypeNode) n.superEntry.type;
 
-			System.out.println(n.type.allFields.size() + " fields (" + n.type.allFields.stream().toList() + ")"); // TODO delete this line
-			System.out.println(n.type.allMethods.size() + " methods (" + n.type.allMethods.stream().toList() + ")"); // TODO delete this line
-
-			System.out.println(fatherType.allFields.size() + " fields (" + fatherType.allFields.stream().toList() + ")"); // TODO delete this line
-			System.out.println(fatherType.allMethods.size() + " methods (" + fatherType.allMethods.stream().toList() + ")"); // TODO delete this line
-
 			// confronto che gli eventuali overriding di campi siano corretti
 			for(int i=0; i<fatherType.allFields.size(); i++) {
 				if(!isSubtype(n.type.allFields.get(i), fatherType.allFields.get(i))) {
@@ -322,6 +316,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		}
 
 		return null; // TODO fix this
+	}
+
+	@Override
+	public TypeNode visitNode(MethodNode n) {
+		if (print) printNode(n);
+		return null;
 	}
 
 	@Override

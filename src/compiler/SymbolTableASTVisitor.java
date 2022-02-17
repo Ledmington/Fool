@@ -256,8 +256,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.superEntry = symTable.get(0).get(n.superID);
 			superType = (ClassTypeNode) n.superEntry.type;
 			classTypeNode = new ClassTypeNode(
-					superType.allFields,
-					superType.allMethods
+					new ArrayList<>(superType.allFields),
+					new ArrayList<>(superType.allMethods)
 			);
 			vt = new HashMap<>(classTable.get(n.superID));
 		}

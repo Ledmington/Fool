@@ -1237,7 +1237,7 @@ public class TestFOOL {
 						var x:example = new example(5, true);
 					in print(x.m());
 				""";
-		compiler.debug().compileSource(code);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
 	}
 
