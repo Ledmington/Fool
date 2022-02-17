@@ -265,6 +265,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		}
 
 		STentry classEntry = new STentry(0, classTypeNode, decOffset--);
+		n.type = classTypeNode;
 
 		// Checking that the class is not already declared
 		if (symTable.get(0).put(n.id, classEntry) != null) {

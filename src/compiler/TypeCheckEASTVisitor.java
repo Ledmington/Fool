@@ -277,15 +277,31 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	}
 
 	@Override
-	public TypeNode visitNode(ClassNode n) {
+	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n);
 
 		if(n.superID != null) {
 			superType.put(n.id, n.superID);
 
-			// TODO continue here
-			System.out.println(n.getType());
-			n.getType();
+			ClassTypeNode fatherType = (ClassTypeNode) n.superEntry.type;
+
+			// confronto che gli eventuali overriding di campi siano corretti
+			for(int i=0; i<fatherType.allFields.size(); i++) {
+				if(!isSubtype(n.type.allFields.get(i), fatherType.allFields.get(i))) {
+					throw new TypeException("Invalid overriding of " + (i+1) + "-th field in class " + n.id, n.getLine());
+				}
+			}
+
+			// confronto che gli eventuali overriding di metodi siano corretti
+			for(int i=0; i<fatherType.allMethods.size(); i++) {
+				if(!isSubtype(n.type.allMethods.get(i), fatherType.allMethods.get(i))) {
+					throw new TypeException("Invalid overriding of " + (i+1) + "-th method in class " + n.id, n.getLine());
+				}
+			}
+
+			for(MethodNode meth : n.methods) {
+				visit(meth);
+			}
 		}
 
 		return null;
@@ -305,7 +321,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(ClassTypeNode n) {
 		if (print) printNode(n);
-		return null; // TODO this should be correct
+		return null;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ public class TypeRels {
 	// Map da classID a superclassID
 	public static Map<String, String> superType = new HashMap<>();
 
+	// controlla che a sia sottotipo di b
 	public static boolean isSubtype(TypeNode a, TypeNode b) {
 		if(a.getClass().equals(b.getClass()) ||
 				(a instanceof BoolTypeNode) && (b instanceof IntTypeNode) ||
