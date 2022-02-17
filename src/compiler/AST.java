@@ -32,6 +32,7 @@ public class AST {
 		final List<ParNode> parlist;
 		final List<DecNode> declist; 
 		final Node exp;
+
 		FunNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
 	    	id=i; 
 	    	retType=rt; 
@@ -222,8 +223,8 @@ public class AST {
 		public ClassNode(final String i, final String fatherID, final List<FieldNode> f, final List<MethodNode> m) {
 			id = i;
 			superID = fatherID;
-			fields = f;
-			methods = m;
+			fields = Collections.unmodifiableList(f);
+			methods = Collections.unmodifiableList(m);
 		}
 
 		@Override
@@ -247,7 +248,7 @@ public class AST {
 	// dichiarazione di un metodo (l'invocazione dall'interno è CallNode)
 	public static class MethodNode extends FunNode {
 		public String label;
-		public int offset;
+		//public int offset; // TODO delete this if unused
 
 		MethodNode(final String i, final TypeNode rt, final List<ParNode> pl, final List<DecNode> dl, final Node e) {
 			super(i, rt, pl, dl, e);
@@ -271,7 +272,7 @@ public class AST {
 		public ClassCallNode(final String oID, final String mID, final List<Node> args) {
 			objID = oID;
 			methodID = mID;
-			arglist = args;
+			arglist = Collections.unmodifiableList(args);
 		}
 
 		@Override
@@ -285,11 +286,11 @@ public class AST {
 		final String classID;
 		final List<Node> arglist;
 		STentry entry;
-		int nl;
+		//int nl; // TODO delete this if unused
 
 		public NewNode(final String cID, final List<Node> args) {
 			classID = cID;
-			arglist = args;
+			arglist = Collections.unmodifiableList(args);
 		}
 
 		@Override

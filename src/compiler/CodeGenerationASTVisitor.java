@@ -339,7 +339,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 			// sulla cima dello stack c'è l'indirizzo del metodo
 			String methodLabel = method.label;
-			int methodOffset = method.offset;
+			//int methodOffset = method.offset; // TODO delete this if unused
 
 			dispatchTableCode = nlJoin("/* class "+n.id+" dispatch table */",
 					dispatchTableCode,

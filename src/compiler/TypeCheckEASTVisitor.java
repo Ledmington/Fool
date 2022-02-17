@@ -44,16 +44,20 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 	@Override
 	public TypeNode visitNode(FunNode n) throws TypeException {
-		if (print) printNode(n,n.id);
-		for (Node dec : n.declist)
+		if (print) printNode(n, n.id);
+
+		for (Node dec : n.declist) {
 			try {
 				visit(dec);
 			} catch (IncomplException ignored) {
 			} catch (TypeException e) {
 				System.out.println("Type checking error in a declaration: " + e.text);
 			}
+		}
+
 		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) )
 			throw new TypeException("Wrong return type for function " + n.id, n.getLine());
+
 		return null;
 	}
 
@@ -299,6 +303,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 				}
 			}
 
+			// Visita dei metodi
 			for(MethodNode meth : n.methods) {
 				visit(meth);
 			}
@@ -319,8 +324,17 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	}
 
 	@Override
-	public TypeNode visitNode(MethodNode n) {
-		if (print) printNode(n);
+	public TypeNode visitNode(MethodNode n) throws TypeException {
+		if (print) printNode(n,n.id);
+		for (Node dec : n.declist)
+			try {
+				visit(dec);
+			} catch (IncomplException ignored) {
+			} catch (TypeException e) {
+				System.out.println("Type checking error in a declaration: " + e.text);
+			}
+		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) )
+			throw new TypeException("Wrong return type for method " + n.id, n.getLine());
 		return null;
 	}
 

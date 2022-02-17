@@ -71,8 +71,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();  
-		for (ParNode par : n.parlist) parTypes.add(par.getType()); 
-		STentry entry = new STentry(nestingLevel, new ArrowTypeNode(parTypes, n.retType), decOffset--);
+		for (ParNode par : n.parlist) parTypes.add(par.getType());
+		ArrowTypeNode atn = new ArrowTypeNode(parTypes, n.retType);
+		n.setType(atn);
+		STentry entry = new STentry(nestingLevel, atn, decOffset--);
 
 		//inserimento di ID nella symtable
 		if (hm.put(n.id, entry) != null) {
@@ -99,6 +101,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		//rimuovere la hashmap corrente poiche' esco dallo scope               
 		symTable.remove(nestingLevel--);
 		decOffset = prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
+
 		return null;
 	}
 	
@@ -339,6 +342,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				.map(DecNode::getType)
 				.toList(); // Collecting parameters
 		ArrowTypeNode atn = new ArrowTypeNode(parTypes, n.retType); // Creating the ArrowTypeNode
+		n.setType(atn);
 		STentry methodEntry = new STentry(nestingLevel, new MethodTypeNode(atn), decOffset++); // Creating the method STentry
 
 		// Adding the method STentry to the symbol table
