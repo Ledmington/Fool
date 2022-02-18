@@ -82,12 +82,15 @@ public class Test {
 
 		String source = """
 					let
-						class example(x:int) {
-							fun getX:int() x;
+						class example(a:int, b:int, c:int) {
+							fun getA:int () (a);
+							fun getB:int () (b);
+							fun getC:int () (c);
 						}
-						var obj:example = new example(5);
+						var obj:example = new example(5,6,7);
+						var obj2:example = new example(10,11,12);
 					in
-						print(obj.getX());
+						print(obj2.getB());
 				""";
 		CharStream chars = CharStreams.fromString(source);
 		FOOLLexer lexer = new FOOLLexer(chars);
@@ -99,11 +102,11 @@ public class Test {
 		System.out.println("You had " + lexer.lexicalErrors + " lexical errors and " + parser.getNumberOfSyntaxErrors() + " syntax errors.\n");
 
 		System.out.println("Generating AST.");
-		ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(); // use true to visualize the ST
+		ASTGenerationSTVisitor visitor = new ASTGenerationSTVisitor(true); // use true to visualize the ST
 		Node ast = visitor.visit(st);
 
 		System.out.println("\nEnriching AST via symbol table.");
-		SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor();
+		SymbolTableASTVisitor symtableVisitor = new SymbolTableASTVisitor(true);
 		symtableVisitor.visit(ast);
 		System.out.println("You had " + symtableVisitor.stErrors + " symbol table errors.\n");
 
@@ -112,7 +115,7 @@ public class Test {
 
 
 		System.out.println("\nChecking Types.");
-		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor();
+		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor(true);
 		TypeNode mainType = typeCheckVisitor.visit(ast);
 
 		System.out.print("Type of main program expression is: ");

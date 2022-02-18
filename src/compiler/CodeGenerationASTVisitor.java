@@ -11,7 +11,7 @@ import static svm.ExecuteVM.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
 
-	private List<List<String>> dispatchTables = new ArrayList<>();
+	private final List<List<String>> dispatchTables = new ArrayList<>();
 
 	public CodeGenerationASTVisitor() {}
 	public CodeGenerationASTVisitor(boolean debug) {super(false, debug);} //enables print for debugging
@@ -345,13 +345,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		// Genero il codice di ogni metodo
 		for(int i = 0; i < n.methods.size(); i++) {
 			MethodNode method = n.methods.get(i);
+			method.label = "class" + dispatchTables.size() + "method" + i;
 			visit(method);
 
 			// sulla cima dello stack c'è l'indirizzo del metodo
 			String methodLabel = method.label;
 			//int methodOffset = method.offset; // TODO delete this if unused
 
-			dispatchTableCode = nlJoin("/* class "+n.id+" dispatch table */",
+			dispatchTableCode = nlJoin(
 					dispatchTableCode,
 
 					// aggiorno la Dispatch Table creata settando la posizione, data
@@ -398,13 +399,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			popParl = nlJoin(popParl, "pop");
 		}
 
-		String methodLabel = freshFunLabel();
-		n.label = methodLabel;
+		// TODO delete this code if unused
+		//String methodLabel = freshFunLabel();
+		//n.label = methodLabel;
 
 		putCode(
 				nlJoin(
 						"/* method "+n.id+" */",
-						methodLabel+":",
+						n.label+":",
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
 
@@ -508,7 +510,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"/* searching "+n.methodID+" declaration */",
 				"lfp", getAR, // retrieve address of frame containing "id" declaration
 				              // by following the static chain (of Access Links)
-				"push "+n.entry.offset, // address of class's dispatch pointer
+				"push " + n.entry.offset, // address of object's dispatch pointer
 				"add",
 				"lw",
 

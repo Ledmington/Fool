@@ -278,7 +278,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Adding class virtual table
 		classTable.put(n.id, vt);
 		symTable.add(vt);
-		
+
+		int prevDecOffset = decOffset;
 		decOffset = (n.superID == null) ? -1 : -superType.allFields.size()-1;
 
 		// adding fields without visit
@@ -301,6 +302,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				}
 			}
 		}
+
+		decOffset = prevDecOffset;
 
 		// Incrementing nesting level for method visits
 		int prevNLDecOffset = decOffset;
@@ -399,7 +402,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (objEntry == null) {
 			System.out.println("Object id " + n.objID + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-			return null; // early exit
+			//return null; // early exit // TODO delete if unused
 		} else {
 			n.entry = objEntry;
 			n.nl = nestingLevel;

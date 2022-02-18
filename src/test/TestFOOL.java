@@ -1040,7 +1040,7 @@ public class TestFOOL {
 					in
 						print(obj.getB());
 				""";
-		String result = compiler.debug().compileSourceAndRun(code).get(0);
+		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "6");
 	}
