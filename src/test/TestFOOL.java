@@ -1040,7 +1040,7 @@ public class TestFOOL {
 					in
 						print(obj.getB());
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		String result = compiler.debug().compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "6");
 	}
@@ -1447,6 +1447,22 @@ public class TestFOOL {
 				""";
 		compiler.compileSource(code);
 		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void method_call_on_grandfather_class() throws TypeException {
+		String code = """
+					let
+						class grandfather() {
+							fun m:int() (5);
+						}
+						class father extends grandfather() {}
+						class example extends father() {}
+						var x:example = new example();
+					in x.m();
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
 	}
 
 	// Code Optimization tests
