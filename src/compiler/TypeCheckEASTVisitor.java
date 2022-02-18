@@ -193,6 +193,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printNode(n, n.id);
 
 		TypeNode t = visit(n.entry);
+		if(t instanceof MethodTypeNode) {
+			t = ((MethodTypeNode) t).fun;
+		}
 
 		if ( !(t instanceof ArrowTypeNode at) )
 			throw new TypeException("Invocation of a non-function "+n.id, n.getLine());
@@ -254,6 +257,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(RefTypeNode n) {
 		if (print) printNode(n);
 		return null;
+	}
+
+	@Override
+	public TypeNode visitNode(MethodTypeNode n) {
+		if (print) printNode(n);
+		return null; // TODO is this correct?
 	}
 
 	@Override

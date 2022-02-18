@@ -1124,7 +1124,7 @@ public class TestFOOL {
 									if (tail == null) then {
 										-1
 									} else {
-										search(tail)
+										tail.search(n)
 									}
 								}
 							);
@@ -1295,10 +1295,27 @@ public class TestFOOL {
 		String code = """
 					let
 						class father() {
-							fun m:bool() (false);
+							fun m:int() (5);
 						}
 						class example extends father() {
+							fun m:bool() (true);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
+	public void useless_overriding() throws TypeException {
+		String code = """
+					let
+						class father() {
 							fun m:int() (5);
+						}
+						class example extends father() {
+							fun m:int() (7);
 						}
 						var x:example = new example();
 					in print(x.m());
