@@ -1331,7 +1331,7 @@ public class TestFOOL {
 						}
 					in 1;
 				""";
-		compiler.debug().compileSource(code);
+		compiler.compileSource(code);
 		assertFalse(compiler.err.ok());
 	}
 

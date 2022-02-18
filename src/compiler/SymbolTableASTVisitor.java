@@ -245,6 +245,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		ClassTypeNode classTypeNode;
 		ClassTypeNode superType = null;
 		Map<String, STentry> vt; // virtual table
+
 		if(n.superID == null) {
 			 classTypeNode = new ClassTypeNode(
 					new ArrayList<>(), // fields
@@ -312,7 +313,18 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 			visit(meth);
 
-			classTypeNode.allMethods.add(((MethodTypeNode)meth.getType()).fun);
+			ArrowTypeNode methATN = ((MethodTypeNode) meth.getType()).fun;
+			classTypeNode.allMethods.add(methATN);
+
+			if(!vt.containsKey(meth.id)) {
+				// methods only exist at nesting level 1
+				vt.put(meth.id, new STentry(1, meth.getType(), decOffset--));
+				classTypeNode.allMethods.add(methATN);
+			} else { // overriding
+				STentry oldEntry = vt.get(meth.id);
+				vt.put(meth.id, new STentry(1, meth.getType(), oldEntry.offset));
+				classTypeNode.allMethods.set(i, methATN);
+			}
 		}
 
 		// Resetting old value of nesting level
