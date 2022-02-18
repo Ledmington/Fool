@@ -194,7 +194,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 		TypeNode t = visit(n.entry);
 		if(t instanceof MethodTypeNode) {
-			t = ((MethodTypeNode) t).fun;
+			t = ((MethodTypeNode) t).fun; // TODO is this correct?
 		}
 
 		if ( !(t instanceof ArrowTypeNode at) )

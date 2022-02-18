@@ -3,10 +3,15 @@ package compiler;
 import compiler.exc.*;
 import compiler.lib.*;
 import compiler.AST.*;
+
+import java.util.*;
+
 import static compiler.lib.FOOLlib.*;
 import static svm.ExecuteVM.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
+
+	private List<List<String>> dispatchTables = new ArrayList<>();
 
 	public CodeGenerationASTVisitor() {}
 	public CodeGenerationASTVisitor(boolean debug) {super(false, debug);} //enables print for debugging
@@ -332,6 +337,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		String dispatchTableCode = null;
 
+		if(n.superID != null) {
+			List<String> fatherDTCode = dispatchTables.get(-n.superEntry.offset-2);
+			dispatchTableCode = String.join("\n", fatherDTCode); // copying the dispatch table
+		}
+
 		// Genero il codice di ogni metodo
 		for(int i = 0; i < n.methods.size(); i++) {
 			MethodNode method = n.methods.get(i);
@@ -356,6 +366,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"add",
 					"shp"
 					);
+		}
+
+		// aggiungo la dispatchTable alla lista
+		if(dispatchTableCode != null) {
+			dispatchTables.add(List.of(dispatchTableCode.split("\n")));
+		} else {
+			dispatchTables.add(List.of()); // dispatch tables of empty classes
 		}
 
 		// TODO is this finished?
