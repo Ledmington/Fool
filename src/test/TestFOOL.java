@@ -1308,7 +1308,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_overriding() throws TypeException {
+	public void useless_overriding1() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1316,6 +1316,39 @@ public class TestFOOL {
 						}
 						class example extends father() {
 							fun m:int() (7);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+	@Test
+	public void useless_overriding2() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:bool) (5);
+						}
+						class example extends father() {
+							fun m:int(a:bool) (7);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
+	public void useless_overriding3() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:father, b:int) (5);
+						}
+						class example extends father() {
+							fun m:int(a:father, b:int) (7);
 						}
 						var x:example = new example();
 					in print(x.m());
