@@ -303,7 +303,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			}
 		}
 
-		decOffset = prevDecOffset;
+		decOffset = prevDecOffset; // TODO maybe merge this with the following lines
 
 		// Incrementing nesting level for method visits
 		int prevNLDecOffset = decOffset;
@@ -420,7 +420,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			n.nl = nestingLevel;
 		}
 
-		for (Node arg : n.arglist) visit(arg);
+		for (Node arg : n.arglist) {
+			visit(arg);
+		}
 
 		return null;
 	}

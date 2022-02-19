@@ -1075,11 +1075,11 @@ public class TestFOOL {
 							fun getB:bool () (b);
 						}
 						var one:example = new example(1);
-						var hello:example = new useless(false, false);
+						var hello:useless = new useless(false, false);
 						var two:example = new example(2);
-						var wow:example = new useless(false, true);
+						var wow:useless = new useless(false, true);
 						var three:example = new example(3);
-						var ciao:example = new useless(true, false);
+						var ciao:useless = new useless(true, false);
 					in
 						print(two.getX());
 				""";

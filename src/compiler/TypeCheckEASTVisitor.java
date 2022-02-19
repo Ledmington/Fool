@@ -332,6 +332,8 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ClassCallNode n) {
 		if (print) printNode(n, n.objID+"."+n.methodID);
 
+		if(n.methodEntry == null) return null; // early exit to avoid NullPointerException on wrong ClassCallNodes
+
 		if(n.methodEntry.type instanceof MethodTypeNode) {
 			return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
 		}
