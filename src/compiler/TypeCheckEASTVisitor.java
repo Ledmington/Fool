@@ -311,6 +311,8 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			}
 
 			// confronto che gli eventuali overriding di metodi siano corretti
+			System.out.println("my methods: " + n.type.allMethods); // TODO delete this line
+			System.out.println("father methods: " + fatherType.allMethods); // TODO delete this line
 			for(; m<fatherType.allMethods.size(); m++) {
 				ArrowTypeNode atn = n.type.allMethods.get(m);
 				ArrowTypeNode fatherAtn = fatherType.allMethods.get(m);

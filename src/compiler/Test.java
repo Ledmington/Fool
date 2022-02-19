@@ -82,15 +82,41 @@ public class Test {
 
 		String source = """
 					let
-						class example(a:int, b:int, c:int) {
-							fun getA:int () (a);
-							fun getB:int () (b);
-							fun getC:int () (c);
-						}
-						var obj:example = new example(5,6,7);
-						var obj2:example = new example(10,11,12);
-					in
-						print(obj2.getB());
+				 
+				   class Account (money:int) {
+				     fun getMon:int () money;
+				   }
+				  
+				   class TradingAcc extends Account (invested:int) {
+				     fun getInv:int () invested;
+				   }
+				  
+				   class BankLoan (loan: Account) {
+				     fun getLoan:Account () loan;
+				     fun openLoan:Account (m:TradingAcc) (
+				     	if ((m.getMon()+m.getInv())>=30000) then {
+				     		new Account(loan.getMon())
+				     	} else {
+				     		null
+				     	}
+				     );
+				   }
+				  
+				   class MyBankLoan extends BankLoan (loan: TradingAcc) {
+				     fun openLoan:TradingAcc (l:Account) (
+				     	if (l.getMon()>=20000) then {
+				     		new TradingAcc(loan.getMon(),loan.getInv())
+				     	} else {
+				     		null
+				     	}
+				     );
+				   }
+				   
+				   var bl:BankLoan = new MyBankLoan(new TradingAcc(50000,40000));
+				   var myTradingAcc:TradingAcc = new TradingAcc(20000,5000);
+				   var myLoan:Account = bl.openLoan(myTradingAcc);
+				  
+				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
 				""";
 		CharStream chars = CharStreams.fromString(source);
 		FOOLLexer lexer = new FOOLLexer(chars);

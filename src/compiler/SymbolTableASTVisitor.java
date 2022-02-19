@@ -313,6 +313,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		// Visiting methods
 		for(int i=0; i<n.methods.size(); i++) {
 			MethodNode meth = n.methods.get(i);
+			System.out.println(meth.id + " -> " + i);
 
 			visit(meth);
 
@@ -323,10 +324,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				// methods only exist at nesting level 1
 				vt.put(meth.id, new STentry(1, meth.getType(), decOffset--));
 				classTypeNode.allMethods.add(methATN);
-			} else { // overriding
+			} else {
+				// overriding
 				STentry oldEntry = vt.get(meth.id);
 				vt.put(meth.id, new STentry(1, meth.getType(), oldEntry.offset));
-				classTypeNode.allMethods.set(i, methATN);
+				classTypeNode.allMethods.set(oldEntry.offset, methATN); // TODO change oldoffset to i
 			}
 		}
 
