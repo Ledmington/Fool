@@ -1833,4 +1833,51 @@ public class TestFOOL {
 		assertTrue(compiler.err.ok());
 		System.out.println(result);
 	}
+
+	@Test
+	public void method_override_in_other_order() throws TypeException {
+		String code = """
+    					let
+    						class father() {
+    							fun m:int() (7);
+    						}
+    						class example extends father() {
+    							fun wow:int() (6);
+    							fun m:bool() (true);
+    						}
+    						var x:example = new example();
+    					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "1");
+	}
+
+	@Test
+	public void method_override_complicated() throws TypeException {
+		String code = """
+    					let
+    						class father() {
+    							fun a:int() (13);
+    							fun b:int() (7);
+    							fun c:int() (29);
+    						}
+    						class example extends father() {
+    							fun x:int() (123);
+    							fun c:int() (31);
+    							fun y:int() (99);
+    							fun a:int() (91);
+    						}
+    						var x:example = new example();
+    					in
+    						if (print(x.c()) >= 0) then {
+    							print(x.a())
+    						} else {
+    							print(-1)
+    						};
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("31", "91"));
+	}
 }
