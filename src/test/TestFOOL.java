@@ -1796,4 +1796,41 @@ public class TestFOOL {
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "5");
 	}
+
+	@Test
+	public void bankloan() throws TypeException {
+		String code = """
+					let
+				 
+				   class Account (money:int) {
+				     fun getMon:int () money;
+				   }
+				  
+				   class TradingAcc extends Account (invested:int) {
+				     fun getInv:int () invested;
+				   }
+				  
+				   class BankLoan (loan: Account) {
+				     fun getLoan:Account () loan;
+				     fun openLoan:Account (m:TradingAcc) if ((m.getMon()+m.getInv())>=30000)
+				       then {new Account(loan.getMon())}
+				       else {null};
+				   }
+				  
+				   class MyBankLoan extends BankLoan (loan: TradingAcc) {
+				     fun openLoan:TradingAcc (l:Account) if (l.getMon()>=20000)
+				       then {new TradingAcc(loan.getMon(),loan.getInv())}
+				       else {null};
+				   }
+				   
+				   var bl:BankLoan = new MyBankLoan(new TradingAcc(50000,40000));
+				   var myTradingAcc:TradingAcc = new TradingAcc(20000,5000);
+				   var myLoan:Account = bl.openLoan(myTradingAcc);
+				  
+				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
+				""";
+		List<String> result = compiler.debug().compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		System.out.println(result);
+	}
 }
