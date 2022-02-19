@@ -1216,7 +1216,7 @@ public class TestFOOL {
 		assertThrows(TypeException.class, () -> compiler.quiet().compileSource(code));
 	}
 
-	// Object Inheritance tests
+	// Object Inheritance compilation tests
 
 	@Test
 	public void subtyping_class() throws TypeException {
@@ -1323,6 +1323,7 @@ public class TestFOOL {
 		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
 	}
+
 	@Test
 	public void useless_overriding2() throws TypeException {
 		String code = """
@@ -1465,5 +1466,334 @@ public class TestFOOL {
 		assertTrue(compiler.err.ok());
 	}
 
-	// Code Optimization tests
+	// Object Inheritance execution tests
+
+	@Test
+	public void subclass_as_parameter() throws TypeException {
+		String code = """
+					let
+						class father() {}
+						class example extends father() {}
+						fun f:int(obj:father) (5);
+						var x:example = new example();
+					in print(f(x));
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void subsubclass_as_parameter() throws TypeException {
+		String code = """
+					let
+						class grandfather() {}
+						class father extends grandfather() {}
+						class example extends father() {}
+						fun f:int(obj:grandfather) (5);
+						var x:example = new example();
+					in print(f(x));
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void superclass_getter() throws TypeException {
+		String code = """
+					let
+						class father(a:int) {
+							fun m:int() (a);
+						}
+						class example extends father() {}
+						var x:example = new example(6);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "6");
+	}
+
+	@Test
+	public void supersuperclass_getter() throws TypeException {
+		String code = """
+					let
+						class grandfather(a:int) {
+							fun m:int() (a);
+						}
+						class father extends grandfather() {}
+						class example extends father() {}
+						var x:example = new example(6);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "6");
+	}
+
+	@Test
+	public void superclass_method() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int() (7);
+						}
+						class example extends father() {}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void supersuperclass_method() throws TypeException {
+		String code = """
+					let
+						class grandfather() {
+							fun m:int() (7);
+						}
+						class father extends grandfather() {}
+						class example extends father() {}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void field_override() throws TypeException {
+		String code = """
+					let
+						class father(a:int) {
+							fun m:int() (a);
+						}
+						class example extends father(a:bool) {}
+						var x:example = new example(true);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "1");
+	}
+
+	@Test
+	public void double_field_override() throws TypeException {
+		String code = """
+					let
+						class grandfather() {}
+						class father extends grandfather() {}
+						class son extends father() {}
+						
+						class supersuperexample(a:grandfather) {
+							fun m:int() (7);
+						}
+						class superexample extends supersuperexample(a:father) {}
+						class example extends superexample(a:son) {}
+						var obj:son = new son();
+						var x:example = new example(obj);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void supersuperclass_field_override() throws TypeException {
+		String code = """
+					let
+						class grandfather(a:int) {
+							fun m:int() (a);
+						}
+						class father extends grandfather(a:int) {}
+						class example extends father(a:bool) {}
+						var x:example = new example(true);
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "1");
+	}
+
+	@Test
+	public void method_override() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int() (7);
+						}
+						class example extends father() {
+							fun m:bool() (true);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "1");
+	}
+
+	@Test
+	public void double_method_override() throws TypeException {
+		String code = """
+					let
+						class grandfather() {
+							fun x:int() (7);
+						}
+						class father extends grandfather() {}
+						class son extends father() {}
+						
+						class supersuperexample() {
+							fun m:grandfather() (new grandfather());
+						}
+						class superexample extends supersuperexample() {
+							fun m:father() (new father());
+						}
+						class example extends superexample() {
+							fun m:son() (new son());
+						}
+						var x:example = new example();
+						var obj:son = x.m();
+					in print(obj.x());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void supersuperclass_method_override() throws TypeException {
+		String code = """
+					let
+						class grandfather() {
+							fun m:int() (7);
+						}
+						class father extends grandfather() {}
+						class example extends father() {
+							fun m:bool() (true);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "1");
+	}
+
+	@Test
+	public void useless_override_rettype() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int() (7);
+						}
+						class example extends father() {
+							fun m:int() (7);
+						}
+						var x:example = new example();
+					in print(x.m());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void useless_override_rettype_1param() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:int) (7);
+						}
+						class example extends father() {
+							fun m:int(a:int) (7);
+						}
+						var x:example = new example();
+					in print(x.m(5));
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void useless_override_rettype_2params() throws TypeException {
+		String code = """
+					let
+						class father() {
+							fun m:int(a:int, b:bool) (7);
+						}
+						class example extends father() {
+							fun m:int(a:int, b:bool) (7);
+						}
+						var x:example = new example();
+					in print(x.m(5, false));
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "7");
+	}
+
+	@Test
+	public void constructor_with_implicit_fields() throws TypeException {
+		String code = """
+					let
+						class father(a:int) {
+							fun getA:int() (a);
+						}
+						class example extends father(b:int) {
+							fun getB:int() (b);
+						}
+						var x:example = new example(5,6);
+					in print(x.getA());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void constructor_with_implicit_fields_only_grandfather() throws TypeException {
+		String code = """
+					let
+						class grandfather(a:int) {
+							fun getA:int() (a);
+						}
+						class father extends grandfather() {}
+						class example extends father(b:int) {
+							fun getB:int() (b);
+						}
+						var x:example = new example(5,6);
+					in print(x.getA());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
+
+	@Test
+	public void constructor_with_implicit_fields_father_and_grandfather() throws TypeException {
+		String code = """
+					let
+						class grandfather(a:int) {
+							fun getA:int() (a);
+						}
+						class father extends grandfather(b:int) {
+							fun getB:int() (b);
+						}
+						class example extends father(c:int) {
+							fun getC:int() (c);
+						}
+						var x:example = new example(5,6,7);
+					in print(x.getA());
+				""";
+		String result = compiler.compileSourceAndRun(code).get(0);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, "5");
+	}
 }
