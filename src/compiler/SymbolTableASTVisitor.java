@@ -320,15 +320,21 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 			if(!vt.containsKey(meth.id)) {
 				// methods only exist at nesting level 1
-				vt.put(meth.id, new STentry(1, meth.getType(), decOffset--));
+				vt.put(meth.id, new STentry(1, meth.getType(), decOffset));
+				meth.offset = decOffset;
+				decOffset--;
 				classTypeNode.allMethods.add(methATN);
 			} else {
 				// overriding
 				STentry oldEntry = vt.get(meth.id);
 				vt.put(meth.id, new STentry(1, meth.getType(), oldEntry.offset));
+				meth.offset = oldEntry.offset;
 				classTypeNode.allMethods.set(-oldEntry.offset, methATN); // TODO change oldoffset to i (if needed)
 			}
 		}
+
+		System.out.println("class " + n.id + " vt is " + vt.entrySet().stream().map(e->e.getKey()+"="+e.getValue().type).toList()); // TODO delete this line
+		System.out.println("classtypenode methods: " + classTypeNode.allMethods); // TODO delete this line
 
 		// Resetting old value of nesting level
 		decOffset = prevNLDecOffset;

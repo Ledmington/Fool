@@ -336,10 +336,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		if (print) printNode(n, n.id);
 
 		String dispatchTableCode = null;
+		List<String> fatherDT = null;
+		List<String> myDT = new ArrayList<>();
 
 		if(n.superID != null) {
-			List<String> fatherDTCode = dispatchTables.get(-n.superEntry.offset-2);
-			dispatchTableCode = String.join("\n", fatherDTCode); // copying the dispatch table
+			fatherDT = dispatchTables.get(-n.superEntry.offset-2);
+			myDT.addAll(fatherDT);
 		}
 
 		// Genero il codice di ogni metodo
@@ -350,7 +352,13 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 			// sulla cima dello stack c'è l'indirizzo del metodo
 			String methodLabel = method.label;
-			//int methodOffset = method.offset; // TODO delete this if unused
+			int methodOffset = method.offset;
+
+			if(myDT.size() > -methodOffset) {
+				myDT.set(-methodOffset, methodLabel);
+			} else {
+				myDT.add(methodLabel);
+			}
 
 			dispatchTableCode = nlJoin(
 					dispatchTableCode,
@@ -369,12 +377,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					);
 		}
 
-		// aggiungo la dispatchTable alla lista
-		if(dispatchTableCode != null) {
-			dispatchTables.add(List.of(dispatchTableCode.split("\n")));
-		} else {
-			dispatchTables.add(List.of()); // dispatch tables of empty classes
-		}
+		dispatchTables.add(myDT);
 
 		// TODO is this finished?
 		return nlJoin(

@@ -82,41 +82,14 @@ public class Test {
 
 		String source = """
 					let
-				 
-				   class Account (money:int) {
-				     fun getMon:int () money;
-				   }
-				  
-				   class TradingAcc extends Account (invested:int) {
-				     fun getInv:int () invested;
-				   }
-				  
-				   class BankLoan (loan: Account) {
-				     fun getLoan:Account () loan;
-				     fun openLoan:Account (m:TradingAcc) (
-				     	if ((m.getMon()+m.getInv())>=30000) then {
-				     		new Account(loan.getMon())
-				     	} else {
-				     		null
-				     	}
-				     );
-				   }
-				  
-				   class MyBankLoan extends BankLoan (loan: TradingAcc) {
-				     fun openLoan:TradingAcc (l:Account) (
-				     	if (l.getMon()>=20000) then {
-				     		new TradingAcc(loan.getMon(),loan.getInv())
-				     	} else {
-				     		null
-				     	}
-				     );
-				   }
-				   
-				   var bl:BankLoan = new MyBankLoan(new TradingAcc(50000,40000));
-				   var myTradingAcc:TradingAcc = new TradingAcc(20000,5000);
-				   var myLoan:Account = bl.openLoan(myTradingAcc);
-				  
-				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
+						class father() {
+							fun m:int() (7);
+						}
+						class example extends father() {
+							fun m:bool() (true);
+						}
+						var x:example = new example();
+					in print(x.m());
 				""";
 		CharStream chars = CharStreams.fromString(source);
 		FOOLLexer lexer = new FOOLLexer(chars);
@@ -139,7 +112,6 @@ public class Test {
 		System.out.println("Visualizing Enriched AST.");
 		new PrintEASTVisitor().visit(ast);
 
-
 		System.out.println("\nChecking Types.");
 		TypeCheckEASTVisitor typeCheckVisitor = new TypeCheckEASTVisitor(true);
 		TypeNode mainType = typeCheckVisitor.visit(ast);
@@ -148,7 +120,6 @@ public class Test {
 		new PrintEASTVisitor().visit(mainType);
 		System.out.println("You had " + FOOLlib.typeErrors + " type checking errors.\n");
 
-
 		int frontEndErrors = lexer.lexicalErrors + parser.getNumberOfSyntaxErrors() + symtableVisitor.stErrors + FOOLlib.typeErrors;
 		System.out.println("You had a total of " + frontEndErrors + " front-end errors.\n");
 
@@ -156,7 +127,7 @@ public class Test {
 
 		System.out.println("Generating code.");
 
-		String code = new CodeGenerationASTVisitor().visit(ast);
+		String code = new CodeGenerationASTVisitor(true).visit(ast);
 		CharStream charsASM = CharStreams.fromString(code);
 		SVMLexer lexerASM = new SVMLexer(charsASM);
 		CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
