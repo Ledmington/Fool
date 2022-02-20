@@ -320,7 +320,7 @@ public class AST {
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {return visitor.visitNode(this);}
 
 		public String toString() {
-			return "(" + parlist.toString() + ") -> " + returnType;
+			return parlist.toString() + " -> " + returnType;
 		}
 	}
 	

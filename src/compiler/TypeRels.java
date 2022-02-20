@@ -35,18 +35,15 @@ public class TypeRels {
 
 			// covarianza tipo di ritorno (il tipo di ritorno nuovo deve essere uguale o sottotipo di quello vecchio)
 			if(!isSubtype(atnA.returnType, atnB.returnType)) return false;
-System.out.println("correct return type"); // TODO delete this line
-System.out.println(atnA.parlist); // TODO delete this line
-			System.out.println(atnB.parlist);
+
 			// il metodo che effettua override deve avere lo stesso numero di parametri
 			if(atnA.parlist.size() != atnB.parlist.size()) return false;
-			System.out.println("correct number of params"); // TODO delete this line
+
 			// controvarianza tipi dei parametri (il tipo dell'i-esimo parametro nuovo deve essere "uguale" o supertipo dell'i-esimo parametro vecchio)
 			for(int i=0; i<atnA.parlist.size(); i++) {
 				TypeNode newPar = atnA.parlist.get(i);
 				TypeNode oldPar = atnB.parlist.get(i);
 				if(!isSubtype(oldPar, newPar)) return false;
-				System.out.println("correct "+i+"-th parameter"); // TODO delete this line
 			}
 
 			return true;

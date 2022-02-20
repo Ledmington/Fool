@@ -1813,7 +1813,7 @@ public class TestFOOL {
 				   class BankLoan (loan: Account) {
 				     fun getLoan:Account () loan;
 				     fun openLoan:Account (m:TradingAcc) (
-				     	if ((m.getMon()+m.getInv())>=30000) then {
+				     	if ((m.getMon()+m.getInv()) >= 30000) then {
 				     		new Account(loan.getMon())
 				     	} else {
 				     		null
@@ -1823,16 +1823,16 @@ public class TestFOOL {
 				  
 				   class MyBankLoan extends BankLoan (loan: TradingAcc) {
 				     fun openLoan:TradingAcc (l:Account) (
-				     	if (l.getMon()>=20000) then {
-				     		new TradingAcc(loan.getMon(),loan.getInv())
+				     	if (l.getMon() >= 20000) then {
+				     		new TradingAcc(loan.getMon(), loan.getInv())
 				     	} else {
 				     		null
 				     	}
 				     );
 				   }
 				   
-				   var bl:BankLoan = new MyBankLoan(new TradingAcc(50000,40000));
-				   var myTradingAcc:TradingAcc = new TradingAcc(20000,5000);
+				   var bl:BankLoan = new MyBankLoan(new TradingAcc(50000, 40000));
+				   var myTradingAcc:TradingAcc = new TradingAcc(20000, 5000);
 				   var myLoan:Account = bl.openLoan(myTradingAcc);
 				  
 				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});

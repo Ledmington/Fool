@@ -307,28 +307,22 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Incrementing nesting level for method visits
 		int prevNLDecOffset = decOffset;
-		decOffset = (n.superID == null) ? 0 : superType.allMethods.size();
+		decOffset = (n.superID == null) ? 0 : -superType.allMethods.size();
 		nestingLevel++;
 
 		// Visiting methods
 		for(int i=0; i<n.methods.size(); i++) {
 			MethodNode meth = n.methods.get(i);
-			System.out.println("class " + n.id + " " + meth.id + " -> index: " + i); // TODO delete this line
 
 			visit(meth);
 
 			ArrowTypeNode methATN = ((MethodTypeNode) meth.getType()).fun;
-			classTypeNode.allMethods.add(methATN);
-
-			System.out.println("vt is " + vt); // TODO delete this line
 
 			if(!vt.containsKey(meth.id)) {
-				System.out.println("no override"); // TODO delete this line
 				// methods only exist at nesting level 1
 				vt.put(meth.id, new STentry(1, meth.getType(), decOffset--));
 				classTypeNode.allMethods.add(methATN);
 			} else {
-				System.out.println("overriding"); // TODO delete this line
 				// overriding
 				STentry oldEntry = vt.get(meth.id);
 				vt.put(meth.id, new STentry(1, meth.getType(), oldEntry.offset));
