@@ -296,24 +296,35 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n, n.id + ((n.superID==null)?"":" extends "+n.superID));
 
-		int f=0;
 		int m=0;
 		if(n.superID != null) {
 			superType.put(n.id, n.superID);
 
-			ClassTypeNode fatherType = (ClassTypeNode) n.superEntry.type;
+			ClassTypeNode parentCT = (ClassTypeNode) n.superEntry.type;
 
 			// confronto che gli eventuali overriding di campi siano corretti
-			for(; f<fatherType.allFields.size(); f++) {
-				if( !isSubtype(n.type.allFields.get(f), fatherType.allFields.get(f)) ) {
+			for(int f=0; f<n.fields.size(); f++) {
+				int position = -n.fields.get(f).offset - 1;
+
+				if(position < parentCT.allFields.size()) {
+					// overriding
+					if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(f)) ) {
+						throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
+					}
+				}
+			}
+
+			// confronto che gli eventuali overriding di campi siano corretti
+			for(int f=0; f<parentCT.allFields.size(); f++) {
+				if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(f)) ) {
 					throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
 				}
 			}
 
 			// confronto che gli eventuali overriding di metodi siano corretti
-			for(; m<fatherType.allMethods.size(); m++) {
+			for(; m<parentCT.allMethods.size(); m++) {
 				ArrowTypeNode atn = n.type.allMethods.get(m);
-				ArrowTypeNode fatherAtn = fatherType.allMethods.get(m);
+				ArrowTypeNode fatherAtn = parentCT.allMethods.get(m);
 				if( !isSubtype(atn, fatherAtn) ) {
 					throw new TypeException("Invalid overriding of " + m + "-th method in class " + n.id, n.getLine());
 				}

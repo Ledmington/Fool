@@ -1338,7 +1338,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in print(x.m(true));
 				""";
-		compiler.debug().compileSource(code);
+		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
 	}
 
@@ -1608,7 +1608,7 @@ public class TestFOOL {
 						var x:example = new example(true);
 					in print(x.m());
 				""";
-		String result = compiler.debug().compileSourceAndRun(code).get(0);
+		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "1");
 	}
@@ -1630,7 +1630,7 @@ public class TestFOOL {
 						var x:example = new example(obj);
 					in print(x.m());
 				""";
-		String result = compiler.debug().compileSourceAndRun(code).get(0);
+		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "7");
 	}
@@ -1665,7 +1665,7 @@ public class TestFOOL {
 						var x:example = new example();
 					in print(x.m());
 				""";
-		String result = compiler.debug().compileSourceAndRun(code).get(0);
+		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "1");
 	}

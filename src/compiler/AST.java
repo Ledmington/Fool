@@ -235,6 +235,7 @@ public class AST {
 
 	// dichiarazione di un campo
 	public static class FieldNode extends ParNode {
+		public int offset;
 		FieldNode(String i, TypeNode t) {
 			super(i, t);
 		}

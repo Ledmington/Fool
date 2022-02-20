@@ -293,7 +293,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			} else {
 				if(!vt.containsKey(field.id)) {
 					// fields only exist at nesting level 1
-					vt.put(field.id, new STentry(1, field.getType(), decOffset--));
+					vt.put(field.id, new STentry(1, field.getType(), decOffset));
+					field.offset = decOffset;
+					decOffset--;
 					classTypeNode.allFields.add(field.getType());
 				} else {
 					// overriding
@@ -303,6 +305,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 						stErrors++;
 					} else {
 						vt.put(field.id, new STentry(1, field.getType(), oldEntry.offset));
+						field.offset = oldEntry.offset;
 						classTypeNode.allFields.set(i, field.getType());
 					}
 				}
