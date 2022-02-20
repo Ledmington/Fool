@@ -318,16 +318,28 @@ public class AST {
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {return visitor.visitNode(this);}
+
+		public String toString() {
+			return "(" + parlist.toString() + ") -> " + returnType;
+		}
 	}
 	
 	public static class BoolTypeNode extends TypeNode {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
+		public String toString() {
+			return "bool";
+		}
 	}
 
 	public static class IntTypeNode extends TypeNode {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
+		public String toString() {
+			return "int";
+		}
 	}
 
 	// tipo di una classe
@@ -358,6 +370,10 @@ public class AST {
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
 		}
+
+		public String toString() {
+			return fun.toString();
+		}
 	}
 
 	// riferimento ad una classe (tipo quando si invoca un metodo dall'esterno)
@@ -371,6 +387,10 @@ public class AST {
 		@Override
 		public <S, E extends Exception> S accept(final BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
+		}
+
+		public String toString() {
+			return classID;
 		}
 	}
 
