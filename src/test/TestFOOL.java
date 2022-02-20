@@ -1117,6 +1117,7 @@ public class TestFOOL {
 						class list(head:int, tail:list) {
 							fun getHead:int() (head);
 							fun getTail:list() (tail);
+							
 							fun search:int (n:int) (
 								if (head == n) then {
 									head
@@ -1133,7 +1134,7 @@ public class TestFOOL {
 					in
 						print(l.search(3));
 				""";
-		String result = compiler.compileSourceAndRun(code).get(0);
+		String result = compiler.debug().compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "3");
 	}
@@ -1335,9 +1336,9 @@ public class TestFOOL {
 							fun m:int(a:bool) (7);
 						}
 						var x:example = new example();
-					in print(x.m());
+					in print(x.m(true));
 				""";
-		compiler.compileSource(code);
+		compiler.debug().compileSource(code);
 		assertTrue(compiler.err.ok());
 	}
 
@@ -1351,8 +1352,9 @@ public class TestFOOL {
 						class example extends father() {
 							fun m:int(a:father, b:int) (7);
 						}
+						var f:father = new father();
 						var x:example = new example();
-					in print(x.m());
+					in print(x.m(f,55));
 				""";
 		compiler.compileSource(code);
 		assertTrue(compiler.err.ok());
@@ -1391,10 +1393,10 @@ public class TestFOOL {
 		String code = """
 					let
 						class father() {
-							fun m:int(a:bool) (5);
+							fun m:int(a:int) (5);
 						}
 						class example extends father() {
-							fun m:int(a:int) (5);
+							fun m:int(a:bool) (5);
 						}
 					in 1;
 				""";

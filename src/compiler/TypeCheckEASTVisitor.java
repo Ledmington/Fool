@@ -15,7 +15,7 @@ import static compiler.TypeRels.*;
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
 	public TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions
-	public TypeCheckEASTVisitor(boolean debug) { super(true,debug); } // enables print for debugging
+	public TypeCheckEASTVisitor(boolean debug) { super(true, debug); } // enables print for debugging
 
 	//checks that a type object is visitable (not incomplete) 
 	private TypeNode ckvisit(TypeNode t) throws TypeException {
@@ -329,15 +329,29 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	}
 
 	@Override
-	public TypeNode visitNode(ClassCallNode n) {
+	public TypeNode visitNode(ClassCallNode n) throws TypeException {
 		if (print) printNode(n, n.objID+"."+n.methodID);
-
+		System.out.println("wow"); // TODO delete this line
 		if(n.methodEntry == null) return null; // early exit to avoid NullPointerException on wrong ClassCallNodes
-
+		System.out.println("mannaggia"); // TODO delete this line
 		if(n.methodEntry.type instanceof MethodTypeNode) {
-			return ((MethodTypeNode) n.methodEntry.type).fun.returnType;
-		}
+			ArrowTypeNode atn = ((MethodTypeNode) n.methodEntry.type).fun;
 
+			if(n.arglist.size() != atn.parlist.size()) {
+				throw new TypeException("Wrong number of arguments in method " + n.methodID + " invocation", n.getLine());
+			}
+
+			for(int i=0; i<n.arglist.size(); i++) {
+				TypeNode argType = visit(n.arglist.get(i));
+				TypeNode declarationArgType = atn.parlist.get(i);
+				if(!isSubtype(argType, declarationArgType)) {
+					throw new TypeException("Wrong type of " + i + "-th argument in method " + n.methodID + " invocation", n.getLine());
+				}
+			}
+
+			return atn.returnType;
+		}
+		System.out.println("è un sacco null"); // TODO delete this line
 		return null; // TODO is this correct?
 	}
 
@@ -354,10 +368,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			}
 		}
 
-		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) )
+		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) ) {
 			throw new TypeException("Wrong return type for method " + n.id, n.getLine());
+		}
 
-		return new MethodTypeNode(new ArrowTypeNode(n.parlist.stream().map(DecNode::getType).toList(), n.retType));
+		//return new MethodTypeNode(new ArrowTypeNode(n.parlist.stream().map(DecNode::getType).toList(), n.retType)); // TODO delete if unused
+		return null;
 	}
 
 	@Override
