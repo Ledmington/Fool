@@ -307,7 +307,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Incrementing nesting level for method visits
 		int prevNLDecOffset = decOffset;
-		decOffset = (n.superID == null) ? 0 : -superType.allMethods.size();
+		decOffset = (n.superID == null) ? 0 : superType.allMethods.size();
 		nestingLevel++;
 
 		// Visiting methods
@@ -322,14 +322,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 				// methods only exist at nesting level 1
 				vt.put(meth.id, new STentry(1, meth.getType(), decOffset));
 				meth.offset = decOffset;
-				decOffset--;
+				decOffset++;
 				classTypeNode.allMethods.add(methATN);
 			} else {
 				// overriding
 				STentry oldEntry = vt.get(meth.id);
 				vt.put(meth.id, new STentry(1, meth.getType(), oldEntry.offset));
 				meth.offset = oldEntry.offset;
-				classTypeNode.allMethods.set(-oldEntry.offset, methATN); // TODO change oldoffset to i (if needed)
+				classTypeNode.allMethods.set(oldEntry.offset, methATN); // TODO change oldoffset to i (if needed)
 			}
 		}
 

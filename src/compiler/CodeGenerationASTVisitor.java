@@ -344,28 +344,40 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			myDT.addAll(fatherDT);
 		}
 
-		// Genero il codice di ogni metodo
+		// qui visito i metodi
 		for(int i = 0; i < n.methods.size(); i++) {
 			MethodNode method = n.methods.get(i);
+			System.out.println(method.id + " -> " + method.offset); // TODO delete this line
 			method.label = "class" + dispatchTables.size() + "method" + i;
+			String methodLabel = method.label;
+			int methodOffset = method.offset; // TODO surely it's not finished
+
+			if(methodOffset >= myDT.size()) {
+				// se il metodo non fa overriding
+				myDT.add(methodLabel);
+			} else {
+				// se il metodo fa overriding
+				myDT.set(methodOffset, methodLabel);
+			}
+
+			// visitare solo i metodi che non fanno overriding
 			visit(method);
 
 			// sulla cima dello stack c'è l'indirizzo del metodo
-			String methodLabel = method.label;
-			int methodOffset = method.offset;
 
-			if(myDT.size() > -methodOffset) {
-				myDT.set(-methodOffset, methodLabel);
-			} else {
-				myDT.add(methodLabel);
-			}
+		}
+
+		// qui genero il codice
+		for(int i = 0; i < myDT.size(); i++) {
+			String methodLabel = myDT.get(i);
+			//method.label = "class" + dispatchTables.size() + "method" + i; // TODO delete is unused
 
 			dispatchTableCode = nlJoin(
 					dispatchTableCode,
 
 					// aggiorno la Dispatch Table creata settando la posizione, data
 					// dall’offset del metodo, alla sua etichetta
-					"push "+methodLabel,
+					"push " + methodLabel,
 					"lhp",
 					"sw",
 
@@ -374,7 +386,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 					"push 1",
 					"add",
 					"shp"
-					);
+			);
 		}
 
 		dispatchTables.add(myDT);
