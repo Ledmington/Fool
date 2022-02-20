@@ -1468,6 +1468,36 @@ public class TestFOOL {
 		assertTrue(compiler.err.ok());
 	}
 
+	@Test
+	public void method_overriding_field() throws TypeException {
+		String code = """
+    					let
+    						class father(m:int) {}
+    						class example extends father() {
+    							fun m:int() (5);
+    						}
+    						var x:example = new example();
+    					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
+	@Test
+	public void field_overriding_method() throws TypeException {
+		String code = """
+    					let
+    						class father() {
+    							fun m:int() (5);
+    						}
+    						class example extends father(m:int) {}
+    						var x:example = new example();
+    					in 1;
+				""";
+		compiler.compileSource(code);
+		assertFalse(compiler.err.ok());
+	}
+
 	// Object Inheritance execution tests
 
 	@Test
