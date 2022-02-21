@@ -321,7 +321,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 					// overriding
 					ArrowTypeNode atn = n.type.allMethods.get(position);
 					ArrowTypeNode fatherAtn = parentCT.allMethods.get(position);
-					System.out.println("checking " + atn + " against " + fatherAtn);
 					if( !isSubtype(atn, fatherAtn) ) {
 						throw new TypeException("Invalid overriding of " + m + "-th method in class " + n.id, n.getLine());
 					}
@@ -363,7 +362,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 			return atn.returnType;
 		}
-		System.out.println("è un sacco null"); // TODO delete this line
+
 		return null; // TODO is this correct?
 	}
 
@@ -384,7 +383,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			throw new TypeException("Wrong return type for method " + n.id, n.getLine());
 		}
 
-		//return new MethodTypeNode(new ArrowTypeNode(n.parlist.stream().map(DecNode::getType).toList(), n.retType)); // TODO delete if unused
 		return null;
 	}
 

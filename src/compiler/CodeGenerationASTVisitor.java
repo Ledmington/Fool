@@ -347,7 +347,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		// qui visito i metodi
 		for(int i = 0; i < n.methods.size(); i++) {
 			MethodNode method = n.methods.get(i);
-			System.out.println(method.id + " -> " + method.offset); // TODO delete this line
 			method.label = "class" + dispatchTables.size() + "method" + i;
 			String methodLabel = method.label;
 			int methodOffset = method.offset; // TODO surely it's not finished
@@ -370,7 +369,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		// qui genero il codice
 		for(int i = 0; i < myDT.size(); i++) {
 			String methodLabel = myDT.get(i);
-			//method.label = "class" + dispatchTables.size() + "method" + i; // TODO delete is unused
 
 			dispatchTableCode = nlJoin(
 					dispatchTableCode,
@@ -391,7 +389,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		dispatchTables.add(myDT);
 
-		// TODO is this finished?
 		return nlJoin(
 			"/* class " + n.id + " declaration */",
 				"lhp", // metto il dispatch pointer sullo stack
@@ -413,10 +410,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		for (int i = 0; i < n.parlist.size(); i++) {
 			popParl = nlJoin(popParl, "pop");
 		}
-
-		// TODO delete this code if unused
-		//String methodLabel = freshFunLabel();
-		//n.label = methodLabel;
 
 		putCode(
 				nlJoin(

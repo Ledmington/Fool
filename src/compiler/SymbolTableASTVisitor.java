@@ -435,7 +435,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		if (objEntry == null) {
 			System.out.println("Object " + n.objID + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-			//return null; // early exit // TODO delete if unused
 		} else {
 			n.entry = objEntry;
 			n.nl = nestingLevel;
@@ -473,7 +472,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
 		// Setting the entry as the one of the class
 		n.entry = symTable.get(0).get(classID);
-		//n.entry = new STentry(nestingLevel, new RefTypeNode(classID), decOffset);
 
 		for (Node arg : n.arglist) visit(arg);
 
