@@ -306,9 +306,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			for(int f=0; f<n.fields.size(); f++) {
 				int position = -n.fields.get(f).offset - 1;
 
-				if(position < parentCT.allFields.size()) {
+				if(position < parentCT.allFields.size() && f < n.type.allFields.size()) {
 					// overriding
-					if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(f)) ) {
+					if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(position)) ) {
 						throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
 					}
 				}
