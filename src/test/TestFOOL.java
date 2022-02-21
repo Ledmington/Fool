@@ -25,24 +25,24 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void booleans_as_ints() throws TypeException {
+	public void booleansAsInts() throws TypeException {
 		assertEquals(compileAndRun("print(true);").get(0), "1");
 		assertEquals(compileAndRun("print(false);").get(0), "0");
 	}
 
 	@Test
-	public void simple_if() throws TypeException {
+	public void simpleIf() throws TypeException {
 		assertEquals(compileAndRun("print(if 2+2 == 3 then {1} else {5});").get(0), "5");
 	}
 
 	@Test
-	public void simple_var() throws TypeException {
+	public void simpleVar() throws TypeException {
 		assertEquals(compileAndRun("let var x:int = 5; in print(x);").get(0), "5");
 		assertEquals(compileAndRun("let var x:bool = true; in print(x);").get(0), "1");
 	}
 
 	@Test
-	public void simple_fun() throws TypeException {
+	public void simpleFun() throws TypeException {
 		String code = """
 					let
 						fun f:int()
@@ -57,7 +57,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void simple_math() throws TypeException {
+	public void simpleMath() throws TypeException {
 		assertEquals(compileAndRun("print(1+2);").get(0), "3");
 		assertEquals(compileAndRun("print(2-1);").get(0), "1");
 		assertEquals(compileAndRun("print(2*3);").get(0), "6");
@@ -65,12 +65,12 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void division_by_zero() {
+	public void divisionByZero() {
 		assertThrows(ArithmeticException.class, () -> compileAndRun("1/0;"));
 	}
 
 	@Test
-	public void negative_numbers() throws TypeException {
+	public void negativeNumbers() throws TypeException {
 		assertEquals(compileAndRun("print(1-2);").get(0), "-1");
 		assertEquals(compileAndRun("print(-2-1);").get(0), "-3");
 		assertEquals(compileAndRun("print(1+-2);").get(0), "-1");
@@ -83,28 +83,28 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void test_eq() throws TypeException {
+	public void testEq() throws TypeException {
 		assertEquals(compileAndRun("print(1==2);").get(0), "0");
 		assertEquals(compileAndRun("print(2==2);").get(0), "1");
 		assertEquals(compileAndRun("print(3==2);").get(0), "0");
 	}
 
 	@Test
-	public void test_geq() throws TypeException {
+	public void testGeq() throws TypeException {
 		assertEquals(compileAndRun("print(1>=2);").get(0), "0");
 		assertEquals(compileAndRun("print(2>=2);").get(0), "1");
 		assertEquals(compileAndRun("print(3>=2);").get(0), "1");
 	}
 
 	@Test
-	public void test_leq() throws TypeException {
+	public void testLeq() throws TypeException {
 		assertEquals(compileAndRun("print(1<=2);").get(0), "1");
 		assertEquals(compileAndRun("print(2<=2);").get(0), "1");
 		assertEquals(compileAndRun("print(3<=2);").get(0), "0");
 	}
 
 	@Test
-	public void test_or() throws TypeException {
+	public void testOr() throws TypeException {
 		assertEquals(compileAndRun("print(false||false);").get(0), "0");
 		assertEquals(compileAndRun("print(false||true);").get(0), "1");
 		assertEquals(compileAndRun("print(true||false);").get(0), "1");
@@ -112,14 +112,14 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_bool_in_or() {
+	public void onlyBoolInOr() {
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 || 2);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 || true);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(true || 2);"));
 	}
 
 	@Test
-	public void test_and() throws TypeException {
+	public void testAnd() throws TypeException {
 		assertEquals(compileAndRun("print(false&&false);").get(0), "0");
 		assertEquals(compileAndRun("print(false&&true);").get(0), "0");
 		assertEquals(compileAndRun("print(true&&false);").get(0), "0");
@@ -127,27 +127,27 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_bool_in_and() {
+	public void onlyBoolInAnd() {
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 && 2);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(3 && true);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(true && 2);"));
 	}
 
 	@Test
-	public void test_not() throws TypeException {
+	public void testNot() throws TypeException {
 		assertEquals(compileAndRun("print(!false);").get(0), "1");
 		assertEquals(compileAndRun("print(!true);").get(0), "0");
 	}
 
 	@Test
-	public void only_bool_in_not() {
+	public void onlyBoolInNot() {
 		assertThrows(TypeException.class, () -> compileAndRun("print(!0);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(!1);"));
 		assertThrows(TypeException.class, () -> compileAndRun("print(!2);"));
 	}
 
 	@Test
-	public void efficient_or() throws TypeException {
+	public void efficientOr() throws TypeException {
 		// This code tests if || is efficiently evaluated
 		// We prepare an infinite recursive function f() that will loop the program if executed
 		// Then we check (true || f()) and the program should terminate
@@ -168,7 +168,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void efficient_and() throws TypeException {
+	public void efficientAnd() throws TypeException {
 		// This code tests if && is efficiently evaluated
 		// We prepare an infinite recursive function f() that will loop the program if executed
 		// Then we check (false && f()) and the program should terminate
@@ -189,7 +189,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_return_type_function() throws TypeException {
+	public void wrongReturnTypeFunction() throws TypeException {
 		String code = """
 					let
 						fun f:bool() let var x:int=5; in x;
@@ -200,7 +200,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void incompatible_value_var() throws TypeException {
+	public void incompatibleValueVar() throws TypeException {
 		String code = """
 					let
 						var x:bool = 5;
@@ -211,7 +211,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void non_bool_in_if() {
+	public void nonBoolInIf() {
 		String c1 = """
 					if(5) then {true} else {false};""";
 		String c2 = """
@@ -225,7 +225,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void different_types_in_if() {
+	public void differentTypesInIf() {
 		String c1 = """
 					let
 						fun f:int() (5);
@@ -243,7 +243,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void incompatible_types_in_equal() {
+	public void incompatibleTypesInEqual() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -254,7 +254,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void incompatible_types_in_greaterequal() {
+	public void incompatibleTypesInGreaterequal() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -265,7 +265,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void incompatible_types_in_lessequal() {
+	public void incompatibleTypesInLessequal() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -276,7 +276,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_mul() {
+	public void onlyIntInMul() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -287,7 +287,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_div() {
+	public void onlyIntInDiv() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -298,7 +298,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_sum() {
+	public void onlyIntInSum() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -309,7 +309,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void only_int_in_sub() {
+	public void onlyIntInSub() {
 		String code = """
 					let
 						fun f:int() (5);
@@ -320,7 +320,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void non_function_invocation() {
+	public void nonFunctionInvocation() {
 		String code = """
 					let
 						var x:int = 5;
@@ -331,7 +331,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_number_of_parameters() {
+	public void wrongNumberOfParameters() {
 		String c1 = """
 					let
 						fun f:int() (5);
@@ -349,7 +349,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_parameter_type() {
+	public void wrongParameterType() {
 		String code = """
 					let
 						fun f:int(x:bool) (5);
@@ -360,7 +360,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void unexisting_variable() {
+	public void unexistingVariable() {
 		String code = """
 					x;
 				""";
@@ -368,7 +368,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void variable_redefinition() throws TypeException {
+	public void variableRedefinition() throws TypeException {
 		String code = """
 					let
 						var x:bool = true;
@@ -381,7 +381,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void function_redefinition() throws TypeException {
+	public void functionRedefinition() throws TypeException {
 		String code = """
 					let
 						fun f:bool() (true);
@@ -394,7 +394,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void function_argument_redefinition() {
+	public void functionArgumentRedefinition() {
 		String code = """
 					let
 						fun f:bool(x:int, x:bool) (true);
@@ -422,7 +422,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void fattoriale() throws TypeException {
+	public void factorial() throws TypeException {
 		String code = """
 					let
 						fun fatt:int (n:int) (
@@ -439,7 +439,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void euclid_gcd() throws TypeException {
+	public void euclidGCD() throws TypeException {
 		String code = """
 					let
 						fun rem:int (a:int, b:int) (
@@ -512,7 +512,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void square_root() throws TypeException {
+	public void squareRoot() throws TypeException {
 		String code = """
 					let
 						fun subOddNumber:int (i:int, n:int, count:int) (
@@ -532,7 +532,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void square_root_binary_search() throws TypeException {
+	public void squareRootBinarySearch() throws TypeException {
 		String code = """
 					let
 						fun sqrtBinarySearch:int (low:int, high:int, mid:int, n:int)
@@ -563,7 +563,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void collatz_conjecture() throws TypeException {
+	public void collatzConjecture() throws TypeException {
 		String code = """
 					let
 						fun rem:int (a:int, b:int) (
@@ -668,7 +668,7 @@ public class TestFOOL {
 	// Object-Oriented tests
 
 	@Test
-	public void empty_class() throws TypeException {
+	public void emptyClass() throws TypeException {
 		String code = """
 					let
 						class example() {}
@@ -680,7 +680,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void class_with_fields() throws TypeException {
+	public void classWithFields() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {}
@@ -692,7 +692,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void class_with_methods() throws TypeException {
+	public void classWithMethods() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -706,7 +706,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void class_with_fields_and_methods() throws TypeException {
+	public void classWithFieldsAndMethods() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -720,7 +720,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void null_type() throws TypeException {
+	public void nullType() throws TypeException {
 		String code = """
 					let
 						class useless() {}
@@ -732,7 +732,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void null_is_not_int() {
+	public void nullIsNotInt() {
 		// we are checking null against -1 because null is represented as -1 in memory
 		String code = """
 					if (null == -1) then {
@@ -745,7 +745,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void classes_only_in_global_scope() throws TypeException {
+	public void classesOnlyInGlobalScope() throws TypeException {
 		String code = """
 					let
 						fun f:int ()
@@ -759,7 +759,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void class_redefinition() throws TypeException {
+	public void classRedefinition() throws TypeException {
 		String code = """
 					let
 						class example() {}
@@ -771,7 +771,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void object_redefinition() throws TypeException {
+	public void objectRedefinition() throws TypeException {
 		String code = """
 					let
 						class example() {}
@@ -784,7 +784,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void field_redefinition() throws TypeException {
+	public void fieldRedefinition() throws TypeException {
 		String code = """
 					let
 						class example(x:int, x:bool) {}
@@ -795,7 +795,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_redefinition() throws TypeException {
+	public void methodRedefinition() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -809,7 +809,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_argument_redefinition() throws TypeException {
+	public void methodArgumentRedefinition() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -822,7 +822,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void cannot_access_fields() throws TypeException {
+	public void cannotAccessFields() throws TypeException {
 		String code = """
 					let
 						class example(a:int) {}
@@ -834,7 +834,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void using_method_like_field() throws TypeException {
+	public void usingMethodLikeField() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -848,7 +848,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void unexisting_class() throws TypeException {
+	public void unexistingClass() throws TypeException {
 		String code = """
 					let
 						var x:example = new example();
@@ -859,7 +859,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void calling_method_on_unexisting_object() throws TypeException {
+	public void callingMethodOnUnexistingObject() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -875,7 +875,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void calling_unexisting_method() throws TypeException {
+	public void callingUnexistingMethod() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -892,7 +892,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void calling_method_on_wrong_class() throws TypeException {
+	public void callingMethodOnWrongClass() throws TypeException {
 		String code = """
 					let
 						class example() {
@@ -912,7 +912,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void function_returning_object() throws TypeException {
+	public void functionReturningObject() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -927,7 +927,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_returning_object() throws TypeException {
+	public void methodReturningObject() throws TypeException {
 		String code = """
 					let
 						class example(a:int) {
@@ -942,7 +942,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void null_subtype_of_class() throws TypeException {
+	public void nullSubtypeOfClass() throws TypeException {
 		String code = """
 					let
 						class example(a:int) {
@@ -957,7 +957,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void less_fields_than_required() throws TypeException {
+	public void lessFieldsThanRequired() throws TypeException {
 		String code = """
 					let
 						class example(a:int) {}
@@ -969,7 +969,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void more_fields_than_required() throws TypeException {
+	public void moreFieldsThanRequired() throws TypeException {
 		String code = """
 					let
 						class example(a:int) {}
@@ -981,7 +981,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_field_type() throws TypeException {
+	public void wrongFieldType() throws TypeException {
 		String code = """
 					let
 						class example(a:bool) {}
@@ -993,7 +993,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_call() throws TypeException {
+	public void methodCall() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -1009,7 +1009,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_call_with_two_classes() throws TypeException {
+	public void methodCallWithTwoClasses() throws TypeException {
 		String code = """
 					let
 						class useless(a:bool, b:bool) {
@@ -1028,7 +1028,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void getter_with_three_fields() throws TypeException {
+	public void getterWithThreeFields() throws TypeException {
 		String code = """
 					let
 						class example(a:int, b:int, c:int) {
@@ -1046,7 +1046,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void multiple_objects() throws TypeException {
+	public void multipleObjects() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -1064,7 +1064,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void multiple_classes_multiple_objects() throws TypeException {
+	public void multipleClassesMultipleObjects() throws TypeException {
 		String code = """
 					let
 						class example(x:int) {
@@ -1089,7 +1089,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void objects_as_function_parameters() throws TypeException {
+	public void objectsAsFunctionParameters() throws TypeException {
 		String code = """
 					let
 						class point(x:int, y:int) {
@@ -1172,7 +1172,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void assert_type_checking_inside_methods() {
+	public void assertTypeCheckingInsideMethods() {
 		String code = """
 					let
 						class father() {
@@ -1191,7 +1191,7 @@ public class TestFOOL {
 	// Object Inheritance compilation tests
 
 	@Test
-	public void subtyping_class() throws TypeException {
+	public void subtypingClass() throws TypeException {
 		String code = """
 					let
 						class father() {}
@@ -1205,7 +1205,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void unexisting_superclass() {
+	public void unexistingSuperclass() {
 		String code = """
 					let
 						class example extends father() {}
@@ -1215,7 +1215,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void accessing_father_fields() throws TypeException {
+	public void accessingFatherFields() throws TypeException {
 		String code = """
 					let
 						class father(a:int) {}
@@ -1230,7 +1230,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void accessing_father_methods() throws TypeException {
+	public void accessingFatherMethods() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1245,7 +1245,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void field_overriding() throws TypeException {
+	public void fieldOverriding() throws TypeException {
 		String code = """
 					let
 						class father(a:int) {
@@ -1263,7 +1263,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_overriding() throws TypeException {
+	public void methodOverriding() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1280,7 +1280,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_overriding1() throws TypeException {
+	public void uselessOverriding1() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1297,7 +1297,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_overriding2() throws TypeException {
+	public void uselessOverriding2() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1314,7 +1314,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_overriding3() throws TypeException {
+	public void uselessOverriding3() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1332,7 +1332,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_field_overriding() throws TypeException {
+	public void wrongFieldOverriding() throws TypeException {
 		String code = """
 					let
 						class father(x:bool) {}
@@ -1344,7 +1344,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_method_overriding1() throws TypeException {
+	public void wrongMethodOverriding1() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1360,7 +1360,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_method_overriding2() throws TypeException {
+	public void wrongMethodOverriding2() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1376,7 +1376,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_method_overriding3() throws TypeException {
+	public void wrongMethodOverriding3() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1392,7 +1392,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void wrong_method_overriding4() throws TypeException {
+	public void wrongMethodOverriding4() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1408,7 +1408,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_call_on_wrong_class() throws TypeException {
+	public void methodCallOnWrongClass() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1424,7 +1424,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_call_on_grandfather_class() throws TypeException {
+	public void methodCallOnGrandfatherClass() throws TypeException {
 		String code = """
 					let
 						class grandfather() {
@@ -1440,7 +1440,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_overriding_field() throws TypeException {
+	public void methodOverridingField() throws TypeException {
 		String code = """
     					let
     						class father(m:int) {}
@@ -1455,7 +1455,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void field_overriding_method() throws TypeException {
+	public void fieldOverridingMethod() throws TypeException {
 		String code = """
     					let
     						class father() {
@@ -1472,7 +1472,7 @@ public class TestFOOL {
 	// Object Inheritance execution tests
 
 	@Test
-	public void subclass_as_parameter() throws TypeException {
+	public void subclassAsParameter() throws TypeException {
 		String code = """
 					let
 						class father() {}
@@ -1487,7 +1487,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void subsubclass_as_parameter() throws TypeException {
+	public void subsubclassAsParameter() throws TypeException {
 		String code = """
 					let
 						class grandfather() {}
@@ -1503,7 +1503,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void superclass_getter() throws TypeException {
+	public void superclassGetter() throws TypeException {
 		String code = """
 					let
 						class father(a:int) {
@@ -1519,7 +1519,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void supersuperclass_getter() throws TypeException {
+	public void supersuperclassGetter() throws TypeException {
 		String code = """
 					let
 						class grandfather(a:int) {
@@ -1536,7 +1536,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void superclass_method() throws TypeException {
+	public void superclassMethod() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1552,7 +1552,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void supersuperclass_method() throws TypeException {
+	public void supersuperclassMethod() throws TypeException {
 		String code = """
 					let
 						class grandfather() {
@@ -1569,7 +1569,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void field_override() throws TypeException {
+	public void fieldOverride() throws TypeException {
 		String code = """
 					let
 						class father(a:int) {
@@ -1585,7 +1585,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void double_field_override() throws TypeException {
+	public void doubleFieldOverride() throws TypeException {
 		String code = """
 					let
 						class grandfather() {}
@@ -1607,7 +1607,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void supersuperclass_field_override() throws TypeException {
+	public void supersuperclassFieldOverride() throws TypeException {
 		String code = """
 					let
 						class grandfather(a:int) {
@@ -1624,7 +1624,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_override() throws TypeException {
+	public void methodOverride() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1642,7 +1642,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void double_method_override() throws TypeException {
+	public void doubleMethodOverride() throws TypeException {
 		String code = """
 					let
 						class grandfather() {
@@ -1670,7 +1670,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void supersuperclass_method_override() throws TypeException {
+	public void supersuperclassMethodOverride() throws TypeException {
 		String code = """
 					let
 						class grandfather() {
@@ -1689,7 +1689,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_override_rettype() throws TypeException {
+	public void uselessOverrideRettype() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1707,7 +1707,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_override_rettype_1param() throws TypeException {
+	public void uselessOverrideRettypeOneParam() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1725,7 +1725,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void useless_override_rettype_2params() throws TypeException {
+	public void uselessOverrideRettypeTwoParams() throws TypeException {
 		String code = """
 					let
 						class father() {
@@ -1743,7 +1743,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void constructor_with_implicit_fields() throws TypeException {
+	public void constructorWithImplicitFields() throws TypeException {
 		String code = """
 					let
 						class father(a:int) {
@@ -1761,7 +1761,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void constructor_with_implicit_fields_only_grandfather() throws TypeException {
+	public void constructorWithImplicitFieldsOnlyGrandfather() throws TypeException {
 		String code = """
 					let
 						class grandfather(a:int) {
@@ -1780,7 +1780,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void constructor_with_implicit_fields_father_and_grandfather() throws TypeException {
+	public void constructorWithImplicitFieldsFatherAndGrandfather() throws TypeException {
 		String code = """
 					let
 						class grandfather(a:int) {
@@ -1846,18 +1846,18 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_override_in_other_order() throws TypeException {
+	public void methodOverrideInOtherOrder() throws TypeException {
 		String code = """
-    					let
-    						class father() {
-    							fun m:int() (7);
-    						}
-    						class example extends father() {
-    							fun wow:int() (6);
-    							fun m:bool() (true);
-    						}
-    						var x:example = new example();
-    					in print(x.m());
+						let
+							class father() {
+								fun m:int() (7);
+							}
+							class example extends father() {
+								fun wow:int() (6);
+								fun m:bool() (true);
+							}
+							var x:example = new example();
+						in print(x.m());
 				""";
 		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
