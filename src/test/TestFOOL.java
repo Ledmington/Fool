@@ -1865,7 +1865,7 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void method_override_complicated() throws TypeException {
+	public void methodOverrideComplicated() throws TypeException {
 		String code = """
     					let
     						class father() {
@@ -1890,5 +1890,101 @@ public class TestFOOL {
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, List.of("31", "91"));
+	}
+
+	// Lowest Common Ancestor testing
+
+	@Test
+	public void lowestCommonAncestorWithClasses1() throws TypeException {
+		String code = """
+    					let
+    						class father() {
+    							fun m:int() (55);
+    						}
+    						class leftson extends father() {
+    							fun m:int() (22);
+    						}
+    						class rightson extends father() {
+    							fun m:int() (99);
+    						}
+    						fun f:father() (
+    							if (true) then {
+									new leftson()
+								} else {
+									new rightson()
+								}
+    						);
+    						var x:father = f();
+    					in
+    						print(x.m());
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("22"));
+	}
+
+	@Test
+	public void lowestCommonAncestorWithClasses2() throws TypeException {
+		String code = """
+    					let
+    						class father() {
+    							fun m:int() (55);
+    						}
+    						class leftson extends father() {
+    							fun m:int() (22);
+    						}
+    						class rightson extends father() {
+    							fun m:int() (99);
+    						}
+    						fun f:father() (
+    							if (true) then {
+									new rightson()
+								} else {
+									new leftson()
+								}
+    						);
+    						var x:father = f();
+    					in
+    						print(x.m());
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("99"));
+	}
+
+	@Test
+	public void lowestCommonAncestorWithIntAndBool1() throws TypeException {
+		String code = """
+    					let
+    						var x:int = 5;
+    						var b:bool = false;
+    					in
+    						print(if (true) then {
+    							x
+    						} else {
+    							b
+    						});
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("5"));
+	}
+
+	@Test
+	public void lowestCommonAncestorWithIntAndBool2() throws TypeException {
+		String code = """
+    					let
+    						var x:int = 5;
+    						var b:bool = false;
+    					in
+    						print(if (true) then {
+    							b
+    						} else {
+    							x
+    						});
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("0"));
 	}
 }

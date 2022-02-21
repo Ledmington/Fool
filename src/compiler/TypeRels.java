@@ -51,4 +51,44 @@ public class TypeRels {
 
 		return a.getClass().equals(b.getClass());
 	}
+
+	public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
+		// se sono entrambi RefType o EmptyType
+		if( ((a instanceof RefTypeNode) || (a instanceof EmptyTypeNode)) &&
+				((b instanceof RefTypeNode) || (b instanceof EmptyTypeNode))) {
+
+			// se uno dei due è EmptyTypeNode, torna l'altro
+			if(a instanceof EmptyTypeNode) return b;
+			if(b instanceof EmptyTypeNode) return a;
+
+			// altrimenti risalgo la catena dei supertipi di a cercando una classe che sia anche supertipo di b
+			RefTypeNode typeA = (RefTypeNode) a;
+			RefTypeNode typeB = (RefTypeNode) b;
+
+			while(typeA.classID != null) {
+				if(isSubtype(typeB, typeA)) {
+					return typeA;
+				}
+				typeA = new RefTypeNode(superType.get(typeA.classID));
+			}
+
+			// se non la trovo, restituisco null
+			return null;
+		}
+
+		// se sono bool o int
+		if( ((a instanceof IntTypeNode) || (a instanceof BoolTypeNode)) &&
+				((b instanceof IntTypeNode) || (b instanceof BoolTypeNode))) {
+
+			// se almeno uno dei due è int, restituisco int
+			if ((a instanceof IntTypeNode) || (b instanceof IntTypeNode)) {
+				return new IntTypeNode();
+			} else {
+				// altrimenti bool
+				return new BoolTypeNode();
+			}
+		}
+
+		return null;
+	}
 }

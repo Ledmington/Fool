@@ -280,7 +280,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		symTable.add(vt);
 
 		int prevDecOffset = decOffset;
-		decOffset = (n.superID == null) ? -1 : -superType.allFields.size()-1;
+		decOffset = (n.superID == null) ? -1 : -superType.allFields.size() - 1;
 
 		// adding fields without visit
 		for(int i=0; i<n.fields.size(); i++) {
