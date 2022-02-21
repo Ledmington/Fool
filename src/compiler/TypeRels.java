@@ -32,13 +32,13 @@ public class TypeRels {
 		}
 
 		if(a instanceof ArrowTypeNode atnA && b instanceof ArrowTypeNode atnB) {
-System.out.println("checking");
+
 			// covarianza tipo di ritorno (il tipo di ritorno nuovo deve essere uguale o sottotipo di quello vecchio)
 			if(!isSubtype(atnA.returnType, atnB.returnType)) return false;
-			System.out.println("correct return tupe");
+
 			// il metodo che effettua override deve avere lo stesso numero di parametri
 			if(atnA.parlist.size() != atnB.parlist.size()) return false;
-			System.out.println("correct number of params");
+
 			// controvarianza tipi dei parametri (il tipo dell'i-esimo parametro nuovo deve essere "uguale" o supertipo dell'i-esimo parametro vecchio)
 			for(int i=0; i<atnA.parlist.size(); i++) {
 				TypeNode newPar = atnA.parlist.get(i);

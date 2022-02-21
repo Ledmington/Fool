@@ -1134,7 +1134,7 @@ public class TestFOOL {
 					in
 						print(l.search(3));
 				""";
-		String result = compiler.debug().compileSourceAndRun(code).get(0);
+		String result = compiler.compileSourceAndRun(code).get(0);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, "3");
 	}
@@ -1869,7 +1869,7 @@ public class TestFOOL {
 				  
 				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
 				""";
-		List<String> result = compiler.debug().compileSourceAndRun(code);
+		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, List.of("50000"));
 	}
