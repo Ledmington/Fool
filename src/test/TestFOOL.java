@@ -1442,13 +1442,13 @@ public class TestFOOL {
 	@Test
 	public void methodOverridingField() throws TypeException {
 		String code = """
-    					let
-    						class father(m:int) {}
-    						class example extends father() {
-    							fun m:int() (5);
-    						}
-    						var x:example = new example();
-    					in 1;
+						let
+							class father(m:int) {}
+							class example extends father() {
+								fun m:int() (5);
+							}
+							var x:example = new example();
+						in 1;
 				""";
 		compiler.compileSource(code);
 		assertFalse(compiler.err.ok());
@@ -1457,13 +1457,13 @@ public class TestFOOL {
 	@Test
 	public void fieldOverridingMethod() throws TypeException {
 		String code = """
-    					let
-    						class father() {
-    							fun m:int() (5);
-    						}
-    						class example extends father(m:int) {}
-    						var x:example = new example();
-    					in 1;
+						let
+							class father() {
+								fun m:int() (5);
+							}
+							class example extends father(m:int) {}
+							var x:example = new example();
+						in 1;
 				""";
 		compiler.compileSource(code);
 		assertFalse(compiler.err.ok());
@@ -1867,25 +1867,25 @@ public class TestFOOL {
 	@Test
 	public void methodOverrideComplicated() throws TypeException {
 		String code = """
-    					let
-    						class father() {
-    							fun a:int() (13);
-    							fun b:int() (7);
-    							fun c:int() (29);
-    						}
-    						class example extends father() {
-    							fun x:int() (123);
-    							fun c:int() (31);
-    							fun y:int() (99);
-    							fun a:int() (91);
-    						}
-    						var x:example = new example();
-    					in
-    						if (print(x.c()) >= 0) then {
-    							print(x.a())
-    						} else {
-    							print(-1)
-    						};
+						let
+							class father() {
+								fun a:int() (13);
+								fun b:int() (7);
+								fun c:int() (29);
+							}
+							class example extends father() {
+								fun x:int() (123);
+								fun c:int() (31);
+								fun y:int() (99);
+								fun a:int() (91);
+							}
+							var x:example = new example();
+						in
+							if (print(x.c()) >= 0) then {
+								print(x.a())
+							} else {
+								print(-1)
+							};
 				""";
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
@@ -1897,26 +1897,26 @@ public class TestFOOL {
 	@Test
 	public void lowestCommonAncestorWithClasses1() throws TypeException {
 		String code = """
-    					let
-    						class father() {
-    							fun m:int() (55);
-    						}
-    						class leftson extends father() {
-    							fun m:int() (22);
-    						}
-    						class rightson extends father() {
-    							fun m:int() (99);
-    						}
-    						fun f:father() (
-    							if (true) then {
+						let
+							class father() {
+								fun m:int() (55);
+							}
+							class leftson extends father() {
+								fun m:int() (22);
+							}
+							class rightson extends father() {
+								fun m:int() (99);
+							}
+							fun f:father() (
+								if (true) then {
 									new leftson()
 								} else {
 									new rightson()
 								}
-    						);
-    						var x:father = f();
-    					in
-    						print(x.m());
+							);
+							var x:father = f();
+						in
+							print(x.m());
 				""";
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
@@ -1926,26 +1926,26 @@ public class TestFOOL {
 	@Test
 	public void lowestCommonAncestorWithClasses2() throws TypeException {
 		String code = """
-    					let
-    						class father() {
-    							fun m:int() (55);
-    						}
-    						class leftson extends father() {
-    							fun m:int() (22);
-    						}
-    						class rightson extends father() {
-    							fun m:int() (99);
-    						}
-    						fun f:father() (
-    							if (true) then {
+						let
+							class father() {
+								fun m:int() (55);
+							}
+							class leftson extends father() {
+								fun m:int() (22);
+							}
+							class rightson extends father() {
+								fun m:int() (99);
+							}
+							fun f:father() (
+								if (true) then {
 									new rightson()
 								} else {
 									new leftson()
 								}
-    						);
-    						var x:father = f();
-    					in
-    						print(x.m());
+							);
+							var x:father = f();
+						in
+							print(x.m());
 				""";
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
@@ -1955,15 +1955,15 @@ public class TestFOOL {
 	@Test
 	public void lowestCommonAncestorWithIntAndBool1() throws TypeException {
 		String code = """
-    					let
-    						var x:int = 5;
-    						var b:bool = false;
-    					in
-    						print(if (true) then {
-    							x
-    						} else {
-    							b
-    						});
+						let
+							var x:int = 5;
+							var b:bool = false;
+						in
+							print(if (true) then {
+								x
+							} else {
+								b
+							});
 				""";
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
@@ -1973,15 +1973,15 @@ public class TestFOOL {
 	@Test
 	public void lowestCommonAncestorWithIntAndBool2() throws TypeException {
 		String code = """
-    					let
-    						var x:int = 5;
-    						var b:bool = false;
-    					in
-    						print(if (true) then {
-    							b
-    						} else {
-    							x
-    						});
+						let
+							var x:int = 5;
+							var b:bool = false;
+						in
+							print(if (true) then {
+								b
+							} else {
+								x
+							});
 				""";
 		List<String> result = compiler.compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
