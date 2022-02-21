@@ -84,7 +84,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"sfp", // set $fp to popped value (Control Link)
 				"ltm", // load $tm value (function result)
 				"lra", // load $ra value
-				"js"  // jump to to popped address
+				"js"  // jump to popped address
 			)
 		);
 
@@ -336,7 +336,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		if (print) printNode(n, n.id);
 
 		String dispatchTableCode = null;
-		List<String> fatherDT = null;
+		List<String> fatherDT;
 		List<String> myDT = new ArrayList<>();
 
 		if(n.superID != null) {
@@ -363,13 +363,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			visit(method);
 
 			// sulla cima dello stack c'è l'indirizzo del metodo
-
 		}
 
 		// qui genero il codice
-		for(int i = 0; i < myDT.size(); i++) {
-			String methodLabel = myDT.get(i);
-
+		for (String methodLabel : myDT) {
 			dispatchTableCode = nlJoin(
 					dispatchTableCode,
 
@@ -435,7 +432,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"sfp", // set $fp to popped value (Control Link)
 						"ltm", // load $tm value (function result)
 						"lra", // load $ra value
-						"js"  // jump to to popped address
+						"js"  // jump to popped address
 				)
 		);
 
