@@ -287,7 +287,6 @@ public class AST {
 		final String classID;
 		final List<Node> arglist;
 		STentry entry;
-		//int nl; // TODO delete this if unused
 
 		public NewNode(final String cID, final List<Node> args) {
 			classID = cID;

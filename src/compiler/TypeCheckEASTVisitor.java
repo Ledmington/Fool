@@ -196,7 +196,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 		TypeNode t = visit(n.entry);
 		if(t instanceof MethodTypeNode) {
-			t = ((MethodTypeNode) t).fun; // TODO is this correct?
+			t = ((MethodTypeNode) t).fun;
 		}
 
 		if ( !(t instanceof ArrowTypeNode at) )
@@ -264,14 +264,14 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(MethodTypeNode n) {
 		if (print) printNode(n);
-		return null; // TODO is this correct?
+		return null;
 	}
 
 	@Override
 	public TypeNode visitNode(NewNode n) throws TypeException {
 		if (print) printNode(n);
 
-		// TODO maybe this is useless
+		// Handle incomplete nodes
 		if (n.entry == null) {
 			throw new TypeException("Invalid type", n.getLine());
 		}
@@ -365,7 +365,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			return atn.returnType;
 		}
 
-		return null; // TODO is this correct?
+		return null;
 	}
 
 	@Override

@@ -312,10 +312,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 			}
 		}
 
-		decOffset = prevDecOffset; // TODO maybe merge this with the following lines
-
 		// Incrementing nesting level for method visits
-		int prevNLDecOffset = decOffset;
 		decOffset = (n.superID == null) ? 0 : superType.allMethods.size();
 		nestingLevel++;
 
@@ -348,7 +345,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		}
 
 		// Resetting old value of nesting level
-		decOffset = prevNLDecOffset;
+		decOffset = prevDecOffset;
 		nestingLevel--;
 
 		// Removing the class's virtual table from the symbol table after visiting the declaration

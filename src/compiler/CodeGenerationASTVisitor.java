@@ -309,7 +309,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			getAR = nlJoin(getAR, "lw");
 		}
 
-		// TODO per trovare il valore di un campo di un oggetto, quando invoco un suo metodo lascio l'object pointer sullo stack, cosi poi posso calcolare la posizione dell'id con il suo offset
 		return nlJoin(
 			"lfp", getAR, // retrieve address of frame containing "id" declaration
 						 // by following the static chain (of Access Links)
@@ -349,7 +348,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			MethodNode method = n.methods.get(i);
 			method.label = "class" + dispatchTables.size() + "method" + i;
 			String methodLabel = method.label;
-			int methodOffset = method.offset; // TODO surely it's not finished
+			int methodOffset = method.offset;
 
 			if(methodOffset >= myDT.size()) {
 				// se il metodo non fa overriding
@@ -464,7 +463,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			);
 		}
 
-		// TODO is this finished?
 		return nlJoin(
 				"/* new " + n.classID + " */",
 				argCode,
@@ -522,7 +520,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 				"stm", // set $tm to popped value (with the aim of duplicating top of stack)
 				"ltm", // load Access Link (pointer to frame of function "id" declaration)
 				"ltm", // duplicate top of stack
-				"lw", // TODO why?
+				"lw",
 
 				// compute address of "id" declaration
 				"/* computing address of "+n.objID+"."+n.methodID+" declaration */",
