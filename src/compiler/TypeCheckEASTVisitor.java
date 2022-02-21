@@ -296,7 +296,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	public TypeNode visitNode(ClassNode n) throws TypeException {
 		if (print) printNode(n, n.id + ((n.superID==null)?"":" extends "+n.superID));
 
-		int m=0;
 		if(n.superID != null) {
 			superType.put(n.id, n.superID);
 
@@ -308,32 +307,34 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 				if(position < parentCT.allFields.size() && f < n.type.allFields.size()) {
 					// overriding
-					if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(position)) ) {
+					if( !isSubtype(n.type.allFields.get(position), parentCT.allFields.get(position)) ) {
 						throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
 					}
 				}
 			}
 
-			// confronto che gli eventuali overriding di campi siano corretti
-			for(int f=0; f<parentCT.allFields.size(); f++) {
-				if( !isSubtype(n.type.allFields.get(f), parentCT.allFields.get(f)) ) {
-					throw new TypeException("Invalid overriding of " + f + "-th field in class " + n.id, n.getLine());
-				}
-			}
-
 			// confronto che gli eventuali overriding di metodi siano corretti
-			for(; m<parentCT.allMethods.size(); m++) {
-				ArrowTypeNode atn = n.type.allMethods.get(m);
-				ArrowTypeNode fatherAtn = parentCT.allMethods.get(m);
-				if( !isSubtype(atn, fatherAtn) ) {
-					throw new TypeException("Invalid overriding of " + m + "-th method in class " + n.id, n.getLine());
+			for(int m=0; m<n.methods.size(); m++) {
+				int position = n.methods.get(m).offset;
+
+				if(position < parentCT.allMethods.size()) {
+					// overriding
+					ArrowTypeNode atn = n.type.allMethods.get(position);
+					ArrowTypeNode fatherAtn = parentCT.allMethods.get(position);
+					System.out.println("checking " + atn + " against " + fatherAtn);
+					if( !isSubtype(atn, fatherAtn) ) {
+						throw new TypeException("Invalid overriding of " + m + "-th method in class " + n.id, n.getLine());
+					}
+				} else {
+					// senza overriding visito il metodo
+					visit(n.methods.get(m));
 				}
 			}
-		}
-
-		// visito tutti gli altri metodi senza overriding (visito solo i metodi nuovi)
-		for(; m<n.methods.size(); m++) {
-			visit(n.methods.get(m));
+		} else {
+			// se non eredito, visito tutti i metodi
+			for (int m=0; m < n.methods.size(); m++) {
+				visit(n.methods.get(m));
+			}
 		}
 
 		return null;
@@ -342,9 +343,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(ClassCallNode n) throws TypeException {
 		if (print) printNode(n, n.objID+"."+n.methodID);
-		System.out.println("wow"); // TODO delete this line
+
 		if(n.methodEntry == null) return null; // early exit to avoid NullPointerException on wrong ClassCallNodes
-		System.out.println("mannaggia"); // TODO delete this line
+
 		if(n.methodEntry.type instanceof MethodTypeNode) {
 			ArrowTypeNode atn = ((MethodTypeNode) n.methodEntry.type).fun;
 

@@ -1869,7 +1869,7 @@ public class TestFOOL {
 				  
 				 in print(if (myLoan==null) then {0} else {myLoan.getMon()});
 				""";
-		List<String> result = compiler.compileSourceAndRun(code);
+		List<String> result = compiler.debug().compileSourceAndRun(code);
 		assertTrue(compiler.err.ok());
 		assertEquals(result, List.of("50000"));
 	}
