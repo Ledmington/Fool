@@ -323,26 +323,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 		for(int i=0; i<n.methods.size(); i++) {
 			MethodNode meth = n.methods.get(i);
 
-			/*// overriding
-			if(vt.containsKey(meth.id)) {
-				STentry methodEntry = vt.get(meth.id);
-				if(methodEntry.type instanceof MethodTypeNode) {
-					int oldOffset = methodEntry.offset;
-					int tmp = decOffset;
-					decOffset = oldOffset;
-					vt.remove(meth.id);
-					visit(meth);
-					decOffset = tmp;
-					classTypeNode.allMethods.set(oldOffset, ((MethodTypeNode) meth.getType()).fun);
-				} else {
-					System.out.println("Method " + n.id+"."+meth.id + " cannot override field in superclass");
-					stErrors++;
-				}
-			} else {
-				visit(meth);
-				classTypeNode.allMethods.add(((MethodTypeNode) meth.getType()).fun);
-			}*/
-
 			visit(meth);
 
 			ArrowTypeNode methATN = ((MethodTypeNode) meth.getType()).fun;
