@@ -181,6 +181,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String labelTrue = freshLabel();
 		String labelEnd = freshLabel();
 		return nlJoin(
+				// efficient or: we check the second expression only if the first one is false
 				visit(n.left),
 				"push 1",
 				"beq "+labelTrue,
@@ -201,6 +202,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String labelFalse = freshLabel();
 		String labelEnd = freshLabel();
 		return nlJoin(
+				// efficient and: we check the second expression only if the first one is true
 				visit(n.left),
 				"push 0",
 				"beq " + labelFalse,
@@ -219,6 +221,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	public String visitNode(NotNode n) {
 		if (print) printNode(n);
 		return nlJoin(
+				// to invert 1 into 0 and 0 into 1, we compute x = 1-x
 				"push 1",
 				visit(n.exp),
 				"sub"
@@ -351,17 +354,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			int methodOffset = method.offset;
 
 			if(methodOffset >= myDT.size()) {
-				// se il metodo non fa overriding
+				// se il metodo non fa overriding, lo aggiungo alla fine della lista
 				myDT.add(methodLabel);
 			} else {
-				// se il metodo fa overriding
+				// se il metodo fa overriding, sostituisco quello vecchio
 				myDT.set(methodOffset, methodLabel);
 			}
 
 			// visitare solo i metodi che non fanno overriding
 			visit(method);
 
-			// sulla cima dello stack c'è l'indirizzo del metodo
+			// sulla cima dello stack viene lasciato l'indirizzo del metodo
 		}
 
 		// qui genero il codice
@@ -369,8 +372,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			dispatchTableCode = nlJoin(
 					dispatchTableCode,
 
-					// aggiorno la Dispatch Table creata settando la posizione, data
-					// dall’offset del metodo, alla sua etichetta
+					// aggiungo alla Dispatch Table l'eitchetta del metodo (ovvero il suo indirizzo)
 					"push " + methodLabel,
 					"lhp",
 					"sw",
@@ -415,7 +417,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"lra", // load $ra value
 
 						"/* local declaration code */",
-						declCode, // generate code for local declarations (they use the new $fp!!!)
+						declCode, // generate code for local declarations
 
 						"/* method body */",
 						visit(n.exp), // generate code for function body expression
