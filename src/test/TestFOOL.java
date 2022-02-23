@@ -1998,4 +1998,37 @@ public class TestFOOL {
 		assertTrue(compiler.err.ok());
 		assertEquals(result, List.of("0"));
 	}
+
+	@Test
+	public void listif() throws TypeException {
+		String code = """
+						let
+				  
+				      class List (){
+				          fun add:bool(f:int) false;
+				          fun get:int(i:int) 3;
+				      }
+				  
+				      class LinkedList extends List (f:int, r:List)
+				      {
+				        fun get:int(i:int) 5;
+				      }
+				  
+				      class ArrayList extends List (size:int)
+				      {
+				        fun get:int(i:int) 7;
+				      }
+				                                                         \s
+				      fun list:List()
+				          if(true)
+				          then{ new LinkedList(33, null)}
+				          else{ new ArrayList(55)};
+				  
+				    var l: List = list();
+				  in print(l.get(0));
+				""";
+		List<String> result = compiler.compileSourceAndRun(code);
+		assertTrue(compiler.err.ok());
+		assertEquals(result, List.of("5"));
+	}
 }
