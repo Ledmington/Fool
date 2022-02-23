@@ -81,14 +81,24 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 	@Override
 	public TypeNode visitNode(IfNode n) throws TypeException {
 		if (print) printNode(n);
-		if ( !(isSubtype(visit(n.cond), new BoolTypeNode())) )
+
+		// checking that the condition is a boolean
+		if ( !(isSubtype(visit(n.cond), new BoolTypeNode())) ) {
 			throw new TypeException("Non boolean condition in if", n.getLine());
+		}
+
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
+
+		// se sono uno sottotipo dell'altro, restituisco il supertipo
 		if (isSubtype(t, e)) return e;
 		if (isSubtype(e, t)) return t;
+
+		// cerco il loro lowest common ancestor
 		TypeNode ancestor = lowestCommonAncestor(t, e);
 		if(ancestor != null) return ancestor;
+
+		// se non sono sottotipi e non hanno un LCA, TypeException
 		throw new TypeException("Incompatible types in then-else branches", n.getLine());
 	}
 
@@ -382,6 +392,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			}
 		}
 
+		// checking that the type of the result is actually the return type or "lower"
 		if ( !isSubtype(visit(n.exp), ckvisit(n.retType)) ) {
 			throw new TypeException("Wrong return type for method " + n.id, n.getLine());
 		}

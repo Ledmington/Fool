@@ -2000,6 +2000,108 @@ public class TestFOOL {
 	}
 
 	@Test
+	public void wrongLCA1() {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+							var b:bool = false;
+						in
+							if (true) then {
+								x
+							} else {
+								b
+							};
+				""";
+		assertThrows(TypeException.class, () -> compiler.compileSource(code));
+	}
+
+	@Test
+	public void wrongLCA2() {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+							var b:bool = false;
+						in
+							if (true) then {
+								b
+							} else {
+								x
+							};
+				""";
+		assertThrows(TypeException.class, () -> compiler.compileSource(code));
+	}
+
+	@Test
+	public void wrongLCA3() {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+							var b:int = false;
+						in
+							if (true) then {
+								x
+							} else {
+								b
+							};
+				""";
+		assertThrows(TypeException.class, () -> compiler.compileSource(code));
+	}
+
+	@Test
+	public void wrongLCA4() {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+							var b:int = false;
+						in
+							if (true) then {
+								b
+							} else {
+								x
+							};
+				""";
+		assertThrows(TypeException.class, () -> compiler.compileSource(code));
+	}
+
+	@Test
+	public void nullLCA1() throws TypeException {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+						in
+							if (true) then {
+								null
+							} else {
+								x
+							};
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
+	public void nullLCA2() throws TypeException {
+		String code = """
+						let
+							class example() {}
+							var x:example = new example();
+						in
+							if (true) then {
+								x
+							} else {
+								null
+							};
+				""";
+		compiler.compileSource(code);
+		assertTrue(compiler.err.ok());
+	}
+
+	@Test
 	public void listif() throws TypeException {
 		String code = """
 						let
@@ -2018,7 +2120,7 @@ public class TestFOOL {
 				      {
 				        fun get:int(i:int) 7;
 				      }
-				                                                         \s
+
 				      fun list:List()
 				          if(true)
 				          then{ new LinkedList(33, null)}

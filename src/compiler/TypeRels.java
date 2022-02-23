@@ -15,6 +15,7 @@ public class TypeRels {
 
 	// controlla che a sia sottotipo di b
 	public static boolean isSubtype(TypeNode a, TypeNode b) {
+		// bool è sottotipo di int e null è sottotipo di qualsiasi classe
 		if((a instanceof BoolTypeNode) && (b instanceof IntTypeNode) ||
 				(a instanceof EmptyTypeNode) && (b instanceof RefTypeNode)) {
 			return true;
@@ -22,8 +23,10 @@ public class TypeRels {
 
 		// class subtyping
 		if(a instanceof RefTypeNode && b instanceof RefTypeNode) {
-			String current = ((RefTypeNode)a).classID;
-			String end = ((RefTypeNode)b).classID;
+			String current = ((RefTypeNode) a).classID;
+			String end = ((RefTypeNode) b).classID;
+
+			// seguo la catena di ereditarietà finchè non trovo null oppure la classe b
 			while(!current.equals(end)) {
 				current = superType.get(current);
 				if(current == null) return false;
@@ -49,6 +52,7 @@ public class TypeRels {
 			return true;
 		}
 
+		// se il caso non rispetta nessuna delle situazioni qui sopra, allora controllo se hanno la stessa classe
 		return a.getClass().equals(b.getClass());
 	}
 
@@ -89,6 +93,7 @@ public class TypeRels {
 			}
 		}
 
+		// in qualsiasi altro caso restituisco null
 		return null;
 	}
 }
