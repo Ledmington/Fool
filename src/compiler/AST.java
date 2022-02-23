@@ -217,8 +217,8 @@ public class AST {
 		final String superID;  // ID classe padre
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
-		ClassTypeNode type;
-		STentry superEntry;
+		ClassTypeNode type; // tipo della classe
+		STentry superEntry; // entry della classe padre
 
 		public ClassNode(final String i, final String fatherID, final List<FieldNode> f, final List<MethodNode> m) {
 			id = i;
@@ -263,8 +263,8 @@ public class AST {
 
 	// invocazione metodo dall'esterno
 	public static class ClassCallNode extends Node {
-		final String objID;
-		final String methodID;
+		final String objID; // id oggetto
+		final String methodID; // id metodo
 		final List<Node> arglist;
 		STentry entry; // entry dell'oggetto
 		STentry methodEntry; // entry del metodo
@@ -286,7 +286,7 @@ public class AST {
 	public static class NewNode extends Node {
 		final String classID;
 		final List<Node> arglist;
-		STentry entry;
+		STentry entry; // entry della classe
 
 		public NewNode(final String cID, final List<Node> args) {
 			classID = cID;
@@ -344,8 +344,8 @@ public class AST {
 
 	// tipo di una classe
 	public static class ClassTypeNode extends TypeNode {
-		final List<TypeNode> allFields;
-		final List<ArrowTypeNode> allMethods;
+		final List<TypeNode> allFields; // tipi dei campi
+		final List<ArrowTypeNode> allMethods; // tipi dei metodi
 
 		public ClassTypeNode(List<TypeNode> f, List<ArrowTypeNode> m) {
 			allFields = f;

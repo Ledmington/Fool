@@ -254,7 +254,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitDotCall(DotCallContext c) {
 		if (print) printVarAndProdName(c);
 
-		// Reading "arguments" for the object
+		// Reading arguments for the call
 		List<Node> arglist = new ArrayList<>();
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
 
@@ -273,7 +273,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		// reading class name
 		String classID = c.ID().getText();
 
-		// reading "arguments"
+		// reading arguments
 		List<Node> arglist = new ArrayList<>();
 		for (ExpContext arg : c.exp()) arglist.add(visit(arg));
 
