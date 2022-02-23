@@ -6,12 +6,12 @@ import compiler.AST.*;
 
 import static compiler.TypeRels.*;
 
-//visitNode(n) fa il type checking di un Node n e ritorna:
-//- per una espressione, il suo tipo (oggetto BoolTypeNode o IntTypeNode)
-//- per una dichiarazione, "null"; controlla la correttezza interna della dichiarazione
-//(- per un tipo: "null"; controlla che il tipo non sia incompleto) 
+// visitNode(n) fa il type checking di un Node n e ritorna:
+// - per una espressione, il suo tipo (oggetto BoolTypeNode o IntTypeNode)
+// - per una dichiarazione, "null"; controlla la correttezza interna della dichiarazione
+//(- per un tipo: "null"; controlla che il tipo non sia incompleto)
 //
-//visitSTentry(s) ritorna, per una STentry s, il tipo contenuto al suo interno
+// visitSTentry(s) ritorna, per una STentry s, il tipo contenuto al suo interno
 public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeException> {
 
 	public TypeCheckEASTVisitor() { super(true); } // enables incomplete tree exceptions
@@ -232,8 +232,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printNode(n,n.val.toString());
 		return new IntTypeNode();
 	}
-
-// gestione tipi incompleti	(se lo sono lancia eccezione)
 	
 	@Override
 	public TypeNode visitNode(ArrowTypeNode n) throws TypeException {
@@ -278,15 +276,17 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
 		ClassTypeNode ctn = ((ClassTypeNode) n.entry.type);
 
+		// Checking number of parameters
 		if ( n.arglist.size() != ctn.allFields.size() ) {
 			throw new TypeException("Wrong number of parameters for new " + n.classID, n.getLine());
 		}
 
+		// Checking parameter types
 		for (int i=0; i<ctn.allFields.size(); i++) {
 			Node arg = n.arglist.get(i);
 			TypeNode t = visit(arg);
 
-			if (!(isSubtype(t, ctn.allFields.get(i)))) {
+			if ( !(isSubtype(t, ctn.allFields.get(i))) ) {
 				throw new TypeException("Wrong type of "+i+"-th parameter", n.getLine());
 			}
 		}
@@ -299,6 +299,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 		if (print) printNode(n, n.id + ((n.superID==null)?"":" extends "+n.superID));
 
 		if(n.superID != null) {
+			// se eredito, aggiungo la mia classe in superType
 			superType.put(n.id, n.superID);
 
 			ClassTypeNode parentCT = (ClassTypeNode) n.superEntry.type;
@@ -363,9 +364,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 			}
 
 			return atn.returnType;
+		} else {
+			throw new TypeException("Cannot call id " + n.methodID + " because it is not a method", n.getLine());
 		}
-
-		return null;
 	}
 
 	@Override

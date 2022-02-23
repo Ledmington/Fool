@@ -822,15 +822,26 @@ public class TestFOOL {
 	}
 
 	@Test
-	public void cannotAccessFields() throws TypeException {
+	public void cannotAccessFields() {
 		String code = """
 					let
 						class example(a:int) {}
 						var x:example = new example(5);
 					in x.a;
 				""";
-		compiler.quiet().compileSource(code);
-		assertFalse(compiler.err.ok());
+		assertThrows(TypeException.class, () -> compiler.quiet().compileSource(code));
+	}
+
+	@Test
+	public void cannotCallFields() {
+		String code = """
+					let
+						class example(a:int) {}
+						var x:example = new example(5);
+					in x.a();
+				""";
+		assertThrows(TypeException.class, () -> compiler.quiet().compileSource(code));
+		assertTrue(compiler.err.ok());
 	}
 
 	@Test
